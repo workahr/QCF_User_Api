@@ -6,12 +6,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants/app_colors.dart';
 import '../../services/comFuncService.dart';
+import '../../services/nam_food_api_service.dart';
 import '../../widgets/sub_heading_widget.dart';
 import '../HomeScreen/home_screen.dart';
 import '../address/fillyour_addresspage.dart';
 import '../cart/cart_page.dart';
 import '../maincontainer.dart';
 import 'package:pinput/pinput.dart';
+
+import 'login_model.dart';
 
 class OtpVerificationPage extends StatefulWidget {
   final String? phoneNumber;
@@ -24,8 +27,11 @@ class OtpVerificationPage extends StatefulWidget {
 }
 
 class _OtpVerificationPageState extends State<OtpVerificationPage> {
+
+  final NamFoodApiService apiService = NamFoodApiService();
   final List<TextEditingController> _otpControllers =
       List.generate(6, (_) => TextEditingController());
+      
   TextEditingController otpCtrl = TextEditingController();
 
   final GlobalKey<FormState> loginForm = GlobalKey<FormState>();
@@ -93,51 +99,50 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
         otpCtrl.text = "";
       });
 
-      //  login();
+        login();
     }
   }
 
-  // Future login() async {
-  //   try {
-  //     //  showInSnackBar(context, 'Processing...');
-  //     showSnackBar(context: context, showClose: false);
-  //     startTimer();
-  //     if (loginForm.currentState!.validate()) {
-  //       Map<String, dynamic> postData = {
-  //         'mobile': widget.phoneNumber,
-  //         'otp': otpCtrl.text,
-  //       };
-  //       var result = await apiService.userLoginWithOtp(postData);
-  //       LoginOtpModel response = loginOtpModelFromJson(result);
+  Future login() async {
+    try {
+      //  showInSnackBar(context, 'Processing...');
+      showSnackBar(context: context, showClose: false);
+      startTimer();
+      if (loginForm.currentState!.validate()) {
+        Map<String, dynamic> postData = {
+          'mobile': widget.phoneNumber,
+          'otp': otpCtrl.text,
+          "mobile_push_id":""
+        };
+        var result = await apiService.userLoginWithOtp(postData);
+        LoginOtpModel response = loginOtpModelFromJson(result);
 
-  //       closeSnackBar(context: context);
+        closeSnackBar(context: context);
 
-  //       if (response.status.toString() == 'SUCCESS') {
-  //         final prefs = await SharedPreferences.getInstance();
+        if (response.status.toString() == 'SUCCESS') {
+          final prefs = await SharedPreferences.getInstance();
 
-  //         if (response.authToken != null) {
-  //           //Navigator.pushNamed(context, '/');
-  //           prefs.setString('auth_token', response.authToken ?? '');
-  //           prefs.setString('role_name', response.roleName ?? '');
-  //           prefs.setInt('user_id', response.userId ?? 0);
-  //           prefs.setBool('isLoggedin', true);
-  //            Navigator.push(
-  //             context,
-  //              MaterialPageRoute(
-  //               builder: (context) => DisplayContentPage(),
-  //              ),
-  //            );
-  //         }
-  //       } else {
-  //         showInSnackBar(context, response.message.toString());
-  //       }
-  //     } else {
-  //       showInSnackBar(context, "Please fill required fields");
-  //     }
-  //   } catch (error) {
-  //     showInSnackBar(context, error.toString());
-  //   }
-  // }
+          if (response.authToken != null) {
+            //Navigator.pushNamed(context, '/');
+            prefs.setString('auth_token', response.authToken ?? '');
+            prefs.setBool('isLoggedin', true);
+             Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => FillyourAddresspage(),
+                        ),
+                      );
+          }
+        } else {
+          showInSnackBar(context, response.message.toString());
+        }
+      } else {
+        showInSnackBar(context, "Please fill required fields");
+      }
+    } catch (error) {
+      showInSnackBar(context, error.toString());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -283,12 +288,8 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                       //     builder: (context) => MainContainer(),
                       //   ),
                       // );
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => FillyourAddresspage(),
-                        ),
-                      );
+                     
+                       login();
                       print(
                           'OTP entered: ${_otpControllers.map((c) => c.text).join()}');
                     },

@@ -279,257 +279,266 @@ class _MyorderPageState extends State<MyorderPage>
                           },
                         ),
                         if (all_expandedIndex == index)
-                          Column(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 30, vertical: 8),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Column(
-                                          children: [
-                                            Container(
-                                              width: 20,
-                                              height: 20,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                border: Border.all(
-                                                  color: AppColors.blue,
-                                                  width: 3,
+                          ...e.orderdetails.map((order) {
+                            return Column(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 30, vertical: 8),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Column(
+                                            children: [
+                                              Container(
+                                                width: 20,
+                                                height: 20,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  border: Border.all(
+                                                    color: AppColors.blue,
+                                                    width: 3,
+                                                  ),
+                                                ),
+                                                child: const Center(
+                                                  child: Icon(
+                                                    Icons.circle,
+                                                    color: AppColors.blue,
+                                                    size: 12,
+                                                  ),
                                                 ),
                                               ),
-                                              child: const Center(
-                                                child: Icon(
-                                                  Icons.circle,
-                                                  color: AppColors.blue,
-                                                  size: 12,
+                                              const DottedLine(
+                                                direction: Axis.vertical,
+                                                dashColor: AppColors.blue,
+                                                lineLength: 50,
+                                                dashLength: 2,
+                                                dashGapLength: 2,
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Order Placed',
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              Text(
+                                                order.OrderPlacedTime
+                                                    .toString(),
+                                                style: TextStyle(
+                                                    color: AppColors.n_black),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Column(
+                                            children: [
+                                              Container(
+                                                width: 20,
+                                                height: 20,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  border: Border.all(
+                                                    color: AppColors.blue,
+                                                    width: 3,
+                                                  ),
+                                                ),
+                                                child: const Center(
+                                                  child: Icon(
+                                                    Icons.circle,
+                                                    color: AppColors.blue,
+                                                    size: 12,
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                            const DottedLine(
-                                              direction: Axis.vertical,
-                                              dashColor: AppColors.blue,
-                                              lineLength: 50,
-                                              dashLength: 2,
-                                              dashGapLength: 2,
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(width: 8),
-                                        const Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Order Placed',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Text(
-                                              '12:02 AM',
-                                              style: TextStyle(
-                                                  color: AppColors.n_black),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Column(
-                                          children: [
-                                            Container(
-                                              width: 20,
-                                              height: 20,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                border: Border.all(
-                                                  color: AppColors.blue,
-                                                  width: 3,
-                                                ),
+                                              const DottedLine(
+                                                direction: Axis.vertical,
+                                                dashColor: AppColors.blue,
+                                                lineLength: 50,
+                                                dashLength: 2,
+                                                dashGapLength: 2,
                                               ),
-                                              child: const Center(
-                                                child: Icon(
-                                                  Icons.circle,
-                                                  color: AppColors.blue,
-                                                  size: 12,
-                                                ),
+                                            ],
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Order Confirmed',
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
                                               ),
-                                            ),
-                                            const DottedLine(
-                                              direction: Axis.vertical,
-                                              dashColor: AppColors.blue,
-                                              lineLength: 50,
-                                              dashLength: 2,
-                                              dashGapLength: 2,
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(width: 8),
-                                        const Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Order Confirmed',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Text(
-                                              '12:02 AM',
-                                              style: TextStyle(
-                                                  color: AppColors.n_black),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                    const Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Column(
-                                          children: [
-                                            Icon(
-                                              Icons.circle,
-                                              color: AppColors.bluetone,
-                                              size: 18,
-                                            ),
-                                            const DottedLine(
-                                              direction: Axis.vertical,
-                                              dashColor: AppColors.blue,
-                                              lineLength: 50,
-                                              dashLength: 2,
-                                              dashGapLength: 2,
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(width: 8),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Preparing',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Text(
-                                              '12:02 AM',
-                                              style: TextStyle(
-                                                  color: AppColors.n_black),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                    const Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Icon(
-                                          Icons.circle,
-                                          color: AppColors.bluetone,
-                                          size: 18,
-                                        ),
-                                        SizedBox(width: 8),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Your Order On Delivery',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Text(
-                                              '12:02 AM',
-                                              style: TextStyle(
-                                                  color: AppColors.n_black),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                              Text(
+                                                order.OrderConfirmedTime
+                                                    .toString(),
+                                                style: TextStyle(
+                                                    color: AppColors.n_black),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Column(
+                                            children: [
+                                              Icon(
+                                                Icons.circle,
+                                                color: AppColors.bluetone,
+                                                size: 18,
+                                              ),
+                                              const DottedLine(
+                                                direction: Axis.vertical,
+                                                dashColor: AppColors.blue,
+                                                lineLength: 50,
+                                                dashLength: 2,
+                                                dashGapLength: 2,
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(width: 8),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Preparing',
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              Text(
+                                                order.PreparingTime.toString(),
+                                                style: TextStyle(
+                                                    color: AppColors.n_black),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Icon(
+                                            Icons.circle,
+                                            color: AppColors.bluetone,
+                                            size: 18,
+                                          ),
+                                          SizedBox(width: 8),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Your Order On Delivery',
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              Text(
+                                                order.DeliveryTime.toString(),
+                                                style: TextStyle(
+                                                    color: AppColors.n_black),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 18, vertical: 18),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      flex: 2,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  OrderPreviewPage(),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 18, vertical: 18),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 2,
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    OrderPreviewPage(),
+                                              ),
+                                            );
+                                          },
+                                          child: Text(
+                                            'View More',
+                                            style: TextStyle(
+                                                color: AppColors.black,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          style: ElevatedButton.styleFrom(
+                                            shape: RoundedRectangleBorder(
+                                              side: BorderSide(
+                                                  color: AppColors.black),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                             ),
-                                          );
-                                        },
-                                        child: Text(
-                                          'View More',
-                                          style: TextStyle(
-                                              color: AppColors.black,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        style: ElevatedButton.styleFrom(
-                                          shape: RoundedRectangleBorder(
-                                            side: BorderSide(
-                                                color: AppColors.black),
-                                            borderRadius:
-                                                BorderRadius.circular(8),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      width: 8,
-                                    ),
-                                    Expanded(
-                                      flex: 2,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  CancelBookingPage(),
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      Expanded(
+                                        flex: 2,
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    CancelBookingPage(),
+                                              ),
+                                            );
+                                          },
+                                          child: Text(
+                                            'Order Cancel',
+                                            style: TextStyle(
+                                                color: AppColors.red,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          style: ElevatedButton.styleFrom(
+                                            shape: RoundedRectangleBorder(
+                                              side: BorderSide(
+                                                  color: AppColors.red),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                             ),
-                                          );
-                                        },
-                                        child: Text(
-                                          'Order Cancel',
-                                          style: TextStyle(
-                                              color: AppColors.red,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        style: ElevatedButton.styleFrom(
-                                          shape: RoundedRectangleBorder(
-                                            side: BorderSide(
-                                                color: AppColors.red),
-                                            borderRadius:
-                                                BorderRadius.circular(8),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
+                              ],
+                            );
+                          }),
                         Divider(
                           color: AppColors.grey1,
                         ),
@@ -545,7 +554,7 @@ class _MyorderPageState extends State<MyorderPage>
                           subtitle: Row(
                             children: [
                               SubHeadingWidget(
-                                title: '${e.DeliveryDate}',
+                                title: '20-Oct-2024',
                                 color: AppColors.n_black,
                               ),
                               SizedBox(width: 10),

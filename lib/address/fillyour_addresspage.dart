@@ -16,319 +16,134 @@ class FillyourAddresspage extends StatefulWidget {
 }
 
 class _FillyourAddresspageState extends State<FillyourAddresspage> {
-  bool _isChecked = false;
-  int _selectedIndex = 0; // Track the selected tab
+  int? _selectedCheckboxIndex;
+  int _selectedIndex = 0;
+  String _selectedAddressType = 'Home'; // Default selected address type
 
-  // Method to change the tab
-  void _onTabSelected(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+  // Method to build address form
+  Widget _buildAddressForm(String type) {
+    List<Widget> fields = [
+      CustomeTextField(
+        borderColor: AppColors.grey,
+        labelText: 'Contact Number',
+        width: MediaQuery.of(context).size.width,
+      ),
+      CustomeTextField(
+        borderColor: AppColors.grey1,
+        labelText: 'Land Mark',
+        width: MediaQuery.of(context).size.width,
+      ),
+      CustomeTextField(
+        borderColor: AppColors.grey1,
+        labelText: 'Address',
+        lines: 3,
+        width: MediaQuery.of(context).size.width,
+      ),
+      Row(
+        children: [
+          Checkbox(
+            side: BorderSide(color: AppColors.grey, width: 2),
+            activeColor: AppColors.red, // Color when checked
+            checkColor: Colors.white, // Color of the tick mark
+            value: _selectedCheckboxIndex == _selectedIndex,
+            onChanged: (bool? value) {
+              setState(() {
+                _selectedCheckboxIndex = value == true ? _selectedIndex : null;
+              });
+            },
+          ),
+          SubHeadingWidget(
+            title: 'Set as default address',
+            color: AppColors.red,
+          )
+        ],
+      ),
+    ];
+
+    if (type == 'Other') {
+      fields.insert(
+        0,
+        CustomeTextField(
+          borderColor: AppColors.grey1,
+          labelText: 'Save As',
+          width: MediaQuery.of(context).size.width,
+        ),
+      );
+    }
+
+    return Column(children: fields);
   }
 
   @override
   Widget build(BuildContext context) {
-    var screenHeight = MediaQuery.of(context).size.height;
     var screenWidth = MediaQuery.of(context).size.width;
-    return SingleChildScrollView(
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: AppColors.lightGrey3,
-          title: Text('Fill your address'),
-        ),
-        body: Padding(
-          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              OutlineBtnWidget(
-                borderColor: AppColors.red,
-                titleColor: AppColors.red,
-                icon: Icons.my_location,
-                iconColor: AppColors.red,
-                title: "Locate me automatically",
-                height: 50,
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Divider(
-                      thickness: 1,
-                      color: AppColors.grey,
-                      indent: screenWidth * 0.05, // 5% of screen width
-                      endIndent: screenWidth * 0.02, // 2% of screen width
-                    ),
-                  ),
-                  Text(
-                    'Or',
-                    style: TextStyle(
-                        color: AppColors.black,
-                        fontSize: screenWidth * 0.04), // 4% of screen width
-                  ),
-                  Expanded(
-                    child: Divider(
-                      thickness: 1,
-                      color: AppColors.grey,
-                      indent: screenWidth * 0.02, // 2% of screen width
-                      endIndent: screenWidth * 0.05, // 5% of screen width
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              HeadingWidget(
-                title: "Fill Your Address Manually",
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              // Custom Tab Bar with ElevatedButtons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  // Home Tab
-                  Expanded(
-                    flex: 1,
-                    child: ElevatedButton(
-                      onPressed: () => _onTabSelected(0),
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor:
-                            _selectedIndex == 0 ? Colors.white : AppColors.red,
-                        backgroundColor:
-                            _selectedIndex == 0 ? AppColors.red : Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          side: BorderSide(color: AppColors.red),
-                        ),
-                        padding: EdgeInsets.symmetric(vertical: 16.0),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            _selectedIndex == 0
-                                ? AppAssets.home_white
-                                : AppAssets.home_red,
-                            width: 18,
-                            height: 18,
-                          ),
-                          SizedBox(width: 12),
-                          Text('Home'),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 10),
 
-                  // Work Tab
-                  Expanded(
-                    flex: 1,
-                    child: ElevatedButton(
-                      onPressed: () => _onTabSelected(1),
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor:
-                            _selectedIndex == 1 ? Colors.white : AppColors.red,
-                        backgroundColor:
-                            _selectedIndex == 1 ? AppColors.red : Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          side: BorderSide(color: AppColors.red),
-                        ),
-                        padding: EdgeInsets.symmetric(vertical: 16.0),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            _selectedIndex == 1
-                                ? AppAssets.work_white
-                                : AppAssets.work_red,
-                            width: 18,
-                            height: 18,
-                          ),
-                          SizedBox(width: 8),
-                          Text('Work'),
-                        ],
-                      ),
-                    ),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppColors.lightGrey3,
+        title: Text('Fill your address'),
+      ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            OutlineBtnWidget(
+              borderColor: AppColors.red,
+              titleColor: AppColors.red,
+              icon: Icons.my_location,
+              iconColor: AppColors.red,
+              title: "Locate me automatically",
+              height: 50,
+            ),
+            SizedBox(height: 15),
+            Row(
+              children: [
+                Expanded(
+                  child: Divider(
+                    thickness: 1,
+                    color: AppColors.grey,
                   ),
-                  SizedBox(width: 10),
-
-                  // Others Tab
-
-                  Expanded(
-                    flex: 1,
-                    child: ElevatedButton(
-                      onPressed: () => _onTabSelected(2),
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor:
-                            _selectedIndex == 2 ? Colors.white : AppColors.red,
-                        backgroundColor:
-                            _selectedIndex == 2 ? AppColors.red : Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          side: BorderSide(color: AppColors.red),
-                        ),
-                        padding: EdgeInsets.symmetric(vertical: 16.0),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.location_on_outlined,
-                            color: _selectedIndex == 2
-                                ? Colors.white
-                                : AppColors.red,
-                            size: 10,
-                          ),
-                          SizedBox(width: 8),
-                          Text('Other'),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              // Content for each tab
-              Expanded(
-                child: IndexedStack(
-                  index: _selectedIndex, // Display the selected tab's content
-                  children: [
-                    Column(
-                      children: [
-                        CustomeTextField(
-                          borderColor: AppColors.grey1,
-                          labelText: 'Contact Number',
-                          width: screenWidth,
-                        ),
-                        CustomeTextField(
-                          borderColor: AppColors.grey1,
-                          labelText: 'Land Mark',
-                          width: screenWidth,
-                        ),
-                        CustomeTextField(
-                          borderColor: AppColors.grey1,
-                          labelText: 'Address',
-                          lines: 3,
-                          width: screenWidth,
-                        ),
-                        Row(
-                          children: [
-                            Checkbox(
-                              side: BorderSide(color: AppColors.grey, width: 2),
-                              activeColor: AppColors.red,
-                              value: _isChecked,
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  _isChecked = value ?? false;
-                                });
-                              },
-                            ),
-                            SubHeadingWidget(
-                              title: 'Set as default address',
-                              color: AppColors.red,
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        CustomeTextField(
-                          borderColor: AppColors.grey1,
-                          labelText: 'Contact Number',
-                          width: screenWidth,
-                        ),
-                        CustomeTextField(
-                          borderColor: AppColors.grey1,
-                          labelText: 'Land Mark',
-                          width: screenWidth,
-                        ),
-                        CustomeTextField(
-                          borderColor: AppColors.grey1,
-                          labelText: 'Address',
-                          lines: 3,
-                          width: screenWidth,
-                        ),
-                        Row(
-                          children: [
-                            Checkbox(
-                              side: BorderSide(color: AppColors.grey, width: 2),
-                              activeColor: AppColors.red,
-                              value: _isChecked,
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  _isChecked = value ?? false;
-                                });
-                              },
-                            ),
-                            SubHeadingWidget(
-                              title: 'Set as default address',
-                              color: AppColors.red,
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        CustomeTextField(
-                          borderColor: AppColors.grey,
-                          labelText: 'Save As',
-                          width: screenWidth,
-                        ),
-                        CustomeTextField(
-                          borderColor: AppColors.grey,
-                          labelText: 'Contact Number',
-                          width: screenWidth,
-                        ),
-                        CustomeTextField(
-                          borderColor: AppColors.grey,
-                          labelText: 'Land Mark',
-                          width: screenWidth,
-                        ),
-                        CustomeTextField(
-                          borderColor: AppColors.grey,
-                          labelText: 'Address',
-                          lines: 3,
-                          width: screenWidth,
-                        ),
-                        Row(
-                          children: [
-                            Checkbox(
-                              side: BorderSide(color: AppColors.grey, width: 2),
-                              activeColor: AppColors.red,
-                              value: _isChecked,
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  _isChecked = value ?? false;
-                                });
-                              },
-                            ),
-                            SubHeadingWidget(
-                              title: 'Set as default address',
-                              color: AppColors.red,
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                  ],
                 ),
-              ),
-            ],
-          ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    'Or',
+                    style: TextStyle(color: AppColors.black, fontSize: 16),
+                  ),
+                ),
+                Expanded(
+                  child: Divider(
+                    thickness: 1,
+                    color: AppColors.grey,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            HeadingWidget(
+              title: "Fill Your Address Manually",
+            ),
+            SizedBox(height: 16),
+            // Row of buttons to select address type
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildAddressTypeButton('Home', AppAssets.home_red),
+                _buildAddressTypeButton('Work', AppAssets.work_red),
+                _buildAddressTypeButton('Other', Icons.location_on_outlined),
+              ],
+            ),
+            SizedBox(height: 20),
+            // Address form based on selected type
+            _buildAddressForm(_selectedAddressType),
+          ],
         ),
-        bottomSheet: Expanded(
-            child: Column(
+      ),
+      bottomSheet: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             ButtonWidget(
               borderRadius: 10,
@@ -351,9 +166,47 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
                   )
                 ],
               ),
-            )
+            ),
           ],
-        )),
+        ),
+      ),
+    );
+  }
+
+  // Method to create a button for address type
+  Widget _buildAddressTypeButton(String type, dynamic icon) {
+    bool isSelected = _selectedAddressType == type;
+    return ElevatedButton(
+      onPressed: () {
+        setState(() {
+          _selectedAddressType = type;
+        });
+      },
+      style: ElevatedButton.styleFrom(
+        foregroundColor: isSelected ? Colors.white : AppColors.red,
+        backgroundColor: isSelected ? AppColors.red : Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: AppColors.red),
+        ),
+        padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          icon is IconData
+              ? Icon(
+                  icon,
+                  color: isSelected ? Colors.white : AppColors.red,
+                )
+              : Image.asset(
+                  isSelected ? AppAssets.home_white : icon,
+                  width: 18,
+                  height: 18,
+                ),
+          SizedBox(width: 8),
+          Text(type),
+        ],
       ),
     );
   }

@@ -43,10 +43,7 @@ class MyOrders {
   String? orderid;
   String? items;
   String? orderstatus;
-  String? OrderPlacedTime;
-  String? OrderConfirmedTime;
-  String? DeliveryTime;
-  String? DeliveryDate;
+  List<Orderdetails> orderdetails;
 
   int status;
   int active;
@@ -65,10 +62,7 @@ class MyOrders {
     this.orderid,
     this.items,
     this.orderstatus,
-    this.OrderPlacedTime,
-    this.OrderConfirmedTime,
-    this.DeliveryTime,
-    this.DeliveryDate,
+    required this.orderdetails,
     required this.status,
     required this.active,
     required this.createdBy,
@@ -87,10 +81,8 @@ class MyOrders {
         orderid: json["orderid"],
         items: json["items"],
         orderstatus: json["orderstatus"],
-        OrderPlacedTime: json["OrderPlacedTime"],
-        OrderConfirmedTime: json["OrderConfirmedTime"],
-        DeliveryTime: json["DeliveryTime"],
-        DeliveryDate: json["DeliveryDate"],
+        orderdetails: List<Orderdetails>.from(
+            json["orderdetails"].map((x) => Orderdetails.fromJson(x))),
         status: json["status"],
         active: json["active"],
         createdBy: json["created_by"],
@@ -111,14 +103,7 @@ class MyOrders {
         "orderid": orderid,
         "items": items,
         "orderstatus": orderstatus,
-        "DeliveryDate": DeliveryDate,
-        "Orderdetails": [
-          {
-            "OrderPlacedTime": OrderPlacedTime,
-            "OrderConfirmedTime": OrderConfirmedTime,
-            "DeliveryTime": DeliveryTime,
-          }
-        ],
+        "orderdetails": List<dynamic>.from(orderdetails.map((x) => x.toJson())),
         "status": status,
         "active": active,
         "created_by": createdBy,
@@ -131,5 +116,33 @@ class MyOrders {
         "license_expiry":
             "${licenseExpiry.year.toString().padLeft(4, '0')}-${licenseExpiry.month.toString().padLeft(2, '0')}-${licenseExpiry.day.toString().padLeft(2, '0')}",
         "address": address,
+      };
+}
+
+class Orderdetails {
+  String? OrderPlacedTime;
+  String? OrderConfirmedTime;
+  String? PreparingTime;
+  String? DeliveryTime;
+
+  Orderdetails({
+    required this.OrderPlacedTime,
+    required this.OrderConfirmedTime,
+    required this.PreparingTime,
+    required this.DeliveryTime,
+  });
+
+  factory Orderdetails.fromJson(Map<String, dynamic> json) => Orderdetails(
+        OrderPlacedTime: json["OrderPlacedTime"],
+        OrderConfirmedTime: json["OrderConfirmedTime"],
+        PreparingTime: json["PreparingTime"],
+        DeliveryTime: json["DeliveryTime"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "OrderPlacedTime": OrderPlacedTime,
+        "OrderConfirmedTime": OrderConfirmedTime,
+        "PreparingTime": PreparingTime,
+        "DeliveryTime": DeliveryTime,
       };
 }

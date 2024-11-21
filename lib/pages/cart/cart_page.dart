@@ -615,6 +615,9 @@ class _CartPageState extends State<CartPage> {
                           children: [
                             Row(
                               children: [
+                                SizedBox(
+                                  width: 10,
+                                ),
                                 Image.asset(AppAssets.moneyIcon,
                                     height: 25, width: 25, color: Colors.black),
                                 SizedBox(width: 12),
@@ -645,6 +648,9 @@ class _CartPageState extends State<CartPage> {
                           children: [
                             Row(
                               children: [
+                                SizedBox(
+                                  width: 10,
+                                ),
                                 Image.asset(
                                   AppAssets.onlinePaymentIcon,
                                   height: 25,
@@ -697,6 +703,7 @@ class _CartPageState extends State<CartPage> {
                       HeadingWidget(
                         title: "₹1400.00",
                         color: AppColors.red,
+                        fontSize: 18.0,
                       ),
                     ],
                   ),

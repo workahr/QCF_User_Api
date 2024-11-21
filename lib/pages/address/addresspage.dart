@@ -72,7 +72,7 @@ class _AddresspageState extends State<Addresspage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => EditAddresspage(),
+                    builder: (context) => EditAddressPage(),
                   ),
                 );
               },
@@ -134,7 +134,7 @@ class _AddresspageState extends State<Addresspage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => EditAddresspage(),
+                                      builder: (context) => EditAddressPage(),
                                     ),
                                   );
                                 },

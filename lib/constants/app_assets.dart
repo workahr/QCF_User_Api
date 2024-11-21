@@ -114,7 +114,7 @@ class AppAssets {
   static const String profilesettings = 'assets/images/profile_setting.png';
   static const String genderal = 'assets/images/genderal.png';
   static const String address = "assets/images/address.png";
-  static const String address_black = "images/address_black.png";
+  static const String address_black = "assets/images/address_black.png";
 
   static const String home_black = 'assets/images/Home_black.png';
   static const String home_white = 'assets/images/home_white.png';

@@ -10,11 +10,12 @@ Future getMyOrderJsonData() async {
         "items": "12",
         'orderstatus': 'On Delivery',
         "DeliveryDate": "20-Oct-2024",
-        "Orderdetails": [
+        "orderdetails": [
           {
-            "OrderPlacedDate": "12:02 AM",
-            "OrderConfirmedDate": "12:02 AM",
+            "OrderPlacedTime": "12:02 AM",
+            "OrderConfirmedTime": "12:02 AM",
             "DeliveryTime": "12:02 AM",
+            "PreparingTime": "12:02 AM",
           }
         ],
         "status": 1,
@@ -35,11 +36,12 @@ Future getMyOrderJsonData() async {
         "items": "12",
         'orderstatus': 'Completed',
         "DeliveryDate": "20-Oct-2024",
-        "Orderdetails": [
+        "orderdetails": [
           {
-            "OrderPlacedDate": "12:02 AM",
-            "OrderConfirmedDate": "12:02 AM",
+            "OrderPlacedTime": "12:02 AM",
+            "OrderConfirmedTime": "12:02 AM",
             "DeliveryTime": "12:02 AM",
+            "PreparingTime": "12:02 AM",
           }
         ],
         "status": 1,
@@ -60,11 +62,12 @@ Future getMyOrderJsonData() async {
         "items": "12",
         'orderstatus': 'Completed',
         "DeliveryDate": "20-Oct-2024",
-        "Orderdetails": [
+        "orderdetails": [
           {
-            "OrderPlacedDate": "12:02 AM",
-            "OrderConfirmedDate": "12:02 AM",
+            "OrderPlacedTime": "12:02 AM",
+            "OrderConfirmedTime": "12:02 AM",
             "DeliveryTime": "12:02 AM",
+            "PreparingTime": "12:02 AM",
           }
         ],
         "status": 1,
@@ -85,11 +88,12 @@ Future getMyOrderJsonData() async {
         "items": "12",
         'orderstatus': 'On Delivery',
         "DeliveryDate": "20-Oct-2024",
-        "Orderdetails": [
+        "orderdetails": [
           {
-            "OrderPlacedDate": "12:02 AM",
-            "OrderConfirmedDate": "12:02 AM",
+            "OrderPlacedTime": "12:02 AM",
+            "OrderConfirmedTime": "12:02 AM",
             "DeliveryTime": "12:02 AM",
+            "PreparingTime": "12:02 AM",
           }
         ],
         "status": 1,

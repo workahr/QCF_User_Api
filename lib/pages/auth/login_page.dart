@@ -8,6 +8,7 @@ import '../../constants/app_assets.dart';
 import '../../services/comFuncService.dart';
 import '../../widgets/custom_text_field.dart';
 import 'auth_validations.dart';
+import 'login_model.dart';
 import 'otp_verification_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -22,53 +23,54 @@ class _LoginPageState extends State<LoginPage> {
   AuthValidation authValidation = AuthValidation();
   final NamFoodApiService apiService = NamFoodApiService();
 
-  // Future login() async {
-  //   try {
-  //      showInSnackBar(context, 'Processing...');
+  Future login() async {
+    try {
+       showInSnackBar(context, 'Processing...');
 
-  //     if (_phoneController.text != "") {
-  //       Map<String, dynamic> postData = {
-  //         'mobile': _phoneController.text,
-  //         'otp': "",
-  //       };
-  //       var result = await apiService.userLoginWithOtp(postData);
-  //       LoginOtpModel response = loginOtpModelFromJson(result);
+      if (_phoneController.text != "") {
+        Map<String, dynamic> postData = {
+          'mobile': _phoneController.text,
+          'otp': "",
+          "mobile_push_id":""
+        };
+        var result = await apiService.userLoginWithOtp(postData);
+        LoginOtpModel response = loginOtpModelFromJson(result);
 
-  //       closeSnackBar(context: context);
+        closeSnackBar(context: context);
 
-  //       if (response.status.toString() == 'SUCCESS') {
-  //         setState(() {
-  //         Navigator.push(
-  //                         context,
-  //                         MaterialPageRoute(
-  //                           builder: (context) => OtpVerificationPage(
-  //                             phoneNumber: _phoneController.text,
-  //                             otp: response.otp!
-  //                           ),
-  //                         ),
-  //                       );
-  //         });
+        if (response.status.toString() == 'SUCCESS') {
+          setState(() {
+          Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => OtpVerificationPage(
+                              phoneNumber: _phoneController.text,
+                              otp: response.otp!
+                            ),
+                          ),
+                        );
+          });
 
-  //         // final prefs = await SharedPreferences.getInstance();
+          // final prefs = await SharedPreferences.getInstance();
 
-  //         // //prefs.setString('fullname', response.fullname ?? '');
+          // //prefs.setString('fullname', response.fullname ?? '');
 
-  //         //   if(response.authToken != null){
-  //         //     Navigator.pushNamed(context, '/');
-  //         //     prefs.setString('auth_token', response.authToken ?? '');
-  //         //     prefs.setBool('isLoggedin', true);
-  //         //   }
+          //   if(response.authToken != null){
+          //     Navigator.pushNamed(context, '/');
+          //     prefs.setString('auth_token', response.authToken ?? '');
+          //     prefs.setBool('isLoggedin', true);
+          //   }
 
-  //       } else {
-  //         showInSnackBar(context, response.message.toString());
-  //       }
-  //     } else {
-  //       showInSnackBar(context, "Please fill required fields");
-  //     }
-  //   } catch (error) {
-  //     showInSnackBar(context, error.toString());
-  //   }
-  // }
+        } else {
+          showInSnackBar(context, response.message.toString());
+        }
+      } else {
+        showInSnackBar(context, "Please fill required fields");
+      }
+    } catch (error) {
+      showInSnackBar(context, error.toString());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -132,15 +134,15 @@ class _LoginPageState extends State<LoginPage> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => OtpVerificationPage(
-                              phoneNumber: _phoneController.text,
-                            ),
-                          ),
-                        );
-                        //login();
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => OtpVerificationPage(
+                        //       phoneNumber: _phoneController.text,
+                        //     ),
+                        //   ),
+                        // );
+                        login();
                         print(
                             'Get OTP tapped with number: ${_phoneController.text}');
                       },
