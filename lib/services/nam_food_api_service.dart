@@ -1817,4 +1817,103 @@ class NamFoodApiService {
       return e;
     }
   }
+
+//User Add Address
+  Future saveaddress(postData) async {
+    try {
+      final url = Uri.parse('${liveApiPath}v1/addaddress');
+      print("test1 ");
+      final response = await client.post(
+        url,
+        headers: headerData,
+        body: jsonEncode(postData),
+      );
+      print("test2 ");
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        return response;
+      }
+    } catch (e) {
+      return e;
+    }
+  }
+
+// Get All Address For User
+
+  Future getalladdressList() async {
+    try {
+      final url = Uri.parse('${liveApiPath}v1/getalladdress');
+      final response = await client.get(
+        url,
+        headers: headerData,
+      );
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        return response;
+      }
+    } catch (e) {
+      return e;
+    }
+  }
+
+  // Delete Address For User
+
+  Future deleteAddressById(postData) async {
+    try {
+      final url = Uri.parse('${liveApiPath}v1/deleteaddress');
+      final response = await client.post(
+        url,
+        headers: headerData,
+        body: jsonEncode(postData),
+      );
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        return [];
+      }
+    } catch (e) {
+      return e;
+    }
+  }
+
+  //get Address byid
+  Future getAddressById(id) async {
+    try {
+      final url = Uri.parse('${liveApiPath}v1/getaddressbyid?id=$id');
+      final response = await client.get(
+        url,
+        headers: headerData,
+      );
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        return response;
+      }
+    } catch (e) {
+      return e;
+    }
+  }
+
+  // update Address
+  Future updateaddress(postData) async {
+    try {
+      final url = Uri.parse('${liveApiPath}v1/updateaddress');
+      final response = await client.post(url,
+          headers: headerData, body: jsonEncode(postData));
+
+      if (response.statusCode == 200) {
+        final json = response.body;
+        return json;
+      } else {
+        print('error');
+        throw Exception(
+            'Failed. Status code: ${response.statusCode} ${response.toString()}');
+      }
+    } catch (e) {
+      print('catcherror ${e}');
+      return e;
+    }
+  }
 }

@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
-
+import 'package:namfood/constants/app_assets.dart';
 import '../../constants/app_colors.dart';
 import '../models/myprofile_model.dart';
 import '../../services/comFuncService.dart';
 import '../../services/nam_food_api_service.dart';
 import '../../widgets/heading_widget.dart';
+import 'address_edit_model.dart';
+import 'address_list_model.dart';
+import 'deleteaddress_model.dart';
 import 'edit_addresspage.dart';
+import 'fillyour_addresspage.dart';
 
 class Addresspage extends StatefulWidget {
   const Addresspage({super.key});
@@ -18,24 +22,24 @@ class _AddresspageState extends State<Addresspage> {
   final NamFoodApiService apiService = NamFoodApiService();
 
   // myprofile
-  List<myprofilelist> myprofilepage = [];
-  List<myprofilelist> myprofilepageAll = [];
+  List<AddressList> myprofilepage = [];
+  List<AddressList> myprofilepageAll = [];
   bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    getmyprofile();
+    getalladdressList();
   }
 
-  Future getmyprofile() async {
+  Future getalladdressList() async {
     setState(() {
       isLoading = true;
     });
 
     try {
-      var result = await apiService.getmyprofile();
-      var response = myprofilemodelFromJson(result);
+      var result = await apiService.getalladdressList();
+      var response = addressListmodelFromJson(result);
       if (response.status.toString() == 'SUCCESS') {
         setState(() {
           myprofilepage = response.list;
@@ -60,6 +64,32 @@ class _AddresspageState extends State<Addresspage> {
     }
   }
 
+  Future deleteAddressById(id) async {
+    final dialogBoxResult = await showAlertDialogInfo(
+        context: context,
+        title: 'Are you sure?',
+        msg: 'You want to delete this data',
+        status: 'danger',
+        okBtn: false);
+    if (dialogBoxResult == 'OK') {
+      await apiService.getBearerToken();
+      print('owner delete test $id');
+      Map<String, dynamic> postData = {"id": id};
+      var result = await apiService.deleteAddressById(postData);
+      Deleteaddressmodel response = deleteaddressmodelFromJson(result);
+
+      if (response.status.toString() == 'SUCCESS') {
+        showInSnackBar(context, response.message.toString());
+        setState(() {
+          getalladdressList();
+        });
+      } else {
+        print(response.message.toString());
+        showInSnackBar(context, response.message.toString());
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,7 +102,7 @@ class _AddresspageState extends State<Addresspage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => EditAddressPage(),
+                    builder: (context) => FillyourAddresspage(),
                   ),
                 );
               },
@@ -98,11 +128,27 @@ class _AddresspageState extends State<Addresspage> {
                         children: [
                           Row(
                             children: [
-                              Image.asset(
-                                e.icon.toString(),
-                                height: 24,
-                                width: 24,
-                              ),
+                              if (e.type == "Home")
+                                Image.asset(
+                                  AppAssets.home_white,
+                                  height: 24,
+                                  width: 24,
+                                  color: Colors.black,
+                                ),
+                              if (e.type == "Work")
+                                Image.asset(
+                                  AppAssets.work_white,
+                                  height: 24,
+                                  width: 24,
+                                  color: Colors.black,
+                                ),
+                              if (e.type == "Other")
+                                Image.asset(
+                                  AppAssets.work_white,
+                                  height: 24,
+                                  width: 24,
+                                  color: Colors.black,
+                                ),
                               SizedBox(width: 8),
                               HeadingWidget(
                                 title: e.type.toString(),
@@ -115,7 +161,9 @@ class _AddresspageState extends State<Addresspage> {
                               HeadingWidget(
                                 fontSize: 16.0,
                                 fontWeight: FontWeight.w500,
-                                title: e.address.toString(),
+                                //  title: e.address.toString(),
+                                title:
+                                    "${e.address.toString()} ${e.addressLine2.toString()} ${e.city.toString()}",
                               ),
                             ],
                           ),
@@ -123,7 +171,8 @@ class _AddresspageState extends State<Addresspage> {
                           HeadingWidget(
                             fontSize: 16.0,
                             fontWeight: FontWeight.w500,
-                            title: e.contact.toString(),
+                            title:
+                                "${e.state.toString()}, Land Mark -${e.landmark.toString()}}",
                           ),
                           SizedBox(height: 8),
                           Row(
@@ -132,11 +181,12 @@ class _AddresspageState extends State<Addresspage> {
                               InkWell(
                                 onTap: () {
                                   Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => EditAddressPage(),
-                                    ),
-                                  );
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              FillyourAddresspage(
+                                                addressId: e.id,
+                                              ))).then((value) {});
                                 },
                                 child: Container(
                                   height: 35,
@@ -159,25 +209,29 @@ class _AddresspageState extends State<Addresspage> {
                                 ),
                               ),
                               SizedBox(width: 8),
-                              Container(
-                                height: 35,
-                                width: 80,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: AppColors.red, width: 1.5),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    'Delete',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: AppColors.red,
-                                      fontWeight: FontWeight.bold,
+                              GestureDetector(
+                                  onTap: () {
+                                    deleteAddressById(e.id);
+                                  },
+                                  child: Container(
+                                    height: 35,
+                                    width: 80,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: AppColors.red, width: 1.5),
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
-                                  ),
-                                ),
-                              ),
+                                    child: Center(
+                                      child: Text(
+                                        'Delete',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: AppColors.red,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  )),
                             ],
                           ),
                         ],

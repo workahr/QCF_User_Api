@@ -38,7 +38,7 @@ class _MyorderPageState extends State<MyorderPage>
   bool isLoading = false;
 
   Future getmyorderpage() async {
-     await apiService.getBearerToken();
+    await apiService.getBearerToken();
     setState(() {
       isLoading = true;
     });
@@ -47,6 +47,7 @@ class _MyorderPageState extends State<MyorderPage>
       var result = await apiService.getMyOrderList();
       var response = orderListModelFromJson(result);
       if (response.status.toString() == 'SUCCESS') {
+        print(result);
         setState(() {
           myorderpage = response.list;
           myorderpageAll = myorderpage;
@@ -203,34 +204,34 @@ class _MyorderPageState extends State<MyorderPage>
             padding: EdgeInsets.symmetric(
                 horizontal: screenWidth * 0.04, vertical: screenHeight * 0),
             child: CustomeTextField(
-                borderColor: AppColors.grey1,
-                width: screenWidth,
-                hint: 'Search Beverage or Foods',
-                hintColor: AppColors.grey,
-                prefixIcon: Icon(
-                  Icons.search_outlined,
-                  color: AppColors.grey,
-                ),
-                  onChanged: (value) {
-                      if (value != '') {
-                        print('value $value');
-                        value = value.toString().toLowerCase();
-                        myorderpage = myorderpageAll!
-                            .where((OrderListData e) =>
-                                e.invoiceNumber
-                                    .toString()
-                                    .toLowerCase()
-                                    .contains(value)
-                               )
-                            .toList();
-                      } else {
-                        myorderpage = myorderpageAll;
-                      }
-                      setState(() {});
-                    },
-                ),
+              borderColor: AppColors.grey1,
+              width: screenWidth,
+              hint: 'Search Beverage or Foods',
+              hintColor: AppColors.grey,
+              prefixIcon: Icon(
+                Icons.search_outlined,
+                color: AppColors.grey,
+              ),
+              onChanged: (value) {
+                if (value != '') {
+                  print('value $value');
+                  value = value.toString().toLowerCase();
+                  myorderpage = myorderpageAll!
+                      .where((OrderListData e) => e.invoiceNumber
+                          .toString()
+                          .toLowerCase()
+                          .contains(value))
+                      .toList();
+                } else {
+                  myorderpage = myorderpageAll;
+                }
+                setState(() {});
+              },
+            ),
           ),
-          SizedBox(height: 10.0,),
+          SizedBox(
+            height: 10.0,
+          ),
           Expanded(
             child: ListView.builder(
               itemCount: myorderpage.length,
@@ -300,266 +301,259 @@ class _MyorderPageState extends State<MyorderPage>
                           },
                         ),
                         if (all_expandedIndex == index)
-                         
-                             Column(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 30, vertical: 8),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Column(
-                                            children: [
-                                              Container(
-                                                width: 20,
-                                                height: 20,
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  border: Border.all(
-                                                    color: AppColors.blue,
-                                                    width: 3,
-                                                  ),
-                                                ),
-                                                child: const Center(
-                                                  child: Icon(
-                                                    Icons.circle,
-                                                    color: AppColors.blue,
-                                                    size: 12,
-                                                  ),
+                          Column(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 30, vertical: 8),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Column(
+                                          children: [
+                                            Container(
+                                              width: 20,
+                                              height: 20,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                border: Border.all(
+                                                  color: AppColors.blue,
+                                                  width: 3,
                                                 ),
                                               ),
-                                              const DottedLine(
-                                                direction: Axis.vertical,
-                                                dashColor: AppColors.blue,
-                                                lineLength: 50,
-                                                dashLength: 2,
-                                                dashGapLength: 2,
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                'Order Placed',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              // Text(
-                                              //   order.OrderPlacedTime
-                                              //       .toString(),
-                                              //   style: TextStyle(
-                                              //       color: AppColors.n_black),
-                                              // ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Column(
-                                            children: [
-                                              Container(
-                                                width: 20,
-                                                height: 20,
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  border: Border.all(
-                                                    color: AppColors.blue,
-                                                    width: 3,
-                                                  ),
-                                                ),
-                                                child: const Center(
-                                                  child: Icon(
-                                                    Icons.circle,
-                                                    color: AppColors.blue,
-                                                    size: 12,
-                                                  ),
+                                              child: const Center(
+                                                child: Icon(
+                                                  Icons.circle,
+                                                  color: AppColors.blue,
+                                                  size: 12,
                                                 ),
                                               ),
-                                              const DottedLine(
-                                                direction: Axis.vertical,
-                                                dashColor: AppColors.blue,
-                                                lineLength: 50,
-                                                dashLength: 2,
-                                                dashGapLength: 2,
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                'Order Confirmed',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              // Text(
-                                              //   e.OrderConfirmedTime
-                                              //       .toString(),
-                                              //   style: TextStyle(
-                                              //       color: AppColors.n_black),
-                                              // ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Column(
-                                            children: [
-                                              Icon(
-                                                Icons.circle,
-                                                color: AppColors.bluetone,
-                                                size: 18,
-                                              ),
-                                              const DottedLine(
-                                                direction: Axis.vertical,
-                                                dashColor: AppColors.blue,
-                                                lineLength: 50,
-                                                dashLength: 2,
-                                                dashGapLength: 2,
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(width: 8),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                'Preparing',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              Text(
-                                                e.prepareMin.toString(),
-                                                style: TextStyle(
-                                                    color: AppColors.n_black),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Icon(
-                                            Icons.circle,
-                                            color: AppColors.bluetone,
-                                            size: 18,
-                                          ),
-                                          SizedBox(width: 8),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                'Your Order On Delivery',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              Text(
-                                                e.prepareMin.toString(),
-                                                style: TextStyle(
-                                                    color: AppColors.n_black),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 18, vertical: 18),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        flex: 2,
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    OrderPreviewPage(),
-                                              ),
-                                            );
-                                          },
-                                          child: Text(
-                                            'View More',
-                                            style: TextStyle(
-                                                color: AppColors.black,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          style: ElevatedButton.styleFrom(
-                                            shape: RoundedRectangleBorder(
-                                              side: BorderSide(
-                                                  color: AppColors.black),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
                                             ),
+                                            const DottedLine(
+                                              direction: Axis.vertical,
+                                              dashColor: AppColors.blue,
+                                              lineLength: 50,
+                                              dashLength: 2,
+                                              dashGapLength: 2,
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Order Placed',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            // Text(
+                                            //   order.OrderPlacedTime
+                                            //       .toString(),
+                                            //   style: TextStyle(
+                                            //       color: AppColors.n_black),
+                                            // ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Column(
+                                          children: [
+                                            Container(
+                                              width: 20,
+                                              height: 20,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                border: Border.all(
+                                                  color: AppColors.blue,
+                                                  width: 3,
+                                                ),
+                                              ),
+                                              child: const Center(
+                                                child: Icon(
+                                                  Icons.circle,
+                                                  color: AppColors.blue,
+                                                  size: 12,
+                                                ),
+                                              ),
+                                            ),
+                                            const DottedLine(
+                                              direction: Axis.vertical,
+                                              dashColor: AppColors.blue,
+                                              lineLength: 50,
+                                              dashLength: 2,
+                                              dashGapLength: 2,
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Order Confirmed',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            // Text(
+                                            //   e.OrderConfirmedTime
+                                            //       .toString(),
+                                            //   style: TextStyle(
+                                            //       color: AppColors.n_black),
+                                            // ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Column(
+                                          children: [
+                                            Icon(
+                                              Icons.circle,
+                                              color: AppColors.bluetone,
+                                              size: 18,
+                                            ),
+                                            const DottedLine(
+                                              direction: Axis.vertical,
+                                              dashColor: AppColors.blue,
+                                              lineLength: 50,
+                                              dashLength: 2,
+                                              dashGapLength: 2,
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(width: 8),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Preparing',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            Text(
+                                              e.prepareMin.toString(),
+                                              style: TextStyle(
+                                                  color: AppColors.n_black),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Icon(
+                                          Icons.circle,
+                                          color: AppColors.bluetone,
+                                          size: 18,
+                                        ),
+                                        SizedBox(width: 8),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Your Order On Delivery',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            Text(
+                                              e.prepareMin.toString(),
+                                              style: TextStyle(
+                                                  color: AppColors.n_black),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 18, vertical: 18),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 2,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  OrderPreviewPage(),
+                                            ),
+                                          );
+                                        },
+                                        child: Text(
+                                          'View More',
+                                          style: TextStyle(
+                                              color: AppColors.black,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        style: ElevatedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                            side: BorderSide(
+                                                color: AppColors.black),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
                                           ),
                                         ),
                                       ),
-                                      SizedBox(
-                                        width: 8,
-                                      ),
-                                      Expanded(
-                                        flex: 2,
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    CancelBookingPage(),
-                                              ),
-                                            );
-                                          },
-                                          child: Text(
-                                            'Order Cancel',
-                                            style: TextStyle(
-                                                color: AppColors.red,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          style: ElevatedButton.styleFrom(
-                                            shape: RoundedRectangleBorder(
-                                              side: BorderSide(
-                                                  color: AppColors.red),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
+                                    ),
+                                    SizedBox(
+                                      width: 8,
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  CancelBookingPage(),
                                             ),
+                                          );
+                                        },
+                                        child: Text(
+                                          'Order Cancel',
+                                          style: TextStyle(
+                                              color: AppColors.red,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        style: ElevatedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                            side: BorderSide(
+                                                color: AppColors.red),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
                                           ),
                                         ),
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                         
+                              ),
+                            ],
+                          ),
                         Divider(
                           color: AppColors.grey1,
                         ),
