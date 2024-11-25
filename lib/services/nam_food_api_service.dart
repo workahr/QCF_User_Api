@@ -1605,9 +1605,8 @@ class NamFoodApiService {
     }
   }
 
-
 // get All Banners image
-   Future getBannerList() async {
+  Future getBannerList() async {
     try {
       final url = Uri.parse('${liveApiPath}v1/getallbanner');
       final response = await client.get(
@@ -1625,7 +1624,7 @@ class NamFoodApiService {
   }
 
   // get All Dashborad Store List
-   Future getdashStoreList() async {
+  Future getdashStoreList() async {
     try {
       final url = Uri.parse('${liveApiPath}v1/getallstore');
       final response = await client.get(
@@ -1642,9 +1641,8 @@ class NamFoodApiService {
     }
   }
 
-
   // get All My Orders List
-   Future getMyOrderList() async {
+  Future getMyOrderList() async {
     try {
       final url = Uri.parse('${liveApiPath}v1/getallorder');
       final response = await client.get(
@@ -1661,9 +1659,8 @@ class NamFoodApiService {
     }
   }
 
-
-   // get All Cart List
-   Future getCartList() async {
+  // get All Cart List
+  Future getCartList() async {
     try {
       final url = Uri.parse('${liveApiPath}v1/getcart');
       final response = await client.get(
@@ -1679,7 +1676,6 @@ class NamFoodApiService {
       return e;
     }
   }
-
 
   // add quantity for products
   Future addQuantity(postData) async {
@@ -1699,7 +1695,6 @@ class NamFoodApiService {
     }
   }
 
-
   // remove quantity for products
   Future removeQuantity(postData) async {
     try {
@@ -1718,7 +1713,7 @@ class NamFoodApiService {
     }
   }
 
-   // Delete Cart
+  // Delete Cart
   Future deleteCart(postData) async {
     try {
       final url = Uri.parse('${liveApiPath}v1/deleteitem');
@@ -1733,6 +1728,93 @@ class NamFoodApiService {
     } catch (e) {
       print('error $e');
       handleError();
+    }
+  }
+
+  // User Store API
+
+// store deatil list
+
+  Future getstoredetailmenuList(id) async {
+    try {
+      final url = Uri.parse('${liveApiPath}v1/getstoredetails?store_id=$id');
+      final response = await client.get(
+        url,
+        headers: headerData,
+      );
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        return response;
+      }
+    } catch (e) {
+      return e;
+    }
+  }
+
+// Store page Add Qty
+
+  Future addquantity(postData) async {
+    try {
+      final url = Uri.parse('${liveApiPath}v1/addquantity');
+      print("test1 ");
+      final response = await client.post(
+        url,
+        headers: headerData,
+        body: jsonEncode(postData),
+      );
+      print("test2 ");
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        return response;
+      }
+    } catch (e) {
+      return e;
+    }
+  }
+
+  // Store page Remove Qty
+
+  Future removequantity(postData) async {
+    try {
+      final url = Uri.parse('${liveApiPath}v1/removequantity');
+      print("test1 ");
+      final response = await client.post(
+        url,
+        headers: headerData,
+        body: jsonEncode(postData),
+      );
+      print("test2 ");
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        return response;
+      }
+    } catch (e) {
+      return e;
+    }
+  }
+
+  // Store page Delete Qty
+
+  Future deletequantity(postData) async {
+    try {
+      final url = Uri.parse('${liveApiPath}v1/deleteitem');
+      print("test1 ");
+      final response = await client.post(
+        url,
+        headers: headerData,
+        body: jsonEncode(postData),
+      );
+      print("test2 ");
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        return response;
+      }
+    } catch (e) {
+      return e;
     }
   }
 }
