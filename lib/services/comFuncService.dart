@@ -463,3 +463,20 @@ void showSnackBar(
 closeSnackBar({required context}) {
   ScaffoldMessenger.of(context).removeCurrentSnackBar();
 }
+
+
+curFormatWithDecimal({locale, symbol, decimalDigits, required value}) {
+  return NumberFormat.currency(
+          locale: locale ?? "en_IN", //en_US
+          symbol: symbol ?? '₹',
+          decimalDigits: decimalDigits ?? 2)
+      .format(value);
+}
+
+Future<void> makePhoneCall(String phoneNumber) async {
+  final Uri launchUri = Uri(
+    scheme: 'tel',
+    path: phoneNumber,
+  );
+  await launchUrl(launchUri);
+}

@@ -1526,18 +1526,18 @@ class NamFoodApiService {
     }
   }
 
-// Cart List Api
-  Future getCartList() async {
-    try {
-      // Create a list of DriversList with hardcoded data
+// // Cart List Api
+//   Future getCartList() async {
+//     try {
+//       // Create a list of DriversList with hardcoded data
 
-      var result = await getCartListJsonData();
-      return jsonEncode(result);
-    } catch (e) {
-      // Handle any errors
-      throw Exception('Failed to retrieve AddtoCart: $e');
-    }
-  }
+//       var result = await getCartListJsonData();
+//       return jsonEncode(result);
+//     } catch (e) {
+//       // Handle any errors
+//       throw Exception('Failed to retrieve AddtoCart: $e');
+//     }
+//   }
 
   // store Rating
 
@@ -1602,6 +1602,137 @@ class NamFoodApiService {
     } catch (e) {
       // Handle any errors
       throw Exception('Failed to retrieve AddtoCart: $e');
+    }
+  }
+
+
+// get All Banners image
+   Future getBannerList() async {
+    try {
+      final url = Uri.parse('${liveApiPath}v1/getallbanner');
+      final response = await client.get(
+        url,
+        headers: headerData,
+      );
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        return response;
+      }
+    } catch (e) {
+      return e;
+    }
+  }
+
+  // get All Dashborad Store List
+   Future getdashStoreList() async {
+    try {
+      final url = Uri.parse('${liveApiPath}v1/getallstore');
+      final response = await client.get(
+        url,
+        headers: headerData,
+      );
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        return response;
+      }
+    } catch (e) {
+      return e;
+    }
+  }
+
+
+  // get All My Orders List
+   Future getMyOrderList() async {
+    try {
+      final url = Uri.parse('${liveApiPath}v1/getallorder');
+      final response = await client.get(
+        url,
+        headers: headerData,
+      );
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        return response;
+      }
+    } catch (e) {
+      return e;
+    }
+  }
+
+
+   // get All Cart List
+   Future getCartList() async {
+    try {
+      final url = Uri.parse('${liveApiPath}v1/getcart');
+      final response = await client.get(
+        url,
+        headers: headerData,
+      );
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        return response;
+      }
+    } catch (e) {
+      return e;
+    }
+  }
+
+
+  // add quantity for products
+  Future addQuantity(postData) async {
+    try {
+      final url = Uri.parse('${liveApiPath}v1/addquantity');
+      final response = await client.post(url,
+          headers: headerData, body: jsonEncode(postData));
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        print('error response $response');
+        throw Exception(response.toString());
+      }
+    } catch (e) {
+      print('error $e');
+      handleError();
+    }
+  }
+
+
+  // remove quantity for products
+  Future removeQuantity(postData) async {
+    try {
+      final url = Uri.parse('${liveApiPath}v1/removequantity');
+      final response = await client.post(url,
+          headers: headerData, body: jsonEncode(postData));
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        print('error response $response');
+        throw Exception(response.toString());
+      }
+    } catch (e) {
+      print('error $e');
+      handleError();
+    }
+  }
+
+   // Delete Cart
+  Future deleteCart(postData) async {
+    try {
+      final url = Uri.parse('${liveApiPath}v1/deleteitem');
+      final response = await client.post(url,
+          headers: headerData, body: jsonEncode(postData));
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        print('error response $response');
+        throw Exception(response.toString());
+      }
+    } catch (e) {
+      print('error $e');
+      handleError();
     }
   }
 }

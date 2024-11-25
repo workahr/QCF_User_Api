@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 
 import '../../constants/app_assets.dart';
 import '../../constants/app_colors.dart';
+import '../../constants/constants.dart';
 import '../../services/comFuncService.dart';
 import '../../services/nam_food_api_service.dart';
 import '../../widgets/heading_widget.dart';
 import '../../widgets/sub_heading_widget.dart';
 import '../models/cart_list_model.dart';
 import '../store/store_page.dart';
+import 'add_quantity_model.dart';
+import 'cart_list_model.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -23,22 +26,23 @@ class _CartPageState extends State<CartPage> {
   void initState() {
     super.initState();
 
-    getOrderPreviewlist();
+    getAllCartList();
   }
 
-  List<CartList> cartList = [];
-  List<CartList> cartListAll = [];
+  List<CartListData> cartList = [];
+  List<CartListData> cartListAll = [];
   bool isLoading = false;
   double totalDiscountPrice = 0.0;
 
-  Future getOrderPreviewlist() async {
+  Future getAllCartList() async {
+     await apiService.getBearerToken();
     setState(() {
       isLoading = true;
     });
 
     try {
       var result = await apiService.getCartList();
-      var response = CartListmodelFromJson(result);
+      var response = cartListModelFromJson(result);
       if (response.status.toString() == 'SUCCESS') {
         setState(() {
           cartList = response.list;
@@ -67,22 +71,22 @@ class _CartPageState extends State<CartPage> {
   }
 
   void calculateTotalDiscount() {
-    totalDiscountPrice = cartList.fold(
-      0.0,
-      (sum, item) => sum + (int.parse(item.quantityPrice.toString()) ?? 0.0),
-    );
+  totalDiscountPrice = cartList.fold(
+    0.0,
+    (sum, item) => sum + (double.tryParse(item.quantityPrice) ?? 0.0),
+  );
 
-    finalTotal =
-        totalDiscountPrice + deliveryFee + platformFee + gstFee - discount;
+  finalTotal = totalDiscountPrice + deliveryFee + platformFee + gstFee - discount;
 
-    setState(() {});
-  }
+  setState(() {});
+}
+
 
   int quantity = 3;
   double itemPrice = 15.50;
-  double deliveryFee = 44.0;
-  double platformFee = 5.0;
-  double gstFee = 2.0;
+  double deliveryFee = 0.0;
+  double platformFee = 0.0;
+  double gstFee = 0.0;
   double discount = 0.0;
   bool isTripAdded = false;
   double finalTotal = 0.0;
@@ -113,6 +117,67 @@ class _CartPageState extends State<CartPage> {
   }
 
   String? selectedValue = 'cash_on_delivery';
+
+
+  Future addQuantity(int productId, int? storeId) async {
+    Map<String, dynamic> postData = {
+     "store_id": storeId,
+      "product_id": productId
+    };
+
+    var result = await apiService.addQuantity(postData);
+    var response = addQuantityModelFromJson(result);
+    if (response.status.toString() == 'SUCCESS') {
+      showInSnackBar(context, response.message.toString());
+      getAllCartList();
+      //Navigator.of(context).pop();
+    } else {
+      showInSnackBar(context, response.message.toString());
+    }
+    setState(() {});
+  }
+
+  Future removeQuantity(int productId, int? storeId) async {
+     Map<String, dynamic> postData = {
+     "store_id": storeId,
+      "product_id": productId
+    };
+
+    var result = await apiService.removeQuantity(postData);
+    var response = addQuantityModelFromJson(result);
+    if (response.status.toString() == 'SUCCESS') {
+      showInSnackBar(context, response.message.toString());
+      getAllCartList();
+      //Navigator.of(context).pop();
+    } else {
+      showInSnackBar(context, response.message.toString());
+    }
+    setState(() {});
+  }
+
+  Future deleteCart(int productId, int? storeId) async {
+    Map<String, dynamic> postData = {
+     "store_id": storeId,
+      "product_id": productId
+    };
+
+    var result = await apiService.deleteCart(postData);
+    var response = addQuantityModelFromJson(result);
+    if (response.status.toString() == 'SUCCESS') {
+      showInSnackBar(context, response.message.toString());
+    //   SharedPreferences prefs = await SharedPreferences.getInstance();
+    // String rawJson = prefs.getString('cartList') ?? '[]';
+    // List<dynamic> jsonList = jsonDecode(rawJson);
+    // List<dynamic> updatedList = jsonList.where((item) => item['item_id'] != itemId).toList();
+    // String updatedJson = jsonEncode(updatedList);
+    // await prefs.setString('cartList', updatedJson);
+      getAllCartList();
+      //Navigator.of(context).pop();
+    } else {
+      showInSnackBar(context, response.message.toString());
+    }
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -216,12 +281,30 @@ class _CartPageState extends State<CartPage> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Image.asset(
-                                              item.dishimage.toString(),
+
+                                            item.itemImageUrl == null ?
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: 
+
+                                         Image.asset(
+                                               AppAssets.cartBiriyani,
                                               height: 60,
                                               width: 60,
                                               fit: BoxFit.fill,
                                             ),
+                                      ):
+
+                                       ClipRRect(
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: Image.network(
+                                       AppConstants.imgBaseUrl + item.itemImageUrl.toString(),
+                                          height: 150,
+                                          width: double.infinity,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                           
                                             Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
@@ -232,7 +315,7 @@ class _CartPageState extends State<CartPage> {
                                                     overflow:
                                                         TextOverflow.visible,
                                                     maxLines: 2,
-                                                    title: item.dishname
+                                                    title: item.itemName
                                                         .toString(),
                                                     fontSize: 16.0,
                                                     fontWeight: FontWeight.bold,
@@ -241,7 +324,9 @@ class _CartPageState extends State<CartPage> {
                                                 SizedBox(height: 8.0),
                                                 SubHeadingWidget(
                                                     title:
-                                                        '₹${item.discountprice.toString()}',
+                                                        curFormatWithDecimal(
+                                                    value: emptyToZero(item.price))
+                                                .toString(),
                                                     color: AppColors.black),
                                               ],
                                             ),
@@ -258,7 +343,26 @@ class _CartPageState extends State<CartPage> {
                                                         children: [
                                                           GestureDetector(
                                                             onTap:
-                                                                _decrement, // Call _decrement directly without =>
+                                                               () {
+                                                        setState(() {
+                                                          item.quantity =
+                                                              (item.quantity ??
+                                                                          0) >
+                                                                      0
+                                                                  ? item.quantity -
+                                                                      1
+                                                                  : 0;
+
+                                                          if (item.quantity >
+                                                              0) {
+                                                            removeQuantity(
+                                                                item.productId,item.storeId);
+                                                          } else {
+                                                            deleteCart(
+                                                                item.productId,item.storeId);
+                                                          }
+                                                        });
+                                                      },
                                                             child: Container(
                                                               height: 25,
                                                               width: 30,
@@ -293,7 +397,7 @@ class _CartPageState extends State<CartPage> {
                                                                     horizontal:
                                                                         10.0),
                                                             child: Text(
-                                                              '$_quantity',
+                                                              item.quantity.toString(),
                                                               style: TextStyle(
                                                                 color: Colors
                                                                     .black,
@@ -306,7 +410,19 @@ class _CartPageState extends State<CartPage> {
                                                           ),
                                                           GestureDetector(
                                                             onTap:
-                                                                _increment, // Call _increment directly without =>
+                                                                () {
+                                                        setState(() {
+                                                          item.quantity =
+                                                              (item.quantity ??
+                                                                      0) +
+                                                                  1;
+
+                                                      
+                                                          addQuantity(
+                                                              item.productId,
+                                                              item.storeId);
+                                                        });
+                                                      },
                                                             child: Container(
                                                               height: 25,
                                                               width: 30,
@@ -344,7 +460,9 @@ class _CartPageState extends State<CartPage> {
                                                   ),
                                                   HeadingWidget(
                                                       title:
-                                                          '₹${item.quantityPrice.toString()}.00',
+                                                            curFormatWithDecimal(
+                                                    value: emptyToZero(item.quantityPrice))
+                                                .toString(),
                                                       fontSize: 16.0,
                                                       fontWeight:
                                                           FontWeight.bold),
@@ -406,7 +524,7 @@ class _CartPageState extends State<CartPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           SubHeadingWidget(
-                              title: "Delivery Trip", color: AppColors.black),
+                              title: "Delivery Tip", color: AppColors.black),
                           GestureDetector(
                             onTap: () {
                               setState(() {
@@ -415,7 +533,7 @@ class _CartPageState extends State<CartPage> {
                             },
                             child: HeadingWidget(
                                 title:
-                                    isTripAdded ? "Remove Trip" : "+ Add Trip",
+                                    isTripAdded ? "Remove Tip" : "+ Add Tip",
                                 color: Colors.red,
                                 fontSize: 14.0),
                           ),
@@ -701,7 +819,7 @@ class _CartPageState extends State<CartPage> {
                         color: AppColors.black,
                       ),
                       HeadingWidget(
-                        title: "₹1400.00",
+                        title: '₹${finalTotal.toString()}',
                         color: AppColors.red,
                         fontSize: 18.0,
                       ),

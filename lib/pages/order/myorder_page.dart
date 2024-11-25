@@ -13,6 +13,7 @@ import '../../widgets/sub_heading_widget.dart';
 import '../models/myorder_page_model.dart';
 import '../rating/add_rating_page.dart';
 import 'cancel_booking_page.dart';
+import 'order_list_model.dart';
 import 'order_preview_page.dart';
 
 class MyorderPage extends StatefulWidget {
@@ -32,18 +33,19 @@ class _MyorderPageState extends State<MyorderPage>
   }
 
   //Myorder
-  List<MyOrders> myorderpage = [];
-  List<MyOrders> myorderpageAll = [];
+  List<OrderListData> myorderpage = [];
+  List<OrderListData> myorderpageAll = [];
   bool isLoading = false;
 
   Future getmyorderpage() async {
+     await apiService.getBearerToken();
     setState(() {
       isLoading = true;
     });
 
     try {
-      var result = await apiService.getmyorderpage();
-      var response = myorderpageFromJson(result);
+      var result = await apiService.getMyOrderList();
+      var response = orderListModelFromJson(result);
       if (response.status.toString() == 'SUCCESS') {
         setState(() {
           myorderpage = response.list;
@@ -208,8 +210,27 @@ class _MyorderPageState extends State<MyorderPage>
                 prefixIcon: Icon(
                   Icons.search_outlined,
                   color: AppColors.grey,
-                )),
+                ),
+                  onChanged: (value) {
+                      if (value != '') {
+                        print('value $value');
+                        value = value.toString().toLowerCase();
+                        myorderpage = myorderpageAll!
+                            .where((OrderListData e) =>
+                                e.invoiceNumber
+                                    .toString()
+                                    .toLowerCase()
+                                    .contains(value)
+                               )
+                            .toList();
+                      } else {
+                        myorderpage = myorderpageAll;
+                      }
+                      setState(() {});
+                    },
+                ),
           ),
+          SizedBox(height: 10.0,),
           Expanded(
             child: ListView.builder(
               itemCount: myorderpage.length,
@@ -217,26 +238,26 @@ class _MyorderPageState extends State<MyorderPage>
                 // final order = orders[index];
                 final e = myorderpage[index];
 
-                final status = e.orderstatus as String;
+                final status = e.orderStatus as String;
                 final color = getStatusColor(status);
                 final icon = getStatusIcon(status);
                 final circlecolor = circleColor(status);
 
-                if (status == 'On Delivery')
+                if (status == 'Order Placed')
                   return Container(
                       margin: EdgeInsets.all(0),
                       child: Column(children: [
                         ListTile(
                           leading: getStatusIcon(status),
                           title: HeadingWidget(
-                              title: 'Order ID#${e.orderid.toString()}'
+                              title: 'Order ID#${e.invoiceNumber.toString()}'
                               // 'Order ID#${order['id']}'
 
                               ),
                           subtitle: Row(
                             children: [
                               SubHeadingWidget(
-                                title: '${e.items} Items',
+                                title: '${e.totalProduct.toString()} Items',
                                 // '${order['items']} Items',
 
                                 color: AppColors.n_black,
@@ -253,7 +274,7 @@ class _MyorderPageState extends State<MyorderPage>
                                 width: 5,
                               ),
                               SubHeadingWidget(
-                                title: e.orderstatus,
+                                title: e.orderStatus,
                                 color: AppColors.n_black,
                               ),
                             ],
@@ -279,8 +300,8 @@ class _MyorderPageState extends State<MyorderPage>
                           },
                         ),
                         if (all_expandedIndex == index)
-                          ...e.orderdetails.map((order) {
-                            return Column(
+                         
+                             Column(
                               children: [
                                 Padding(
                                   padding: EdgeInsets.symmetric(
@@ -333,12 +354,12 @@ class _MyorderPageState extends State<MyorderPage>
                                                     fontWeight:
                                                         FontWeight.bold),
                                               ),
-                                              Text(
-                                                order.OrderPlacedTime
-                                                    .toString(),
-                                                style: TextStyle(
-                                                    color: AppColors.n_black),
-                                              ),
+                                              // Text(
+                                              //   order.OrderPlacedTime
+                                              //       .toString(),
+                                              //   style: TextStyle(
+                                              //       color: AppColors.n_black),
+                                              // ),
                                             ],
                                           ),
                                         ],
@@ -387,12 +408,12 @@ class _MyorderPageState extends State<MyorderPage>
                                                     fontWeight:
                                                         FontWeight.bold),
                                               ),
-                                              Text(
-                                                order.OrderConfirmedTime
-                                                    .toString(),
-                                                style: TextStyle(
-                                                    color: AppColors.n_black),
-                                              ),
+                                              // Text(
+                                              //   e.OrderConfirmedTime
+                                              //       .toString(),
+                                              //   style: TextStyle(
+                                              //       color: AppColors.n_black),
+                                              // ),
                                             ],
                                           ),
                                         ],
@@ -429,7 +450,7 @@ class _MyorderPageState extends State<MyorderPage>
                                                         FontWeight.bold),
                                               ),
                                               Text(
-                                                order.PreparingTime.toString(),
+                                                e.prepareMin.toString(),
                                                 style: TextStyle(
                                                     color: AppColors.n_black),
                                               ),
@@ -458,7 +479,7 @@ class _MyorderPageState extends State<MyorderPage>
                                                         FontWeight.bold),
                                               ),
                                               Text(
-                                                order.DeliveryTime.toString(),
+                                                e.prepareMin.toString(),
                                                 style: TextStyle(
                                                     color: AppColors.n_black),
                                               ),
@@ -537,8 +558,8 @@ class _MyorderPageState extends State<MyorderPage>
                                   ),
                                 ),
                               ],
-                            );
-                          }),
+                            ),
+                         
                         Divider(
                           color: AppColors.grey1,
                         ),
@@ -550,11 +571,11 @@ class _MyorderPageState extends State<MyorderPage>
                         ListTile(
                           leading: getStatusIcon(status),
                           title: HeadingWidget(
-                              title: 'Order ID#${e.orderid.toString()}'),
+                              title: 'Order ID#${e.invoiceNumber.toString()}'),
                           subtitle: Row(
                             children: [
                               SubHeadingWidget(
-                                title: '20-Oct-2024',
+                                title: "",
                                 color: AppColors.n_black,
                               ),
                               SizedBox(width: 10),
