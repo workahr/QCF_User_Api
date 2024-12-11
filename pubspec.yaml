@@ -54,6 +54,9 @@ dependencies:
   syncfusion_flutter_pdf: ^27.2.5
   open_file_plus: ^3.4.1+1
   path_provider: ^2.1.5
+  google_maps_flutter: ^2.10.0
+  geolocator: ^13.0.2
+  geocoding: ^3.0.0
   #geocoding: ^3.0.0
   #geolocator: ^13.0.2
   #permission_handler: ^11.3.1
