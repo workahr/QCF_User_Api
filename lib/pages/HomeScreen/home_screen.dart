@@ -921,11 +921,14 @@ class _HomeScreenState extends State<HomeScreen>
                                                             CrossAxisAlignment
                                                                 .start,
                                                         children: [
-                                                          SubHeadingWidget(
+                                                          HeadingWidget(
                                                             title: e.name
                                                                 .toString(), //'40% Off ,
                                                             color:
                                                                 Colors.black87,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 18.00,
                                                           ),
                                                           SubHeadingWidget(
                                                             title: e.address
@@ -1051,14 +1054,14 @@ class _HomeScreenState extends State<HomeScreen>
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),
-                                Text(
-                                  '${totalCartItems.toString()} items | ₹${finalTotal.toString()}',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                                // Text(
+                                //   '${totalCartItems.toString()} items | ₹${finalTotal.toString()}',
+                                //   style: TextStyle(
+                                //     fontSize: 14,
+                                //     fontWeight: FontWeight.bold,
+                                //   ),
+                                //   overflow: TextOverflow.ellipsis,
+                                // ),
                               ],
                             ),
                             SizedBox(height: 5),
@@ -1098,19 +1101,33 @@ class _HomeScreenState extends State<HomeScreen>
                                 Row(
                                     // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                        'View all menu',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black,
-                                          decoration: TextDecoration.underline,
-                                        ),
-                                        // ),
-                                      ),
-                                      Icon(
-                                        Icons.arrow_forward_ios,
-                                        color: Colors.black,
-                                        size: 12,
+                                      // Text(
+                                      //   'View all menu',
+                                      //   style: TextStyle(
+                                      //     fontSize: 14,
+                                      //     color: Colors.black,
+                                      //     decoration: TextDecoration.underline,
+                                      //   ),
+                                      //   // ),
+                                      // ),
+                                      // Icon(
+                                      //   Icons.arrow_forward_ios,
+                                      //   color: Colors.black,
+                                      //   size: 12,
+                                      // ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            '${totalCartItems.toString()} items | ₹${finalTotal.toString()}',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ],
                                       ),
                                     ]),
 
@@ -1127,37 +1144,64 @@ class _HomeScreenState extends State<HomeScreen>
                                 //   ],
                                 // ),
                                 // SizedBox(height: 10),
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Color(0xFFE23744),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 15, vertical: 5),
-                                  ),
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => CartPage(),
-                                      ),
-                                    );
-                                  },
-                                  child: Text(
-                                    'View Cart',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ),
+                                // ElevatedButton(
+                                //   style: ElevatedButton.styleFrom(
+                                //     backgroundColor: Color(0xFFE23744),
+                                //     shape: RoundedRectangleBorder(
+                                //       borderRadius: BorderRadius.circular(10),
+                                //     ),
+                                //     padding: EdgeInsets.symmetric(
+                                //         horizontal: 15, vertical: 5),
+                                //   ),
+                                //   onPressed: () {
+                                //     Navigator.push(
+                                //       context,
+                                //       MaterialPageRoute(
+                                //         builder: (context) => CartPage(),
+                                //       ),
+                                //     );
+                                //   },
+                                //   child: Text(
+                                //     'View Cart',
+                                //     style: TextStyle(
+                                //       color: Colors.white,
+                                //       fontSize: 16,
+                                //     ),
+                                //   ),
+                                // ),
                               ],
                             ),
                           ],
                         )),
                         SizedBox(width: 15),
-
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFFE23744),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 5),
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CartPage(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'View Cart',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 12,
+                        ),
                         // Delete Cart Button
                         GestureDetector(
                           onTap: () async {

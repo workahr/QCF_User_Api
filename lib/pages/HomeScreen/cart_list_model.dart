@@ -40,30 +40,30 @@ class CartListModel {
 
 class CartListData {
   int cartId;
-  int storeId;
-  int userId;
-  int productId;
+  int? storeId;
+  int? userId;
+  int? productId;
   String? sessionId;
   int quantity;
   String price;
   String quantityPrice;
   String storePrice;
   String storeTotalPrice;
-  int status;
+  int? status;
   int? createdBy;
   DateTime? createdDate;
   int? updatedBy;
   DateTime? updatedDate;
-  String itemName;
+  String? itemName;
   String? itemImageUrl;
   String? store_name;
   String? store_image;
 
   CartListData({
     required this.cartId,
-    required this.storeId,
-    required this.userId,
-    required this.productId,
+    this.storeId,
+    this.userId,
+    this.productId,
     this.sessionId,
     required this.quantity,
     required this.price,
@@ -75,7 +75,7 @@ class CartListData {
     this.createdDate,
     this.updatedBy,
     this.updatedDate,
-    required this.itemName,
+    this.itemName,
     this.itemImageUrl,
     this.store_name,
     this.store_image,

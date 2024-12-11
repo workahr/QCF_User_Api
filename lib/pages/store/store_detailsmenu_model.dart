@@ -56,7 +56,7 @@ class CategoryProductList {
   String categoryName;
   String? description;
   String slug;
-  int serial;
+  int? serial;
   String? imageUrl;
   List<Product> products;
   dynamic createdDate;
@@ -66,7 +66,7 @@ class CategoryProductList {
     required this.categoryName,
     this.description,
     required this.slug,
-    required this.serial,
+    this.serial,
     this.imageUrl,
     required this.products,
     required this.createdDate,

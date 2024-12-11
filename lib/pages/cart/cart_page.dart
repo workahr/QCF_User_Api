@@ -750,7 +750,8 @@ class _CartPageState extends State<CartPage> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             SubHeadingWidget(
-                                                title: "Delivery Fee | 9.8 km",
+                                                title:
+                                                    "Delivery Fee ", // "Delivery Fee | 9.8 km",
                                                 color: AppColors.black),
                                             SubHeadingWidget(
                                                 title:
@@ -787,36 +788,36 @@ class _CartPageState extends State<CartPage> {
                                     //   ],
                                     // ),
                                     SizedBox(height: 8),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        SubHeadingWidget(
-                                            title: "Platform fee",
-                                            color: AppColors.black),
-                                        SubHeadingWidget(
-                                            title:
-                                                "₹${platformFee.toStringAsFixed(2)}",
-                                            color: AppColors.black),
-                                      ],
-                                    ),
-                                    SizedBox(height: 8),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        SubHeadingWidget(
-                                            title: "GST and Restaurant Charges",
-                                            color: AppColors.black),
-                                        SubHeadingWidget(
-                                            title:
-                                                "₹${gstFee.toStringAsFixed(2)}",
-                                            color: AppColors.black),
-                                      ],
-                                    ),
-                                    Divider(
-                                      color: Colors.grey,
-                                    ),
+                                    // Row(
+                                    //   mainAxisAlignment:
+                                    //       MainAxisAlignment.spaceBetween,
+                                    //   children: [
+                                    //     SubHeadingWidget(
+                                    //         title: "Platform fee",
+                                    //         color: AppColors.black),
+                                    //     SubHeadingWidget(
+                                    //         title:
+                                    //             "₹${platformFee.toStringAsFixed(2)}",
+                                    //         color: AppColors.black),
+                                    //   ],
+                                    // ),
+                                    // SizedBox(height: 8),
+                                    // Row(
+                                    //   mainAxisAlignment:
+                                    //       MainAxisAlignment.spaceBetween,
+                                    //   children: [
+                                    //     SubHeadingWidget(
+                                    //         title: "GST and Restaurant Charges",
+                                    //         color: AppColors.black),
+                                    //     SubHeadingWidget(
+                                    //         title:
+                                    //             "₹${gstFee.toStringAsFixed(2)}",
+                                    //         color: AppColors.black),
+                                    //   ],
+                                    // ),
+                                    // Divider(
+                                    //   color: Colors.grey,
+                                    // ),
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
