@@ -208,7 +208,7 @@ class _AddresspageState extends State<Addresspage> {
                                 fontWeight: FontWeight.w500,
                                 //  title: e.address.toString(),
                                 title:
-                                    "${e.address.toString()} ${e.addressLine2.toString()} ${e.city.toString()},",
+                                    "${e.address.toString()},${e.addressLine2.toString()},${e.city.toString()},",
                               ),
                             ],
                           ),

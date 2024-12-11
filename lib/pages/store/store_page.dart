@@ -163,7 +163,8 @@ class _StorePageState extends State<StorePage> {
 
   Map<String, Map<String, int>> categoryProductQuantities = {};
 
-  Future<void> addquantity(String storeid, String productid) async {
+  Future<void> addquantity(
+      String storeid, String productid, categoryIndex, productIndex) async {
     Map<String, dynamic> postData = {
       "store_id": storeid,
       "product_id": productid,
@@ -176,7 +177,17 @@ class _StorePageState extends State<StorePage> {
       if (response.status == 'SUCCESS') {
         setState(() {});
         // showInSnackBar(context, response.message);
+        setState(() {
+          _increment(categoryIndex, productIndex);
+        });
       } else {
+        if (response.code == '113') {
+          setState(() {
+            _decrement(categoryIndex, productIndex);
+            showInSnackBar(
+                context, "Need to delete your Cart and Add this Menu");
+          });
+        }
         // showInSnackBar(context, response.message);
       }
     } catch (error) {
@@ -826,7 +837,19 @@ class _StorePageState extends State<StorePage> {
                                       //         )),
                                       //   ],
                                       // ))
-                                    ])
+                                    ]),
+                                    SizedBox(height: 5),
+                                    SubHeadingWidget(
+                                      title:
+                                          "${storeDetails.address},${storeDetails.city},${storeDetails.state}",
+                                      fontSize: 14.0,
+                                      color: AppColors.black,
+                                    ),
+                                    SubHeadingWidget(
+                                      title: "${storeDetails.zipcode}",
+                                      fontSize: 14.0,
+                                      color: AppColors.black,
+                                    ),
                                   ])),
                           Column(
                             children: [
@@ -1109,15 +1132,16 @@ class _StorePageState extends State<StorePage> {
                                                                     onTap: () =>
                                                                         setState(
                                                                             () {
-                                                                      _increment(
-                                                                          categoryIndex,
-                                                                          productIndex);
-
                                                                       addquantity(
                                                                           storeId
                                                                               .toString(),
                                                                           productId
-                                                                              .toString());
+                                                                              .toString(),
+                                                                          categoryIndex,
+                                                                          productIndex);
+                                                                      // _increment(
+                                                                      // categoryIndex,
+                                                                      // productIndex);
                                                                     }),
                                                                     child: Icon(
                                                                         Icons
@@ -1140,44 +1164,24 @@ class _StorePageState extends State<StorePage> {
                                                                         .toString(),
                                                                     product
                                                                         .itemId
-                                                                        .toString());
-                                                                print(
-                                                                    "storeid $StoreIddetails");
-                                                                print(
-                                                                    "cartstoreid $cartstoreid");
-                                                                StoreIddetails != cartstoreid ||
-                                                                        cartstoreid !=
-                                                                            0 ||
-                                                                        cartstoreid !=
-                                                                            null
-                                                                    ? _increment(
-                                                                        categoryIndex,
-                                                                        productIndex)
-                                                                    : showInSnackBar(
-                                                                        context,
-                                                                        "Need To Clear Your Old Cart and Add this Hotel Menu");
-
-                                                                // if (StoreIddetails !=
-                                                                //     cartstoreid) {
-                                                                //   cartstoreid !=
-                                                                //           0
-                                                                //       ? showInSnackBar(context,
-                                                                //           "Need To Clear Your Old Cart and Add this Hotel Menu")
-                                                                //       : _increment(categoryIndex,
-                                                                //           productIndex);
-                                                                // } else if (cartstoreid ==
-                                                                //     null) {
-                                                                //   _increment(
-                                                                //       categoryIndex,
-                                                                //       productIndex);
-                                                                // } else {
-                                                                //   cartstoreid !=
-                                                                //           0
-                                                                //       ? showInSnackBar(context,
-                                                                //           "Need To Clear Your Old Cart and Add this Hotel Menu")
-                                                                //       : _increment(categoryIndex,
-                                                                //           productIndex);
-                                                                // }
+                                                                        .toString(),
+                                                                    categoryIndex,
+                                                                    productIndex);
+                                                                // print(
+                                                                //     "storeid $StoreIddetails");
+                                                                // print(
+                                                                //     "cartstoreid $cartstoreid");
+                                                                // StoreIddetails != cartstoreid ||
+                                                                //         cartstoreid !=
+                                                                //             0 ||
+                                                                //         cartstoreid !=
+                                                                //             null
+                                                                //     ? _increment(
+                                                                //         categoryIndex,
+                                                                //         productIndex)
+                                                                //     : showInSnackBar(
+                                                                //         context,
+                                                                //         "Need To Clear Your Old Cart and Add this Hotel Menu");
                                                               }),
                                                               child: Container(
                                                                 height: 33,

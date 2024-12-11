@@ -786,37 +786,37 @@ class _MyorderPageState extends State<MyorderPage>
                                           )),
                                     ),
                                   )),
-                              SizedBox(
-                                width: 8,
-                              ),
-                              Expanded(
-                                  flex: 2,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => AddRatingPage(),
-                                        ),
-                                      );
-                                    },
-                                    child: Container(
-                                      height: 35,
-                                      decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color: AppColors.red, width: 1.5),
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                      child: Center(
-                                          child: Text(
-                                        'Rate your order',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            color: AppColors.red,
-                                            fontWeight: FontWeight.bold),
-                                      )),
-                                    ),
-                                  )),
+                              // SizedBox(
+                              //   width: 8,
+                              // ),
+                              // Expanded(
+                              //     flex: 2,
+                              //     child: GestureDetector(
+                              //       onTap: () {
+                              //         Navigator.push(
+                              //           context,
+                              //           MaterialPageRoute(
+                              //             builder: (context) => AddRatingPage(),
+                              //           ),
+                              //         );
+                              //       },
+                              //       child: Container(
+                              //         height: 35,
+                              //         decoration: BoxDecoration(
+                              //             border: Border.all(
+                              //                 color: AppColors.red, width: 1.5),
+                              //             borderRadius:
+                              //                 BorderRadius.circular(10)),
+                              //         child: Center(
+                              //             child: Text(
+                              //           'Rate your order',
+                              //           style: TextStyle(
+                              //               fontSize: 14,
+                              //               color: AppColors.red,
+                              //               fontWeight: FontWeight.bold),
+                              //         )),
+                              //       ),
+                              //     )),
                             ],
                           ),
                         ),

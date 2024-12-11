@@ -37,7 +37,7 @@ class _SliderAdWidgetState extends State<SliderAdWidget> {
                         fit: BoxFit.fill, errorBuilder: (BuildContext context,
                             Object exception, StackTrace? stackTrace) {
                       return Image.asset(
-                        AppAssets.bannerhome,
+                        AppAssets.Banner,
                         width: double.infinity,
                         fit: BoxFit.fill,
                         height: 60.0,

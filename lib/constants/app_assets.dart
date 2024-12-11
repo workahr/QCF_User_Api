@@ -130,6 +130,7 @@ class AppAssets {
   static const String feedback = 'assets/images/feedback.png';
   static const String logout = 'assets/images/logout.png';
   static const String homefill_icon = 'assets/images/home_icon_selected.png';
+  static const String Banner = 'assets/images/Banner.png';
   static const String ChefHatfill_icon =
       'assets/images/order_icon_selected.png';
   static const String userroundedfill_icon =

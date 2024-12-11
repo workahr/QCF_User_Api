@@ -196,7 +196,7 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
         "type": _selectedAddressType.toString(),
         "address": address1Controller.text,
         "address_line_2": address2Controller.text,
-        "city": cityController.text,
+        "city": selectedcity,
         "state": selectedstate,
         "postcode": postController.text,
         "landmark": lankmarkController.text
