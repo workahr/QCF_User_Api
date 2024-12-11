@@ -357,7 +357,7 @@ class _OrderPreviewPageState extends State<OrderPreviewPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  "Delivery Fee | 9.8 km",
+                                  "Delivery Fee ",
                                   style: TextStyle(
                                     fontWeight: FontWeight.normal,
                                     fontSize: 14,
@@ -397,26 +397,26 @@ class _OrderPreviewPageState extends State<OrderPreviewPage> {
                           SizedBox(
                             height: 5,
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "GST & Restaurant Charges",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              Text(
-                                "₹0.00",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Divider(color: Colors.grey[300]),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //   children: [
+                          //     Text(
+                          //       "GST & Restaurant Charges",
+                          //       style: TextStyle(
+                          //         fontWeight: FontWeight.normal,
+                          //         fontSize: 14,
+                          //       ),
+                          //     ),
+                          //     Text(
+                          //       "₹0.00",
+                          //       style: TextStyle(
+                          //         fontWeight: FontWeight.normal,
+                          //         fontSize: 14,
+                          //       ),
+                          //     ),
+                          //   ],
+                          // ),
+                          // Divider(color: Colors.grey[300]),
                           BillRow(
                             label: "Total Amount",
                             value: orderDetailsList?.totalPrice == null

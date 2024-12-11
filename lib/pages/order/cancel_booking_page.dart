@@ -57,7 +57,7 @@ class _CancelBookingPageState extends State<CancelBookingPage> {
     if (!mounted) return; // Ensure widget is still in the tree
 
     if (response.status.toString() == 'SUCCESS') {
-      showInSnackBar(context, response.message.toString());
+      showInSnackBar(context, "Order Cancelled");
       Navigator.push(
         context,
         MaterialPageRoute(
