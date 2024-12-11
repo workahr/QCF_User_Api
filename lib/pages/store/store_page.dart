@@ -102,6 +102,7 @@ class _StorePageState extends State<StorePage> {
 
       // Check the status and update the state
       if (response.status.toString().toUpperCase() == 'SUCCESS') {
+        print("print");
         setState(() {
           storeDetails = response.details; // Store details here
           isLoading = false;
@@ -135,6 +136,7 @@ class _StorePageState extends State<StorePage> {
       var response = storedetailmenulistmodelFromJson(result);
 
       if (response.status.toString().toUpperCase() == 'SUCCESS') {
+        print("print");
         setState(() {
           storedetailslistpage = response.categoryProductList;
           storedetailslistpageAll = storedetailslistpage;
@@ -882,41 +884,41 @@ class _StorePageState extends State<StorePage> {
                       ),
                     ),
                     SizedBox(height: 16),
-                    CustomeTextField(
-                      width: MediaQuery.of(context).size.width - 10.0,
-                      hint: 'Find your dish',
-                      prefixIcon: Icon(
-                        Icons.search,
-                        color: AppColors.red,
-                      ),
-                      labelColor: Colors.grey[900],
-                      focusBorderColor: AppColors.primary,
-                      borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                      borderColor: AppColors.lightGrey3,
-                      onChanged: (value) {
-                        if (value.isNotEmpty) {
-                          print('Search term: $value');
-                          String searchValue = value.toLowerCase();
+                    // CustomeTextField(
+                    //   width: MediaQuery.of(context).size.width - 10.0,
+                    //   hint: 'Find your dish',
+                    //   prefixIcon: Icon(
+                    //     Icons.search,
+                    //     color: AppColors.red,
+                    //   ),
+                    //   labelColor: Colors.grey[900],
+                    //   focusBorderColor: AppColors.primary,
+                    //   borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                    //   borderColor: AppColors.lightGrey3,
+                    //   onChanged: (value) {
+                    //     if (value.isNotEmpty) {
+                    //       print('Search term: $value');
+                    //       String searchValue = value.toLowerCase();
 
-                          storedetailslistpage =
-                              storedetailslistpageAll!.where((category) {
-                            return category.products.any((product) {
-                              print('Checking product: ${product.itemName}');
-                              return product.itemName != null &&
-                                  product.itemName
-                                      .toLowerCase()
-                                      .contains(searchValue);
-                            });
-                          }).toList();
-                        } else {
-                          storedetailslistpage = storedetailslistpageAll;
-                        }
-                        print(
-                            'Filtered categories count: ${storedetailslistpage.length}');
-                        setState(() {});
-                      },
-                    ),
-                    SizedBox(height: 5),
+                    //       storedetailslistpage =
+                    //           storedetailslistpageAll!.where((category) {
+                    //         return category.products.any((product) {
+                    //           print('Checking product: ${product.itemName}');
+                    //           return product.itemName != null &&
+                    //               product.itemName
+                    //                   .toLowerCase()
+                    //                   .contains(searchValue);
+                    //         });
+                    //       }).toList();
+                    //     } else {
+                    //       storedetailslistpage = storedetailslistpageAll;
+                    //     }
+                    //     print(
+                    //         'Filtered categories count: ${storedetailslistpage.length}');
+                    //     setState(() {});
+                    //   },
+                    // ),
+                    // SizedBox(height: 5),
                     ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
@@ -934,7 +936,7 @@ class _StorePageState extends State<StorePage> {
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 8.0, horizontal: 16.0),
                                 child: Text(
-                                  category.categoryName,
+                                  category.categoryName!,
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -1286,24 +1288,24 @@ class _StorePageState extends State<StorePage> {
                                                           vMargin: 1.0,
                                                         ),
                                                       ]),
-                                                      Row(
-                                                        children: [
-                                                          Flexible(
-                                                              child:
-                                                                  SubHeadingWidget(
-                                                            title: product
-                                                                        .itemDesc ==
-                                                                    null
-                                                                ? ''
-                                                                : product
-                                                                    .itemDesc
-                                                                    .toString(),
-                                                            color:
-                                                                AppColors.black,
-                                                            vMargin: 1.0,
-                                                          )),
-                                                        ],
-                                                      )
+                                                      // Row(
+                                                      //   children: [
+                                                      //     Flexible(
+                                                      //         child:
+                                                      //             SubHeadingWidget(
+                                                      //       title: product
+                                                      //                   .itemDesc ==
+                                                      //               null
+                                                      //           ? ''
+                                                      //           : product
+                                                      //               .itemDesc
+                                                      //               .toString(),
+                                                      //       color:
+                                                      //           AppColors.black,
+                                                      //       vMargin: 1.0,
+                                                      //     )),
+                                                      //   ],
+                                                      // )
                                                     ],
                                                   ),
                                                 ),
