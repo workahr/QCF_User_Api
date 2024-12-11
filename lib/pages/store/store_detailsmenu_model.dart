@@ -113,10 +113,10 @@ class Product {
   int itemStock;
   String? itemTags;
   int status;
-  dynamic createdBy;
-  dynamic createdDate;
-  dynamic updatedBy;
-  dynamic updatedDate;
+  int? createdBy;
+  String? createdDate;
+  int? updatedBy;
+  String? updatedDate;
 
   Product({
     required this.itemId,
@@ -134,10 +134,10 @@ class Product {
     required this.itemStock,
     this.itemTags,
     required this.status,
-    required this.createdBy,
-    required this.createdDate,
-    required this.updatedBy,
-    required this.updatedDate,
+    this.createdBy,
+    this.createdDate,
+    this.updatedBy,
+    this.updatedDate,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) => Product(
@@ -188,53 +188,53 @@ class Product {
 class StoreDetails {
   int storeId;
   int userId;
-  String name;
-  String mobile;
-  String email;
-  String address;
-  String city;
-  String state;
-  dynamic country;
-  dynamic logo;
-  dynamic gstNo;
-  dynamic panNo;
-  dynamic terms;
-  String zipcode;
-  dynamic frontImg;
-  String onlineVisibility;
-  dynamic tags;
+  String? name;
+  String? mobile;
+  String? email;
+  String? address;
+  String? city;
+  String? state;
+  String? country;
+  String? logo;
+  String? gstNo;
+  String? panNo;
+  String? terms;
+  String? zipcode;
+  String? frontImg;
+  String? onlineVisibility;
+  String? tags;
   int status;
   dynamic createdBy;
   dynamic createdDate;
   dynamic updatedBy;
   dynamic updatedDate;
-  dynamic slug;
+  String? slug;
   int storeStatus;
 
   StoreDetails({
     required this.storeId,
     required this.userId,
-    required this.name,
-    required this.mobile,
-    required this.email,
-    required this.address,
-    required this.city,
-    required this.state,
-    required this.country,
-    required this.logo,
-    required this.gstNo,
-    required this.panNo,
-    required this.terms,
-    required this.zipcode,
-    required this.frontImg,
-    required this.onlineVisibility,
-    required this.tags,
+    this.name,
+    this.mobile,
+    this.email,
+    this.address,
+    this.city,
+    this.state,
+    this.country,
+    this.logo,
+    this.gstNo,
+    this.panNo,
+    this.terms,
+    this.zipcode,
+    this.frontImg,
+    this.onlineVisibility,
+    this.tags,
     required this.status,
     required this.createdBy,
     required this.createdDate,
     required this.updatedBy,
     required this.updatedDate,
-    required this.slug,
+    this.slug,
     required this.storeStatus,
   });
 

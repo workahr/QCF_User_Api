@@ -42,39 +42,39 @@ class AddressListmodel {
 
 class AddressList {
   int id;
-  int defaultAddress;
-  String type;
-  int userId;
-  String address;
-  String addressLine2;
-  String city;
-  String state;
-  int country;
-  int postcode;
-  String landmark;
-  int status;
-  int createdBy;
-  DateTime createdDate;
-  dynamic updatedBy;
-  dynamic updatedDate;
+  int? defaultAddress;
+  String? type;
+  int? userId;
+  String? address;
+  String? addressLine2;
+  String? city;
+  String? state;
+  int? country;
+  int? postcode;
+  String? landmark;
+  int? status;
+  int? createdBy;
+  DateTime? createdDate;
+  int? updatedBy;
+  DateTime? updatedDate;
 
   AddressList({
     required this.id,
-    required this.defaultAddress,
-    required this.type,
-    required this.userId,
-    required this.address,
-    required this.addressLine2,
-    required this.city,
-    required this.state,
-    required this.country,
-    required this.postcode,
-    required this.landmark,
-    required this.status,
-    required this.createdBy,
-    required this.createdDate,
-    required this.updatedBy,
-    required this.updatedDate,
+    this.defaultAddress,
+    this.type,
+    this.userId,
+    this.address,
+    this.addressLine2,
+    this.city,
+    this.state,
+    this.country,
+    this.postcode,
+    this.landmark,
+    this.status,
+    this.createdBy,
+    this.createdDate,
+    this.updatedBy,
+    this.updatedDate,
   });
 
   factory AddressList.fromJson(Map<String, dynamic> json) => AddressList(
@@ -90,10 +90,14 @@ class AddressList {
         postcode: json["postcode"],
         landmark: json["landmark"],
         status: json["status"],
-        createdBy: json["created_by"],
-        createdDate: DateTime.parse(json["created_date"]),
-        updatedBy: json["updated_by"],
-        updatedDate: json["updated_date"],
+        // createdBy: json["created_by"],
+        // createdDate: json["created_date"] == null
+        //     ? null
+        //     : DateTime.parse(json["created_date"]),
+        // updatedBy: json["updated_by"],
+        // updatedDate: json["updated_date"] == null
+        //     ? null
+        //     : DateTime.parse(json["updated_date"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -110,8 +114,8 @@ class AddressList {
         "landmark": landmark,
         "status": status,
         "created_by": createdBy,
-        "created_date": createdDate.toIso8601String(),
+        "created_date": createdDate!.toIso8601String(),
         "updated_by": updatedBy,
-        "updated_date": updatedDate,
+        "updated_date": updatedDate!.toIso8601String(),
       };
 }

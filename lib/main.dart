@@ -123,7 +123,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   showLater: false,
                   durationUntilAlertAgain: const Duration(seconds: 1),
                 ),
-                child: MainContainer(),
+                child: MainContainer(initialPage: 0),
               ),
         },
       ),

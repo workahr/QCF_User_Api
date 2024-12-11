@@ -52,7 +52,8 @@ class _AddresspageState extends State<Addresspage> {
           myprofilepageAll = [];
           isLoading = false;
         });
-        showInSnackBar(context, response.message.toString());
+        // showInSnackBar(context, response.message.toString());
+        print(response.message.toString());
       }
     } catch (e) {
       setState(() {
@@ -60,7 +61,8 @@ class _AddresspageState extends State<Addresspage> {
         myprofilepageAll = [];
         isLoading = false;
       });
-      showInSnackBar(context, 'Error occurred: $e');
+      // showInSnackBar(context, 'Error occurred: $e');
+      print('Error occurred: $e');
     }
   }
 
@@ -79,6 +81,7 @@ class _AddresspageState extends State<Addresspage> {
       Deleteaddressmodel response = deleteaddressmodelFromJson(result);
 
       if (response.status.toString() == 'SUCCESS') {
+        print("test");
         showInSnackBar(context, response.message.toString());
         setState(() {
           getalladdressList();
@@ -89,6 +92,48 @@ class _AddresspageState extends State<Addresspage> {
       }
     }
   }
+
+  // Future<void> deleteAddressById(int id) async {
+  //   // Show the confirmation dialog
+  //   if (!mounted) return; // Ensure widget is still active before proceeding
+
+  //   final dialogBoxResult = await showAlertDialogInfo(
+  //     context: context,
+  //     title: 'Are you sure?',
+  //     msg: 'You want to delete this data',
+  //     status: 'danger',
+  //     okBtn: false,
+  //   );
+
+  //   if (dialogBoxResult == 'OK') {
+  //     try {
+  //       await apiService.getBearerToken(); // Get the token
+  //       print('owner delete test $id');
+  //       Map<String, dynamic> postData = {"id": id};
+  //       var result = await apiService.deleteAddressById(postData);
+  //       Deleteaddressmodel response = deleteaddressmodelFromJson(result);
+
+  //       if (response.status.toString() == 'SUCCESS') {
+  //         if (mounted) {
+  //           // Safely access context and update the widget
+  //           showInSnackBar(context, response.message.toString());
+  //           setState(() {
+  //             getalladdressList(); // Refresh address list
+  //           });
+  //         }
+  //       } else {
+  //         if (mounted) {
+  //           showInSnackBar(context, response.message.toString());
+  //         }
+  //       }
+  //     } catch (e) {
+  //       if (mounted) {
+  //         showInSnackBar(context, 'Error occurred: $e');
+  //       }
+  //       print('Error occurred: $e');
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -163,7 +208,7 @@ class _AddresspageState extends State<Addresspage> {
                                 fontWeight: FontWeight.w500,
                                 //  title: e.address.toString(),
                                 title:
-                                    "${e.address.toString()} ${e.addressLine2.toString()} ${e.city.toString()}",
+                                    "${e.address.toString()} ${e.addressLine2.toString()} ${e.city.toString()},",
                               ),
                             ],
                           ),
@@ -172,7 +217,12 @@ class _AddresspageState extends State<Addresspage> {
                             fontSize: 16.0,
                             fontWeight: FontWeight.w500,
                             title:
-                                "${e.state.toString()}, Land Mark -${e.landmark.toString()}}",
+                                "${e.state.toString()}, Land Mark -${e.landmark.toString()},",
+                          ),
+                          HeadingWidget(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w500,
+                            title: "${e.postcode.toString()}.",
                           ),
                           SizedBox(height: 8),
                           Row(

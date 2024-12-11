@@ -4,94 +4,96 @@
 
 import 'dart:convert';
 
-OrderListModel orderListModelFromJson(String str) => OrderListModel.fromJson(json.decode(str));
+OrderListModel orderListModelFromJson(String str) =>
+    OrderListModel.fromJson(json.decode(str));
 
 String orderListModelToJson(OrderListModel data) => json.encode(data.toJson());
 
 class OrderListModel {
-    String status;
-    List<OrderListData> list;
-    String code;
-    String message;
+  String status;
+  List<OrderListData> list;
+  String code;
+  String message;
 
-    OrderListModel({
-        required this.status,
-        required this.list,
-        required this.code,
-        required this.message,
-    });
+  OrderListModel({
+    required this.status,
+    required this.list,
+    required this.code,
+    required this.message,
+  });
 
-    factory OrderListModel.fromJson(Map<String, dynamic> json) => OrderListModel(
+  factory OrderListModel.fromJson(Map<String, dynamic> json) => OrderListModel(
         status: json["status"],
-        list: List<OrderListData>.from(json["list"].map((x) => OrderListData.fromJson(x))),
+        list: List<OrderListData>.from(
+            json["list"].map((x) => OrderListData.fromJson(x))),
         code: json["code"],
         message: json["message"],
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "status": status,
         "list": List<dynamic>.from(list.map((x) => x.toJson())),
         "code": code,
         "message": message,
-    };
+      };
 }
 
 class OrderListData {
-    int id;
-    String invoiceNumber;
-    String? transportId;
-    int totalProduct;
-    String? totalPrice;
-    String? storeTotalPrice;
-    int storePaidStatus;
-    String? deliveryCharges;
-    String? cartSessionId;
-    int userId;
-    int storeId;
-    String? orderStatus;
-    String? deliveryPartnerId;
-    int prepareMin;
-    String? paymentMethod;
-    String? cancelReason;
-    int code;
-    int status;
-   int? createdBy;
+  int id;
+  String invoiceNumber;
+  String? transportId;
+  int totalProduct;
+  String? totalPrice;
+  String? storeTotalPrice;
+  int storePaidStatus;
+  String? deliveryCharges;
+  String? cartSessionId;
+  int userId;
+  int storeId;
+  String? orderStatus;
+  String? deliveryPartnerId;
+  int prepareMin;
+  String? paymentMethod;
+  String? cancelReason;
+  int? code;
+  int status;
+  int? createdBy;
   DateTime? createdDate;
   int? updatedBy;
   DateTime? updatedDate;
-    String? storeAddress;
-    String? storeName;
-    String? storeMobile;
+  String? storeAddress;
+  String? storeName;
+  String? storeMobile;
 
-    OrderListData({
-        required this.id,
-        required this.invoiceNumber,
-         this.transportId,
-        required this.totalProduct,
-         this.totalPrice,
-         this.storeTotalPrice,
-        required this.storePaidStatus,
-         this.deliveryCharges,
-         this.cartSessionId,
-        required this.userId,
-        required this.storeId,
-         this.orderStatus,
-         this.deliveryPartnerId,
-        required this.prepareMin,
-         this.paymentMethod,
-         this.cancelReason,
-        required this.code,
-        required this.status,
-        required this.createdBy,
-        required this.createdDate,
-        required this.updatedBy,
-        required this.updatedDate,
-         this.storeAddress,
-         this.storeName,
-         this.storeMobile,
-    });
+  OrderListData({
+    required this.id,
+    required this.invoiceNumber,
+    this.transportId,
+    required this.totalProduct,
+    this.totalPrice,
+    this.storeTotalPrice,
+    required this.storePaidStatus,
+    this.deliveryCharges,
+    this.cartSessionId,
+    required this.userId,
+    required this.storeId,
+    this.orderStatus,
+    this.deliveryPartnerId,
+    required this.prepareMin,
+    this.paymentMethod,
+    this.cancelReason,
+    this.code,
+    required this.status,
+    required this.createdBy,
+    required this.createdDate,
+    required this.updatedBy,
+    required this.updatedDate,
+    this.storeAddress,
+    this.storeName,
+    this.storeMobile,
+  });
 
-    factory OrderListData.fromJson(Map<String, dynamic> json) => OrderListData(
+  factory OrderListData.fromJson(Map<String, dynamic> json) => OrderListData(
         id: json["id"],
         invoiceNumber: json["invoice_number"],
         transportId: json["transport_id"],
@@ -110,7 +112,7 @@ class OrderListData {
         cancelReason: json["cancel_reason"],
         code: json["code"],
         status: json["status"],
-       createdBy: json["created_by"],
+        createdBy: json["created_by"],
         createdDate: DateTime.parse(json["created_date"]),
         updatedBy: json["updated_by"],
         updatedDate: json["updated_date"] == null
@@ -119,9 +121,9 @@ class OrderListData {
         storeAddress: json["store_address"],
         storeName: json["store_name"],
         storeMobile: json["store_mobile"],
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "id": id,
         "invoice_number": invoiceNumber,
         "transport_id": transportId,
@@ -147,5 +149,5 @@ class OrderListData {
         "store_address": storeAddress,
         "store_name": storeName,
         "store_mobile": storeMobile,
-    };
+      };
 }

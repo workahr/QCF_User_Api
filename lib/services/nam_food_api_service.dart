@@ -1916,4 +1916,168 @@ class NamFoodApiService {
       return e;
     }
   }
+
+  // Order  Cancel
+
+  Future ordercancel(postData) async {
+    try {
+      print("test $postData");
+      final url = Uri.parse('${liveApiPath}v1/cancelorder');
+      final response = await client.post(url,
+          headers: headerData, body: jsonEncode(postData));
+
+      if (response.statusCode == 200) {
+        final json = response.body;
+        return json;
+      } else {
+        print('error');
+        throw Exception(
+            'Failed. Status code: ${response.statusCode} ${response.toString()}');
+      }
+    } catch (e) {
+      print('catcherror ${e}');
+      return e;
+    }
+  }
+
+  // Get Profile Details For User
+
+  Future getprofileDetails() async {
+    try {
+      final url = Uri.parse('${liveApiPath}v1/getuserdetails');
+      final response = await client.get(
+        url,
+        headers: headerData,
+      );
+      if (response.statusCode == 200) {
+        print(response.toString());
+
+        return response.body;
+      } else {
+        return response;
+      }
+    } catch (e) {
+      return e;
+    }
+  }
+
+// Update Profile
+  Future updateprofile(
+      String apiCtrl, Map<String, dynamic> postData, imageFile) async {
+    try {
+      final url = Uri.parse(liveApiPath + apiCtrl);
+
+      var headers = headerData;
+      var request = http.MultipartRequest(
+        'POST',
+        url,
+      );
+      request.headers.addAll(headerData);
+
+      for (var entry in postData.entries) {
+        request.fields[entry.key] = entry.value.toString();
+      }
+      if (imageFile != null) {
+        var image = await http.MultipartFile.fromPath('media', imageFile!.path);
+        request.files.add(image);
+      }
+      request.headers.addAll(headers);
+      var response = await request.send();
+      if (response.statusCode == 200) {
+        final json = await response.stream.bytesToString();
+        return json;
+      } else {
+        return [];
+      }
+    } catch (e) {
+      return e;
+    }
+  }
+
+  // Delete Cart
+
+  Future deletecart(postData) async {
+    try {
+      print("test $postData");
+      final url = Uri.parse('${liveApiPath}v1/deletecart');
+      final response = await client.post(url,
+          headers: headerData, body: jsonEncode(postData));
+
+      if (response.statusCode == 200) {
+        final json = response.body;
+        return json;
+      } else {
+        print('error');
+        throw Exception(
+            'Failed. Status code: ${response.statusCode} ${response.toString()}');
+      }
+    } catch (e) {
+      print('catcherror ${e}');
+      return e;
+    }
+  }
+
+  // User Create Order
+
+  Future createorder(postData) async {
+    try {
+      final url = Uri.parse('${liveApiPath}v1/createorder');
+      print("test1 ");
+      final response = await client.post(
+        url,
+        headers: headerData,
+        body: jsonEncode(postData),
+      );
+      print("test2 ");
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        return response;
+      }
+    } catch (e) {
+      return e;
+    }
+  }
+
+//Single Order base Details
+
+  Future getstoredetailbyidList(id) async {
+    try {
+      final url = Uri.parse('${liveApiPath}v1/getorderbyid?id=$id');
+      final response = await client.get(
+        url,
+        headers: headerData,
+      );
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        return response;
+      }
+    } catch (e) {
+      return e;
+    }
+  }
+
+  // Get All Address For User in Login Time
+
+  Future getloginalladdressList(auth) async {
+    try {
+      final url = Uri.parse('${liveApiPath}v1/getalladdress');
+      final response = await client.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $auth',
+        },
+      );
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        return response;
+      }
+    } catch (e) {
+      return e;
+    }
+  }
 }

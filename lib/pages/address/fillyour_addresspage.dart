@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:namfood/constants/app_assets.dart';
 import 'package:namfood/pages/HomeScreen/home_screen.dart';
 import 'package:namfood/pages/address/address_list_model.dart';
@@ -9,12 +10,18 @@ import '../../constants/app_colors.dart';
 import '../../services/comFuncService.dart';
 import '../../services/nam_food_api_service.dart';
 import '../../widgets/button_widget.dart';
+import '../../widgets/custom_autocomplete_widget.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/sub_heading_widget.dart';
 import 'addaddress_model.dart';
 import 'address_edit_model.dart';
 import 'address_update_model.dart';
 import 'addresspage.dart';
+
+// import 'package:geocoding/geocoding.dart';
+// import 'package:geolocator/geolocator.dart';
+// import 'package:intl/intl.dart';
+// import 'package:permission_handler/permission_handler.dart';
 
 class FillyourAddresspage extends StatefulWidget {
   int? addressId;
@@ -48,6 +55,19 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
     'Other': false,
   };
 
+  var selectedstateArr;
+  String? selectedstate;
+  List referList = [
+    {"name": "Tamil Nadu", "value": 1},
+    // {"name": "No", "value": 2},
+  ];
+  var selectedcityArr;
+  String? selectedcity;
+  List refercityList = [
+    {"name": "Trichy", "value": 1},
+    // {"name": "No", "value": 2},
+  ];
+
   // Method to build address form
   Widget _buildAddressForm(String type) {
     List<Widget> fields = [
@@ -75,24 +95,58 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
         labelText: 'Land Mark',
         width: MediaQuery.of(context).size.width,
       ),
-      CustomeTextField(
-        control: cityController,
-        borderColor: AppColors.grey1,
+      // CustomeTextField(
+      //   control: cityController,
+      //   borderColor: AppColors.grey1,
+      //   labelText: 'City',
+      //   lines: 1,
+      //   width: MediaQuery.of(context).size.width,
+      // ),
+      CustomAutoCompleteWidget(
+        width: MediaQuery.of(context).size.width / 1.1,
+        selectedItem: selectedcityArr,
         labelText: 'City',
-        lines: 1,
-        width: MediaQuery.of(context).size.width,
+        labelField: (item) => item["name"],
+        onChanged: (value) {
+          selectedcity = value["name"];
+          print(selectedcity);
+          // if (selectedyes == 'No') {
+          //   selectedThirdpartyId == 0;
+          //   selectedThirdParty == '';
+          // }
+        },
+        valArr: refercityList,
       ),
-      CustomeTextField(
-        control: stateController,
-        borderColor: AppColors.grey1,
+      // CustomeTextField(
+      //   control: stateController,
+      //   borderColor: AppColors.grey1,
+      //   labelText: 'State',
+      //   lines: 1,
+      //   width: MediaQuery.of(context).size.width,
+      // ),
+      CustomAutoCompleteWidget(
+        width: MediaQuery.of(context).size.width / 1.1,
+        selectedItem: selectedstateArr,
         labelText: 'State',
-        lines: 1,
-        width: MediaQuery.of(context).size.width,
+        labelField: (item) => item["name"],
+        onChanged: (value) {
+          selectedstate = value["name"];
+          print(selectedstate);
+          // if (selectedyes == 'No') {
+          //   selectedThirdpartyId == 0;
+          //   selectedThirdParty == '';
+          // }
+        },
+        valArr: referList,
       ),
       CustomeTextField(
         control: postController,
         borderColor: AppColors.grey1,
         labelText: 'Post Code',
+        type: const TextInputType.numberWithOptions(),
+        inputFormaters: [
+          FilteringTextInputFormatter.allow(RegExp(r'^-?(\d+)?\.?\d{0,11}'))
+        ],
         lines: 1,
         width: MediaQuery.of(context).size.width,
       ),
@@ -140,7 +194,7 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
         "address": address1Controller.text,
         "address_line_2": address2Controller.text,
         "city": cityController.text,
-        "state": stateController.text,
+        "state": selectedstate,
         "postcode": postController.text,
         "landmark": lankmarkController.text
       };
@@ -151,15 +205,17 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
       Addaddressmodel response = addaddressmodelFromJson(result);
 
       if (response.status.toString() == 'SUCCESS') {
-        showInSnackBar(context, response.message.toString());
+        // showInSnackBar(context, response.message.toString());
         // Navigator.pop(context, {'type': 1});
         //  Navigator.pop(context, {'add': true});
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MainContainer(),
-          ),
-        );
+        Navigator.pushNamedAndRemoveUntil(
+            context, '/home', ModalRoute.withName('/home'));
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => MainContainer(),
+        //   ),
+        // );
       } else {
         print(response.message.toString());
         showInSnackBar(context, response.message.toString());
@@ -203,6 +259,12 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
     super.initState();
     refresh();
     print('AddressById :' + widget.addressId.toString());
+    selectedstateArr =
+        referList.firstWhere((item) => item["name"] == "Tamil Nadu");
+    selectedstate = selectedstateArr["name"];
+    selectedcityArr =
+        refercityList.firstWhere((item) => item["name"] == "Trichy");
+    selectedcity = selectedcityArr["name"];
   }
 
   refresh() async {
@@ -231,7 +293,8 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
       AdddressUpdatemodel response = adddressUpdatemodelFromJson(result);
 
       if (response.status.toString() == 'SUCCESS') {
-        showInSnackBar(context, response.message.toString());
+        print("test1");
+        // showInSnackBar(context, response.message.toString());
         //  Navigator.pop(context, {'update': true});
         Navigator.push(
           context,
@@ -247,6 +310,135 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
       showInSnackBar(context, "Please fill all fields");
     }
   }
+
+  // Future<void> updateaddress() async {
+  //   await apiService.getBearerToken();
+  //   if (addressForm.currentState!.validate()) {
+  //     Map<String, dynamic> postData = {
+  //       "id": widget.addressId,
+  //       "default_address": _defaultStatus[_selectedAddressType]! ? 1 : 0,
+  //       "type": _selectedAddressType.toString(),
+  //       "address": address1Controller.text,
+  //       "address_line_2": address2Controller.text,
+  //       "city": cityController.text,
+  //       "state": stateController.text,
+  //       "postcode": postController.text,
+  //       "landmark": lankmarkController.text,
+  //     };
+  //     print("updateAddress $postData");
+
+  //     try {
+  //       var result = await apiService.updateaddress(postData);
+  //       AdddressUpdatemodel response = adddressUpdatemodelFromJson(result);
+
+  //       if (response.status.toString() == 'SUCCESS') {
+  //         if (mounted) {
+  //           // Ensure the widget is still active
+  //           showInSnackBar(context, response.message.toString());
+
+  //           // Replace Navigator.push with Navigator.pushReplacement for better flow
+  //           Navigator.pushReplacement(
+  //             context,
+  //             MaterialPageRoute(
+  //               builder: (context) => Addresspage(),
+  //             ),
+  //           );
+  //         }
+  //       } else {
+  //         if (mounted) {
+  //           // Ensure the widget is still active
+  //           print(response.message.toString());
+  //           showInSnackBar(context, response.message.toString());
+  //         }
+  //       }
+  //     } catch (e) {
+  //       if (mounted) {
+  //         // Ensure the widget is still active
+  //         showInSnackBar(context, "Error occurred: $e");
+  //       }
+  //       print('Error occurred: $e');
+  //     }
+  //   } else {
+  //     if (mounted) {
+  //       // Ensure the widget is still active
+  //       showInSnackBar(context, "Please fill all fields");
+  //     }
+  //   }
+  // }
+
+  // String? _currentAddress;
+  // Position? _currentPosition;
+
+  // Future<PermissionStatus> _handleLocationPermission() async {
+  //   final PermissionStatus status = await Permission.location.request();
+  //   return status;
+  // }
+
+  // Future<void> _getCurrentPosition() async {
+  //   final PermissionStatus permissionStatus = await _handleLocationPermission();
+  //   // Map<Permission, PermissionStatus> statuses = await [
+  //   //   Permission.location,
+  //   // ].request();
+  //   print("statuses Permission" + permissionStatus.toString());
+  //   if (permissionStatus == PermissionStatus.granted) {
+  //     //final PermissionStatus statuses1 = await _handleLocationPermission1();
+  //     PermissionStatus statuses1 = await Permission.locationAlways.request();
+  //     print("statuses1 Permission" + statuses1.toString());
+  //     if (statuses1 == PermissionStatus.granted) {
+  //       print("statuses2 Permission" + statuses1.toString());
+  //       await Geolocator.getCurrentPosition(
+  //               desiredAccuracy: LocationAccuracy.high)
+  //           .then((Position position) async {
+  //         setState(() => _currentPosition = position);
+  //         _getAddressFromLatLng(_currentPosition!);
+  //         // print('lattitude: ' +
+  //         //     _currentPosition.latitude.toString() +
+  //         //     'Longitude : ' +
+  //         //     _currentPosition.latitude.toString());
+  //         // return position;
+  //       }).catchError((e) {
+  //         debugPrint(e);
+  //       });
+  //     } else {
+  //       showDialog(
+  //           context: context,
+  //           builder: (BuildContext context) {
+  //             return new AlertDialog(
+  //               title: new Text("Alert"),
+  //               content: new Text(
+  //                   "Please Select \"Allow all the time\" to continue..."),
+  //               actions: <Widget>[
+  //                 new ElevatedButton(
+  //                   child: new Text("OK"),
+  //                   onPressed: () async {
+  //                     Navigator.of(context).pop();
+  //                     final PermissionStatus statuses4 =
+  //                         await Permission.locationAlways.request();
+  //                     print("statuses3 Permission" + statuses4.toString());
+  //                   },
+  //                 ),
+  //               ],
+  //             );
+  //           });
+  //     }
+  //   } else {
+  //     print("statuses4 Permission widget");
+  //   }
+  // }
+
+  // Future<void> _getAddressFromLatLng(Position position) async {
+  //   await placemarkFromCoordinates(position.latitude, position.longitude)
+  //       .then((List<Placemark> placemarks) {
+  //     Placemark place = placemarks[0];
+  //     setState(() {
+  //       _currentAddress =
+  //           '${place.street} ${place.thoroughfare} ${place.subThoroughfare},${place.subLocality},${place.locality},${place.administrativeArea} ${place.subAdministrativeArea},${place.postalCode}, ${place.country}${'(' + place.isoCountryCode! + ')'}';
+  //       print('Address : ' + _currentAddress!);
+  //     });
+  //   }).catchError((e) {
+  //     debugPrint(e);
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -265,14 +457,20 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                OutlineBtnWidget(
-                  borderColor: AppColors.red,
-                  titleColor: AppColors.red,
-                  icon: Icons.my_location,
-                  iconColor: AppColors.red,
-                  title: "Locate me automatically",
-                  height: 50,
-                ),
+                GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        // _getCurrentPosition();
+                      });
+                    },
+                    child: OutlineBtnWidget(
+                      borderColor: AppColors.red,
+                      titleColor: AppColors.red,
+                      icon: Icons.my_location,
+                      iconColor: AppColors.red,
+                      title: "Locate me automatically",
+                      height: 50,
+                    )),
                 SizedBox(height: 15),
                 Row(
                   children: [
@@ -340,12 +538,14 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
                 GestureDetector(
                     onTap: () {
                       setState(() {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => MainContainer(),
-                          ),
-                        );
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, '/home', ModalRoute.withName('/home'));
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => MainContainer(),
+                        //   ),
+                        // );
                       });
                     },
                     child: HeadingWidget(

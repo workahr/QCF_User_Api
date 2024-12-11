@@ -41,36 +41,36 @@ class AdddressEditmodel {
 
 class EditAddressList {
   int id;
-  int defaultAddress;
-  String type;
-  int userId;
-  String address;
-  String addressLine2;
-  String city;
-  String state;
-  int country;
-  int postcode;
-  String landmark;
-  int status;
-  int createdBy;
+  int? defaultAddress;
+  String? type;
+  int? userId;
+  String? address;
+  String? addressLine2;
+  String? city;
+  String? state;
+  int? country;
+  int? postcode;
+  String? landmark;
+  int? status;
+  int? createdBy;
   DateTime createdDate;
   dynamic updatedBy;
   dynamic updatedDate;
 
   EditAddressList({
     required this.id,
-    required this.defaultAddress,
-    required this.type,
-    required this.userId,
-    required this.address,
-    required this.addressLine2,
-    required this.city,
-    required this.state,
-    required this.country,
-    required this.postcode,
-    required this.landmark,
-    required this.status,
-    required this.createdBy,
+    this.defaultAddress,
+    this.type,
+    this.userId,
+    this.address,
+    this.addressLine2,
+    this.city,
+    this.state,
+    this.country,
+    this.postcode,
+    this.landmark,
+    this.status,
+    this.createdBy,
     required this.createdDate,
     required this.updatedBy,
     required this.updatedDate,

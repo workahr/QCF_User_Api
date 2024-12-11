@@ -24,18 +24,15 @@ class CartListModel {
 
   factory CartListModel.fromJson(Map<String, dynamic> json) => CartListModel(
         status: json["status"],
-        list: json["list"] == null
-            ? []
-            : List<CartListData>.from(
-                json["list"].map((x) => CartListData.fromJson(x))),
+        list: List<CartListData>.from(
+            json["list"].map((x) => CartListData.fromJson(x))),
         code: json["code"],
         message: json["message"],
       );
 
   Map<String, dynamic> toJson() => {
         "status": status,
-        "list":
-            list.isEmpty ? "" : List<dynamic>.from(list.map((x) => x.toJson())),
+        "list": List<dynamic>.from(list.map((x) => x.toJson())),
         "code": code,
         "message": message,
       };

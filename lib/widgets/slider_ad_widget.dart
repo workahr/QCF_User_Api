@@ -1,12 +1,10 @@
 import 'package:carousel_slider/carousel_slider.dart' as carousel_slider;
 import 'package:flutter/material.dart';
 
-
 import '../../constants/app_colors.dart';
 import '../constants/app_assets.dart';
 import '../constants/app_constants.dart';
 import '../pages/models/banner_list_model.dart';
-
 
 class SliderAdWidget extends StatefulWidget {
   List<BannerListData>? adList;
@@ -19,7 +17,8 @@ class SliderAdWidget extends StatefulWidget {
 
 class _SliderAdWidgetState extends State<SliderAdWidget> {
   //final CarouselController _controller = CarouselController();
-  final carousel_slider.CarouselController _controller = carousel_slider.CarouselController();
+  final carousel_slider.CarouselController _controller =
+      carousel_slider.CarouselController();
 
   int _current = 0;
 
@@ -31,18 +30,17 @@ class _SliderAdWidgetState extends State<SliderAdWidget> {
           items: widget.adList!
               .map(
                 (e) => GestureDetector(
-                  onTap: () {
-                    
-
-                  },
-                 
+                  onTap: () {},
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    child: Image.network(AppConstants.imgBaseUrl + e.imageUrl,
+                    child: Image.network(AppConstants.imgBaseUrl + e.imageUrl!,
                         fit: BoxFit.fill, errorBuilder: (BuildContext context,
                             Object exception, StackTrace? stackTrace) {
                       return Image.asset(
-                        AppAssets.logo,
+                        AppAssets.bannerhome,
+                        width: double.infinity,
+                        fit: BoxFit.fill,
+                        height: 60.0,
                       );
                     }),
                   ),
@@ -53,8 +51,8 @@ class _SliderAdWidgetState extends State<SliderAdWidget> {
           options: carousel_slider.CarouselOptions(
               autoPlay: true,
               enlargeCenterPage: true,
-              aspectRatio: 3.4,
-              enlargeFactor: 0.1,
+              aspectRatio: 3.0,
+              enlargeFactor: 0.2,
               viewportFraction: 0.9,
               onPageChanged: (index, reason) {
                 setState(() {

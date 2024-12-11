@@ -122,10 +122,16 @@ class AppAssets {
   static const String work_black = 'assets/images/work_black.png';
   static const String work_red = 'assets/images/work_red.png';
   static const String work_white = 'assets/images/work_white.png';
+  static const String call_icon = 'assets/images/call_icon.png';
 
   static const String profileavathar = 'assets/images/profileavathar.png';
   static const String mappoint_white = 'assets/images/mappoint_white.png';
   static const String mappoint_red = 'images/mappoint_red.png';
   static const String feedback = 'assets/images/feedback.png';
   static const String logout = 'assets/images/logout.png';
+  static const String homefill_icon = 'assets/images/home_icon_selected.png';
+  static const String ChefHatfill_icon =
+      'assets/images/order_icon_selected.png';
+  static const String userroundedfill_icon =
+      'assets/images/userrounded_icon.png';
 }

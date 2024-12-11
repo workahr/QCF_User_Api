@@ -4,92 +4,94 @@
 
 import 'dart:convert';
 
-StoreListModel storeListModelFromJson(String str) => StoreListModel.fromJson(json.decode(str));
+StoreListModel storeListModelFromJson(String str) =>
+    StoreListModel.fromJson(json.decode(str));
 
 String storeListModelToJson(StoreListModel data) => json.encode(data.toJson());
 
 class StoreListModel {
-    String status;
-    List<StoreListData> list;
-    String code;
-    String message;
+  String status;
+  List<StoreListData> list;
+  String code;
+  String message;
 
-    StoreListModel({
-        required this.status,
-        required this.list,
-        required this.code,
-        required this.message,
-    });
+  StoreListModel({
+    required this.status,
+    required this.list,
+    required this.code,
+    required this.message,
+  });
 
-    factory StoreListModel.fromJson(Map<String, dynamic> json) => StoreListModel(
+  factory StoreListModel.fromJson(Map<String, dynamic> json) => StoreListModel(
         status: json["status"],
-        list: List<StoreListData>.from(json["list"].map((x) => StoreListData.fromJson(x))),
+        list: List<StoreListData>.from(
+            json["list"].map((x) => StoreListData.fromJson(x))),
         code: json["code"],
         message: json["message"],
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "status": status,
         "list": List<dynamic>.from(list.map((x) => x.toJson())),
         "code": code,
         "message": message,
-    };
+      };
 }
 
 class StoreListData {
-    int storeId;
-    int userId;
-    String name;
-    String mobile;
-    String email;
-    String address;
-    String city;
-    String state;
-    String? country;
-    String? logo;
-    String? gstNo;
-    String? panNo;
-    String? terms;
-    String? zipcode;
-    String? frontImg;
-    String onlineVisibility;
-    String? tags;
-    int status;
-   int? createdBy;
-  DateTime? createdDate;
+  int storeId;
+  int userId;
+  String? name;
+  String? mobile;
+  String? email;
+  String? address;
+  String? city;
+  String? state;
+  String? country;
+  String? logo;
+  String? gstNo;
+  String? panNo;
+  String? terms;
+  String? zipcode;
+  String? frontImg;
+  String? onlineVisibility;
+  String? tags;
+  int? status;
+  int? createdBy;
+  String? createdDate;
   int? updatedBy;
-  DateTime? updatedDate;
-    String? slug;
-    int storeStatus;
+  String? updatedDate;
+  String? slug;
+  int? storeStatus;
 
-    StoreListData({
-        required this.storeId,
-        required this.userId,
-        required this.name,
-        required this.mobile,
-        required this.email,
-        required this.address,
-        required this.city,
-        required this.state,
-         this.country,
-         this.logo,
-         this.gstNo,
-         this.panNo,
-         this.terms,
-         this.zipcode,
-         this.frontImg,
-        required this.onlineVisibility,
-         this.tags,
-        required this.status,
-         this.createdBy,
-         this.createdDate,
-         this.updatedBy,
-         this.updatedDate,
-         this.slug,
-        required this.storeStatus,
-    });
+  StoreListData({
+    required this.storeId,
+    required this.userId,
+    this.name,
+    this.mobile,
+    this.email,
+    this.address,
+    this.city,
+    this.state,
+    this.country,
+    this.logo,
+    this.gstNo,
+    this.panNo,
+    this.terms,
+    this.zipcode,
+    this.frontImg,
+    this.onlineVisibility,
+    this.tags,
+    this.status,
+    this.createdBy,
+    this.createdDate,
+    this.updatedBy,
+    this.updatedDate,
+    this.slug,
+    this.storeStatus,
+  });
 
-    factory StoreListData.fromJson(Map<String, dynamic> json) => StoreListData(
+  factory StoreListData.fromJson(Map<String, dynamic> json) => StoreListData(
         storeId: json["store_id"],
         userId: json["user_id"],
         name: json["name"],
@@ -114,9 +116,9 @@ class StoreListData {
         updatedDate: json["updated_date"],
         slug: json["slug"],
         storeStatus: json["store_status"],
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "store_id": storeId,
         "user_id": userId,
         "name": name,
@@ -136,10 +138,10 @@ class StoreListData {
         "tags": tags,
         "status": status,
         "created_by": createdBy,
-        "created_date": createdDate?.toIso8601String(),
+        "created_date": createdDate,
         "updated_by": updatedBy,
-        "updated_date": updatedDate?.toIso8601String(),
+        "updated_date": updatedDate,
         "slug": slug,
         "store_status": storeStatus,
-    };
+      };
 }

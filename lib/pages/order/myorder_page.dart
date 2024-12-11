@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/widgets.dart';
 import 'package:dotted_line/dotted_line.dart';
+import 'package:intl/intl.dart';
 
 import '../../constants/app_colors.dart';
 import '../../services/comFuncService.dart';
@@ -13,6 +14,7 @@ import '../../widgets/sub_heading_widget.dart';
 import '../models/myorder_page_model.dart';
 import '../rating/add_rating_page.dart';
 import 'cancel_booking_page.dart';
+import 'cancel_order_preview_page.dart';
 import 'order_list_model.dart';
 import 'order_preview_page.dart';
 
@@ -59,7 +61,8 @@ class _MyorderPageState extends State<MyorderPage>
           myorderpageAll = [];
           isLoading = false;
         });
-        showInSnackBar(context, response.message.toString());
+        // showInSnackBar(context, response.message.toString());
+        print(response.message.toString());
       }
     } catch (e) {
       setState(() {
@@ -67,7 +70,8 @@ class _MyorderPageState extends State<MyorderPage>
         myorderpageAll = [];
         isLoading = false;
       });
-      showInSnackBar(context, 'Error occurred: $e');
+      // showInSnackBar(context, 'Error occurred: $e');
+      print('Error occurred: $e');
     }
 
     setState(() {});
@@ -98,38 +102,38 @@ class _MyorderPageState extends State<MyorderPage>
 
   Widget getStatusIcon(String status) {
     switch (status) {
-      case 'On Delivery':
+      case 'Order Placed':
         return Container(
             padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppColors.lightred,
+              color: Color.fromARGB(255, 240, 248, 240),
               shape: BoxShape.rectangle,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
               Icons.shopping_bag_outlined,
               size: 32,
-              color: AppColors.red,
+              color: AppColors.darkGreen,
             ));
 
-      case 'Completed':
+      case 'Order Confirmed':
         return Container(
             padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppColors.lightred,
+              color: const Color.fromARGB(255, 237, 244, 251),
               shape: BoxShape.rectangle,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
               Icons.shopping_bag_outlined,
               size: 32,
-              color: AppColors.red,
+              color: Colors.blue,
             ));
       case 'Cancelled':
         return Container(
           padding: EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: AppColors.lightred,
+            color: const Color.fromARGB(255, 250, 239, 240),
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.circular(8),
           ),
@@ -170,10 +174,10 @@ class _MyorderPageState extends State<MyorderPage>
 
   Color circleColor(String status) {
     switch (status) {
-      case 'On Delivery':
-        return AppColors.darkGreen;
-      case 'Completed':
-        return AppColors.red;
+      case 'Order Placed':
+        return Colors.lightGreen;
+      case 'Order Confirmed':
+        return Colors.blue;
       case 'Cancelled':
         return Colors.red;
       default:
@@ -243,8 +247,13 @@ class _MyorderPageState extends State<MyorderPage>
                 final color = getStatusColor(status);
                 final icon = getStatusIcon(status);
                 final circlecolor = circleColor(status);
+                String formattedDate = DateFormat('dd-MMM-yyyy')
+                    .format(DateTime.parse(e.createdDate.toString()));
 
-                if (status == 'Order Placed')
+                if (status == 'Order Placed' ||
+                    // status == 'Order Picked' ||
+                    status == 'Order Confirmed' ||
+                    status == 'Ready to Pickup')
                   return Container(
                       margin: EdgeInsets.all(0),
                       child: Column(children: [
@@ -255,31 +264,45 @@ class _MyorderPageState extends State<MyorderPage>
                               // 'Order ID#${order['id']}'
 
                               ),
-                          subtitle: Row(
-                            children: [
-                              SubHeadingWidget(
-                                title: '${e.totalProduct.toString()} Items',
-                                // '${order['items']} Items',
+                          subtitle: Column(children: [
+                            Row(
+                              children: [
+                                SubHeadingWidget(
+                                  title: '${e.totalProduct.toString()} Items',
+                                  // '${order['items']} Items',
 
-                                color: AppColors.n_black,
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Icon(
-                                Icons.circle,
-                                size: 11,
-                                color: circlecolor,
-                              ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              SubHeadingWidget(
-                                title: e.orderStatus,
-                                color: AppColors.n_black,
-                              ),
-                            ],
-                          ),
+                                  color: AppColors.n_black,
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Icon(
+                                  Icons.circle,
+                                  size: 11,
+                                  color: circlecolor,
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                SubHeadingWidget(
+                                  title: e.orderStatus,
+                                  color: AppColors.n_black,
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                SubHeadingWidget(
+                                  title: "Date : ",
+                                  color: AppColors.n_black,
+                                ),
+                                SubHeadingWidget(
+                                  title: formattedDate,
+                                  color: AppColors.n_black,
+                                ),
+                              ],
+                            )
+                          ]),
                           trailing: IconButton(
                             icon: Icon(
                               all_expandedIndex == index
@@ -362,98 +385,201 @@ class _MyorderPageState extends State<MyorderPage>
                                         ),
                                       ],
                                     ),
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Column(
-                                          children: [
-                                            Container(
-                                              width: 20,
-                                              height: 20,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                border: Border.all(
-                                                  color: AppColors.blue,
-                                                  width: 3,
-                                                ),
+                                    status == 'Order Confirmed' ||
+                                            status == 'Ready to Pickup'
+                                        ? Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Column(
+                                                children: [
+                                                  Container(
+                                                    width: 20,
+                                                    height: 20,
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      border: Border.all(
+                                                        color: AppColors.blue,
+                                                        width: 3,
+                                                      ),
+                                                    ),
+                                                    child: const Center(
+                                                      child: Icon(
+                                                        Icons.circle,
+                                                        color: AppColors.blue,
+                                                        size: 12,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const DottedLine(
+                                                    direction: Axis.vertical,
+                                                    dashColor: AppColors.blue,
+                                                    lineLength: 50,
+                                                    dashLength: 2,
+                                                    dashGapLength: 2,
+                                                  ),
+                                                ],
                                               ),
-                                              child: const Center(
-                                                child: Icon(
-                                                  Icons.circle,
-                                                  color: AppColors.blue,
-                                                  size: 12,
-                                                ),
+                                              const SizedBox(width: 8),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Order Confirmed',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  // Text(
+                                                  //   e.OrderConfirmedTime
+                                                  //       .toString(),
+                                                  //   style: TextStyle(
+                                                  //       color: AppColors.n_black),
+                                                  // ),
+                                                ],
                                               ),
-                                            ),
-                                            const DottedLine(
-                                              direction: Axis.vertical,
-                                              dashColor: AppColors.blue,
-                                              lineLength: 50,
-                                              dashLength: 2,
-                                              dashGapLength: 2,
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Order Confirmed',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            // Text(
-                                            //   e.OrderConfirmedTime
-                                            //       .toString(),
-                                            //   style: TextStyle(
-                                            //       color: AppColors.n_black),
-                                            // ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Column(
-                                          children: [
-                                            Icon(
-                                              Icons.circle,
-                                              color: AppColors.bluetone,
-                                              size: 18,
-                                            ),
-                                            const DottedLine(
-                                              direction: Axis.vertical,
-                                              dashColor: AppColors.blue,
-                                              lineLength: 50,
-                                              dashLength: 2,
-                                              dashGapLength: 2,
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(width: 8),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Preparing',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Text(
-                                              e.prepareMin.toString(),
-                                              style: TextStyle(
-                                                  color: AppColors.n_black),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
+                                            ],
+                                          )
+                                        : Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Column(
+                                                children: [
+                                                  Icon(
+                                                    Icons.circle,
+                                                    color: AppColors.bluetone,
+                                                    size: 18,
+                                                  ),
+                                                  const DottedLine(
+                                                    direction: Axis.vertical,
+                                                    dashColor: AppColors.blue,
+                                                    lineLength: 50,
+                                                    dashLength: 2,
+                                                    dashGapLength: 2,
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(width: 8),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Order Confirmed',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  // Text(
+                                                  //   e.OrderConfirmedTime
+                                                  //       .toString(),
+                                                  //   style: TextStyle(
+                                                  //       color: AppColors.n_black),
+                                                  // ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                    status != 'Ready to Pickup'
+                                        ? Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Column(
+                                                children: [
+                                                  Icon(
+                                                    Icons.circle,
+                                                    color: AppColors.bluetone,
+                                                    size: 18,
+                                                  ),
+                                                  const DottedLine(
+                                                    direction: Axis.vertical,
+                                                    dashColor: AppColors.blue,
+                                                    lineLength: 50,
+                                                    dashLength: 2,
+                                                    dashGapLength: 2,
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(width: 8),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Preparing',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  if (e.prepareMin != 0)
+                                                    Text(
+                                                      "${e.prepareMin.toString()} Mins",
+                                                      style: TextStyle(
+                                                          color: AppColors
+                                                              .n_black),
+                                                    ),
+                                                ],
+                                              ),
+                                            ],
+                                          )
+                                        : Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Column(
+                                                children: [
+                                                  Container(
+                                                    width: 20,
+                                                    height: 20,
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      border: Border.all(
+                                                        color: AppColors.blue,
+                                                        width: 3,
+                                                      ),
+                                                    ),
+                                                    child: const Center(
+                                                      child: Icon(
+                                                        Icons.circle,
+                                                        color: AppColors.blue,
+                                                        size: 12,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const DottedLine(
+                                                    direction: Axis.vertical,
+                                                    dashColor: AppColors.blue,
+                                                    lineLength: 50,
+                                                    dashLength: 2,
+                                                    dashGapLength: 2,
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(width: 8),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Preparing',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  if (e.prepareMin != 0)
+                                                    Text(
+                                                      "${e.prepareMin.toString()} Mins",
+                                                      style: TextStyle(
+                                                          color: AppColors
+                                                              .n_black),
+                                                    ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
                                     Row(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -473,11 +599,11 @@ class _MyorderPageState extends State<MyorderPage>
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold),
                                             ),
-                                            Text(
-                                              e.prepareMin.toString(),
-                                              style: TextStyle(
-                                                  color: AppColors.n_black),
-                                            ),
+                                            // Text(
+                                            //   e.prepareMin.toString(),
+                                            //   style: TextStyle(
+                                            //       color: AppColors.n_black),
+                                            // ),
                                           ],
                                         ),
                                       ],
@@ -498,7 +624,8 @@ class _MyorderPageState extends State<MyorderPage>
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  OrderPreviewPage(),
+                                                  OrderPreviewPage(
+                                                      orderid: e.id),
                                             ),
                                           );
                                         },
@@ -521,34 +648,35 @@ class _MyorderPageState extends State<MyorderPage>
                                     SizedBox(
                                       width: 8,
                                     ),
-                                    Expanded(
-                                      flex: 2,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  CancelBookingPage(),
+                                    if (status == 'Order Placed')
+                                      Expanded(
+                                        flex: 2,
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        CancelBookingPage(
+                                                          cancelId: e.id,
+                                                        ))).then((value) {});
+                                          },
+                                          child: Text(
+                                            'Order Cancel',
+                                            style: TextStyle(
+                                                color: AppColors.red,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          style: ElevatedButton.styleFrom(
+                                            shape: RoundedRectangleBorder(
+                                              side: BorderSide(
+                                                  color: AppColors.red),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                             ),
-                                          );
-                                        },
-                                        child: Text(
-                                          'Order Cancel',
-                                          style: TextStyle(
-                                              color: AppColors.red,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        style: ElevatedButton.styleFrom(
-                                          shape: RoundedRectangleBorder(
-                                            side: BorderSide(
-                                                color: AppColors.red),
-                                            borderRadius:
-                                                BorderRadius.circular(8),
                                           ),
                                         ),
                                       ),
-                                    ),
                                   ],
                                 ),
                               ),
@@ -563,26 +691,65 @@ class _MyorderPageState extends State<MyorderPage>
                       margin: EdgeInsets.all(0),
                       child: Column(children: [
                         ListTile(
-                          leading: getStatusIcon(status),
-                          title: HeadingWidget(
-                              title: 'Order ID#${e.invoiceNumber.toString()}'),
-                          subtitle: Row(
-                            children: [
-                              SubHeadingWidget(
-                                title: "",
-                                color: AppColors.n_black,
-                              ),
-                              SizedBox(width: 10),
-                              Icon(Icons.circle,
-                                  size: 11, color: circleColor(status)),
-                              SizedBox(width: 5),
-                              SubHeadingWidget(
-                                title: status,
-                                color: AppColors.n_black,
-                              ),
-                            ],
-                          ),
-                        ),
+                            leading: getStatusIcon(status),
+                            title: HeadingWidget(
+                                title:
+                                    'Order ID#${e.invoiceNumber.toString()}'),
+                            subtitle: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    SubHeadingWidget(
+                                      title:
+                                          '${e.totalProduct.toString()} Items',
+                                      color: AppColors.n_black,
+                                    ),
+                                    SizedBox(width: 10),
+                                    e.orderStatus == "Cancelled"
+                                        ? Icon(
+                                            Icons.circle,
+                                            size: 11,
+                                            color: circlecolor,
+                                          )
+                                        : Icon(
+                                            Icons.circle,
+                                            size: 11,
+                                            color: circlecolor,
+                                          ),
+                                    SizedBox(width: 5),
+                                    SubHeadingWidget(
+                                      title: status,
+                                      color: AppColors.n_black,
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    SubHeadingWidget(
+                                      title: "Date : ",
+                                      color: AppColors.n_black,
+                                    ),
+                                    SubHeadingWidget(
+                                      title: formattedDate,
+                                      color: AppColors.n_black,
+                                    ),
+                                  ],
+                                ),
+                                if (status != 'Cancelled')
+                                  Row(
+                                    children: [
+                                      SubHeadingWidget(
+                                        title: "Delivery Code : ",
+                                        color: AppColors.n_black,
+                                      ),
+                                      SubHeadingWidget(
+                                        title: e.code,
+                                        color: AppColors.n_black,
+                                      ),
+                                    ],
+                                  )
+                              ],
+                            )),
                         Padding(
                           padding: EdgeInsets.symmetric(
                               horizontal: 18, vertical: 18),
@@ -605,7 +772,8 @@ class _MyorderPageState extends State<MyorderPage>
                                               context,
                                               MaterialPageRoute(
                                                 builder: (context) =>
-                                                    OrderPreviewPage(),
+                                                    OrderPreviewPage(
+                                                        orderid: e.id),
                                               ),
                                             );
                                           },

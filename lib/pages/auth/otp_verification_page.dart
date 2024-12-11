@@ -9,6 +9,7 @@ import '../../services/comFuncService.dart';
 import '../../services/nam_food_api_service.dart';
 import '../../widgets/sub_heading_widget.dart';
 import '../HomeScreen/home_screen.dart';
+import '../address/address_list_model.dart';
 import '../address/fillyour_addresspage.dart';
 import '../cart/cart_page.dart';
 import '../maincontainer.dart';
@@ -27,11 +28,10 @@ class OtpVerificationPage extends StatefulWidget {
 }
 
 class _OtpVerificationPageState extends State<OtpVerificationPage> {
-
   final NamFoodApiService apiService = NamFoodApiService();
   final List<TextEditingController> _otpControllers =
       List.generate(6, (_) => TextEditingController());
-      
+
   TextEditingController otpCtrl = TextEditingController();
 
   final GlobalKey<FormState> loginForm = GlobalKey<FormState>();
@@ -99,7 +99,67 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
         otpCtrl.text = "";
       });
 
-        login();
+      login();
+    }
+  }
+
+  // myprofile
+  List<AddressList> myprofilepage = [];
+  List<AddressList> myprofilepageAll = [];
+  bool isLoading = false;
+
+  String? auth;
+
+  Future getalladdressList() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      var result = await apiService.getloginalladdressList(auth);
+      var response = addressListmodelFromJson(result);
+      if (response.status.toString() == 'SUCCESS') {
+        setState(() {
+          myprofilepage = response.list;
+          myprofilepageAll = myprofilepage;
+          isLoading = false;
+        });
+        // if (loginStatus == true) {
+        Navigator.pushNamedAndRemoveUntil(
+            context, '/home', ModalRoute.withName('/home'));
+        // } else {
+        //   Navigator.pushNamedAndRemoveUntil(
+        //       context, '/login', ModalRoute.withName('/login'));
+        // }
+      } else {
+        setState(() {
+          myprofilepage = [];
+          myprofilepageAll = [];
+          isLoading = false;
+        });
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => FillyourAddresspage(),
+          ),
+        );
+        // showInSnackBar(context, response.message.toString());
+        print(response.message.toString());
+      }
+    } catch (e) {
+      setState(() {
+        myprofilepage = [];
+        myprofilepageAll = [];
+        isLoading = false;
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => FillyourAddresspage(),
+          ),
+        );
+      });
+      // showInSnackBar(context, 'Error occurred: $e');
+      print('Error occurred: $e');
     }
   }
 
@@ -112,7 +172,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
         Map<String, dynamic> postData = {
           'mobile': widget.phoneNumber,
           'otp': otpCtrl.text,
-          "mobile_push_id":""
+          "mobile_push_id": ""
         };
         var result = await apiService.userLoginWithOtp(postData);
         LoginOtpModel response = loginOtpModelFromJson(result);
@@ -126,12 +186,32 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
             //Navigator.pushNamed(context, '/');
             prefs.setString('auth_token', response.authToken ?? '');
             prefs.setBool('isLoggedin', true);
-             Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => FillyourAddresspage(),
-                        ),
-                      );
+            auth = response.authToken ?? '';
+            getalladdressList();
+
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (context) => login_management_byaddresspage(),
+            //   ),
+            // );
+
+            // getalladdressList();
+            // if (myprofilepage == null) {
+            //   Navigator.push(
+            //     context,
+            //     MaterialPageRoute(
+            //       builder: (context) => MainContainer(),
+            //     ),
+            //   );
+            // } else {
+            //   Navigator.push(
+            //     context,
+            //     MaterialPageRoute(
+            //       builder: (context) => FillyourAddresspage(),
+            //     ),
+            //   );
+            // }
           }
         } else {
           showInSnackBar(context, response.message.toString());
@@ -288,8 +368,8 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                       //     builder: (context) => MainContainer(),
                       //   ),
                       // );
-                     
-                       login();
+
+                      login();
                       print(
                           'OTP entered: ${_otpControllers.map((c) => c.text).join()}');
                     },
