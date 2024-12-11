@@ -368,19 +368,12 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
         Placemark place = placemarks.first;
         print(place);
         setState(() {
-          address1Controller.text = (place.street ?? "").toString();
-          // address2Controller.text = (place.locality ?? "").toString();
+          address1Controller.text = (place.name ?? "").toString();
+          address2Controller.text = (place.street ?? "").toString();
           lankmarkController.text = (place.subLocality ?? "").toString();
           cityController.text = (place.locality ?? "").toString();
           stateController.text = (place.administrativeArea ?? "").toString();
           postController.text = (place.postalCode ?? "").toString();
-
-          address1Controller.text = addressDetails!.address ?? '';
-          address2Controller.text = addressDetails!.addressLine2 ?? '';
-          cityController.text = addressDetails!.city ?? '';
-          stateController.text = addressDetails!.state ?? '';
-          postController.text = (addressDetails!.postcode ?? '').toString();
-          lankmarkController.text = addressDetails!.landmark ?? '';
 
           address =
               "${place.street}, ${place.locality}, ${place.subLocality} ${place.administrativeArea}, ${place.postalCode}, ${place.country}";
