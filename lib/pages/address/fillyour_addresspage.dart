@@ -17,6 +17,9 @@ import 'addaddress_model.dart';
 import 'address_edit_model.dart';
 import 'address_update_model.dart';
 import 'addresspage.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 // import 'package:geocoding/geocoding.dart';
 // import 'package:geolocator/geolocator.dart';
@@ -311,6 +314,90 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
     }
   }
 
+  late GoogleMapController _mapController;
+  LatLng _initialPosition =
+      LatLng(37.7749, -122.4194); // Default: San Francisco
+  late LatLng _currentPosition = _initialPosition;
+  String address = "";
+  Future<void> _getCurrentLocation() async {
+    // Check and request permission
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      await Geolocator.openLocationSettings();
+      return Future.error('Location services are disabled.');
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied.');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permanently denied. Enable them in settings.');
+    }
+
+    // Get current location
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    setState(() {
+      _currentPosition = LatLng(position.latitude, position.longitude);
+      _initialPosition = _currentPosition;
+
+      _getAddressFromLatLng(position.latitude, position.longitude);
+    });
+
+    // Move camera to the current position
+    _mapController.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(target: _currentPosition, zoom: 14.0),
+      ),
+    );
+  }
+
+  Future<void> _getAddressFromLatLng(double latitude, double longitude) async {
+    try {
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(latitude, longitude);
+
+      if (placemarks.isNotEmpty) {
+        Placemark place = placemarks.first;
+        print(place);
+        setState(() {
+          address1Controller.text = (place.street ?? "").toString();
+          // address2Controller.text = (place.locality ?? "").toString();
+          lankmarkController.text = (place.subLocality ?? "").toString();
+          cityController.text = (place.locality ?? "").toString();
+          stateController.text = (place.administrativeArea ?? "").toString();
+          postController.text = (place.postalCode ?? "").toString();
+
+          address1Controller.text = addressDetails!.address ?? '';
+          address2Controller.text = addressDetails!.addressLine2 ?? '';
+          cityController.text = addressDetails!.city ?? '';
+          stateController.text = addressDetails!.state ?? '';
+          postController.text = (addressDetails!.postcode ?? '').toString();
+          lankmarkController.text = addressDetails!.landmark ?? '';
+
+          address =
+              "${place.street}, ${place.locality}, ${place.subLocality} ${place.administrativeArea}, ${place.postalCode}, ${place.country}";
+        });
+      }
+    } catch (e) {
+      print("Error getting address: $e");
+    }
+  }
+
+  void _onMapTap(LatLng position) {
+    setState(() {
+      _currentPosition = position;
+    });
+    _getAddressFromLatLng(position.latitude, position.longitude);
+  }
+
   // Future<void> updateaddress() async {
   //   await apiService.getBearerToken();
   //   if (addressForm.currentState!.validate()) {
@@ -457,6 +544,35 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                //new map
+                // SizedBox(
+                //   width: 500.0,
+                //   height: 500.0,
+                //   child: GoogleMap(
+                //     onMapCreated: (controller) => _mapController = controller,
+                //     initialCameraPosition: CameraPosition(
+                //       target: _initialPosition,
+                //       zoom: 11.0,
+                //     ),
+                //     onTap: _onMapTap, // Detect map clicks
+                //     markers: {
+                //       Marker(
+                //         markerId: MarkerId("selectedLocation"),
+                //         position: _currentPosition,
+                //       ),
+                //     },
+                //     myLocationEnabled: false,
+                //     myLocationButtonEnabled: false,
+                //     gestureRecognizers: Set()
+                //       ..add(
+                //         Factory<OneSequenceGestureRecognizer>(
+                //           () => EagerGestureRecognizer(),
+                //         ),
+                //       ),
+                //     // Custom button instead
+                //   ),
+                // ),
+
                 GestureDetector(
                     onTap: () {
                       setState(() {
@@ -470,6 +586,11 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
                       iconColor: AppColors.red,
                       title: "Locate me automatically",
                       height: 50,
+                      onTap: () {
+                        setState(() {
+                          _getCurrentLocation();
+                        });
+                      },
                     )),
                 SizedBox(height: 15),
                 Row(
