@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:namfood/constants/app_colors.dart';
+import 'package:namfood/pages/address/address_list_model.dart';
+import 'package:namfood/pages/address/fillyour_addresspage.dart';
 import 'package:namfood/pages/maincontainer.dart';
 import 'package:namfood/services/nam_food_api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -50,6 +52,7 @@ class _LoginPageState extends State<LoginPage> {
                 prefs.setString('auth_token', response.authToken ?? '');
                 prefs.setBool('isLoggedin', true);
                 auth = response.authToken ?? '';
+                getalladdressList();
 
                 Navigator.push(
                   context,
@@ -88,6 +91,63 @@ class _LoginPageState extends State<LoginPage> {
       }
     } catch (error) {
       //  showInSnackBar(context, error.toString());
+    }
+  }
+
+  List<AddressList> myprofilepage = [];
+  List<AddressList> myprofilepageAll = [];
+  bool isLoading = false;
+
+  Future getalladdressList() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      var result = await apiService.getloginalladdressList(auth);
+      var response = addressListmodelFromJson(result);
+      if (response.status.toString() == 'SUCCESS') {
+        setState(() {
+          myprofilepage = response.list;
+          myprofilepageAll = myprofilepage;
+          isLoading = false;
+        });
+        // if (loginStatus == true) {
+        Navigator.pushNamedAndRemoveUntil(
+            context, '/home', ModalRoute.withName('/home'));
+        // } else {
+        //   Navigator.pushNamedAndRemoveUntil(
+        //       context, '/login', ModalRoute.withName('/login'));
+        // }
+      } else {
+        setState(() {
+          myprofilepage = [];
+          myprofilepageAll = [];
+          isLoading = false;
+        });
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => FillyourAddresspage(),
+          ),
+        );
+        // showInSnackBar(context, response.message.toString());
+        print(response.message.toString());
+      }
+    } catch (e) {
+      setState(() {
+        myprofilepage = [];
+        myprofilepageAll = [];
+        isLoading = false;
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => FillyourAddresspage(),
+          ),
+        );
+      });
+      // showInSnackBar(context, 'Error occurred: $e');
+      print('Error occurred: $e');
     }
   }
 
