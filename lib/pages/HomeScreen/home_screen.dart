@@ -14,7 +14,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 
 import '../../widgets/slider_ad_widget.dart';
 import '../../widgets/svgiconButtonWidget.dart';
-
+import 'package:shimmer/shimmer.dart';
 import '../address/address_list_model.dart';
 import '../address/addresspage.dart';
 import '../cart/cart_page.dart';
@@ -131,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
-    getalladdressList();
+
     gethomecarousel();
     getdashbordlist();
     getlocationpopup();
@@ -476,6 +476,7 @@ class _HomeScreenState extends State<HomeScreen>
   String? defaultAddress2String;
   String? defaultpostcodeString;
   bool isLoadingaddress = false;
+
   Future getalladdressList() async {
     setState(() {
       isLoadingaddress = true;
@@ -544,6 +545,52 @@ class _HomeScreenState extends State<HomeScreen>
 
   AddressList? selectedAddress;
 
+  Widget _buildShimmerPlaceholder() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey.shade300,
+        highlightColor: Colors.grey.shade100,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(13), // Add border radius
+              child: Container(
+                width: double.infinity,
+                height: 183,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShimmerPlaceholder1() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey.shade300,
+        highlightColor: Colors.grey.shade100,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(13), // Add border radius
+              child: Container(
+                width: double.infinity,
+                height: 83,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenHeight = MediaQuery.of(context).size.height;
@@ -579,55 +626,60 @@ class _HomeScreenState extends State<HomeScreen>
                             child: Image.asset(AppAssets.map_icon)),
                         SizedBox(width: 8),
                         if (myprofilepage.length > 0)
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              isLoadingaddress
-                                  ? Center(child: CircularProgressIndicator())
-                                  : myprofilepage.isEmpty
-                                      ? Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                              Text(
-                                                'Current location',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Text(
-                                                    "No.132 St, New York",
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 18,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
+                          isLoading
+                              ? ListView.builder(
+                                  itemCount: 5,
+                                  itemBuilder: (context, index) {
+                                    return _buildShimmerPlaceholder1();
+                                  },
+                                )
+                              : Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    myprofilepage.isEmpty
+                                        ? Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                                Text(
+                                                  'Current location',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 14,
                                                   ),
-                                                  // Icon(Icons.arrow_drop_down,
-                                                  //     color: Colors.white),
-                                                ],
-                                              )
-                                            ])
-                                      : Text(
-                                          'Delivery location',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 14,
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      "No.132 St, New York",
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    // Icon(Icons.arrow_drop_down,
+                                                    //     color: Colors.white),
+                                                  ],
+                                                )
+                                              ])
+                                        : Text(
+                                            'Delivery location',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 14,
+                                            ),
                                           ),
-                                        ),
-                              Text(
-                                "$defaultAddressString$defaultAddress2String$defaultcityString$defaultlandmarkString$defaultstateString",
-                                style: TextStyle(
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white),
-                              ),
-                            ],
-                          ),
+                                    Text(
+                                      "$defaultAddressString$defaultAddress2String$defaultcityString$defaultlandmarkString$defaultstateString",
+                                      style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                    ),
+                                  ],
+                                ),
                       ],
                     ),
                   ),
@@ -668,362 +720,379 @@ class _HomeScreenState extends State<HomeScreen>
             ],
           ),
         ),
-        body: isLoading
-            ? Center(child: CircularProgressIndicator())
-            : Column(children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                      child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(21, 23, 21, 15),
-                        child: Column(
-                          children: [
-                            // if (carouselpage.isNotEmpty)
-                            //   CarouselSlider.builder(
-                            //     itemCount: carouselpage.length,
-                            //     itemBuilder: (BuildContext context, int itemIndex,
-                            //         int pageViewIndex) {
-                            //       final e = carouselpage[itemIndex];
-                            //       return ClipRRect(
-                            //                               borderRadius:
-                            //                                   BorderRadius.circular(10),
-                            //                               child: Image.network(
-                            //                                 AppConstants.imgBaseUrl +
-                            //                                     e.imageUrl,
-                            //                                 width: double.infinity,
-                            //                                 fit: BoxFit.fill,
-                            //                                 height: 60.0,
-                            //                                 // height: 100.0,
-                            //                                 errorBuilder:
-                            //                                     (BuildContext context,
-                            //                                         Object exception,
-                            //                                         StackTrace?
-                            //                                             stackTrace) {
-                            //                                   return Image.asset(
-                            //                                       AppAssets.logo,
-                            //                                       width: 30.0,
-                            //                                       height: 50.0,
-                            //                                       fit: BoxFit.cover);
-                            //                                 },
-                            //                               ),
-                            //                             );
-                            //     },
-                            //     options: CarouselOptions(
-                            //       autoPlay: true,
-                            //       enlargeCenterPage: true,
-                            //       aspectRatio: 13.2 / 6,
-                            //       viewportFraction: 1.0,
-                            //       onPageChanged: (index, reason) {
-                            //         setState(() {
-                            //           currentIndex = index;
-                            //         });
-                            //       },
-                            //     ),
-                            //   ),
-                            // SizedBox(height: 16),
-                            // if (carouselpage
-                            //     .isNotEmpty) // Show DotsIndicator only if list is not empty
-                            //   DotsIndicator(
-                            //     dotsCount: carouselpage.length,
-                            //     position: currentIndex,
-                            //     decorator: DotsDecorator(
-                            //       color: const Color.fromARGB(255, 216, 216, 216),
-                            //       activeColor: Color(0xFFE23744),
-                            //       size: const Size.square(8.0),
-                            //       activeSize: const Size(12.0, 8.0),
-                            //       activeShape: RoundedRectangleBorder(
-                            //         borderRadius: BorderRadius.circular(5.0),
-                            //       ),
-                            //     ),
-                            //   ),
-                            if (carouselpage != null)
-                              if (carouselpage.isNotEmpty)
-                                SliderAdWidget(adList: carouselpage),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(21, 0, 0, 5),
-                        child: HeadingWidget(
-                          title: "Restaurant Explore",
-                          fontSize: 17.0,
-                        ),
-                      ),
-                      ListView.builder(
-                        itemCount: dashlistpage.length,
-                        shrinkWrap:
-                            true, // Let the list take only as much space as needed
-                        physics:
-                            NeverScrollableScrollPhysics(), // Disable scrolling for ListView
-                        itemBuilder: (context, index) {
-                          final e = dashlistpage[index];
-                          return Padding(
-                              padding: const EdgeInsets.fromLTRB(15, 0, 18, 5),
-                              child: e.storeStatus == 1
-                                  ? Container(
-                                      margin: EdgeInsets.only(bottom: 16),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(12),
-                                        border: Border.all(
-                                          color: Color(0xFFEEEEEE),
-                                          width: 0.2,
-                                        ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Color.fromARGB(
-                                                    255, 196, 195, 195)
-                                                .withOpacity(0.2),
-                                            spreadRadius: 2,
-                                            blurRadius: 4,
-                                            offset: Offset(0, 2),
-                                          ),
-                                        ],
-                                      ),
-                                      child: GestureDetector(
-                                          onTap: () {
-                                            _navigateToMenus(e.storeId);
-                                            // Navigator.push(
-                                            //   context,
-                                            //   MaterialPageRoute(
-                                            //     builder: (context) => StorePage(),
-                                            //   ),
-                                            // );
-                                          },
-                                          child: Card(
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
+        body:
+            // isLoading
+            //     ? Center(child: CircularProgressIndicator())
+            //     :
+
+            isLoading
+                ? ListView.builder(
+                    itemCount: 5,
+                    itemBuilder: (context, index) {
+                      return _buildShimmerPlaceholder();
+                    },
+                  )
+                : Column(children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                          child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(21, 23, 21, 15),
+                            child: Column(
+                              children: [
+                                // if (carouselpage.isNotEmpty)
+                                //   CarouselSlider.builder(
+                                //     itemCount: carouselpage.length,
+                                //     itemBuilder: (BuildContext context, int itemIndex,
+                                //         int pageViewIndex) {
+                                //       final e = carouselpage[itemIndex];
+                                //       return ClipRRect(
+                                //                               borderRadius:
+                                //                                   BorderRadius.circular(10),
+                                //                               child: Image.network(
+                                //                                 AppConstants.imgBaseUrl +
+                                //                                     e.imageUrl,
+                                //                                 width: double.infinity,
+                                //                                 fit: BoxFit.fill,
+                                //                                 height: 60.0,
+                                //                                 // height: 100.0,
+                                //                                 errorBuilder:
+                                //                                     (BuildContext context,
+                                //                                         Object exception,
+                                //                                         StackTrace?
+                                //                                             stackTrace) {
+                                //                                   return Image.asset(
+                                //                                       AppAssets.logo,
+                                //                                       width: 30.0,
+                                //                                       height: 50.0,
+                                //                                       fit: BoxFit.cover);
+                                //                                 },
+                                //                               ),
+                                //                             );
+                                //     },
+                                //     options: CarouselOptions(
+                                //       autoPlay: true,
+                                //       enlargeCenterPage: true,
+                                //       aspectRatio: 13.2 / 6,
+                                //       viewportFraction: 1.0,
+                                //       onPageChanged: (index, reason) {
+                                //         setState(() {
+                                //           currentIndex = index;
+                                //         });
+                                //       },
+                                //     ),
+                                //   ),
+                                // SizedBox(height: 16),
+                                // if (carouselpage
+                                //     .isNotEmpty) // Show DotsIndicator only if list is not empty
+                                //   DotsIndicator(
+                                //     dotsCount: carouselpage.length,
+                                //     position: currentIndex,
+                                //     decorator: DotsDecorator(
+                                //       color: const Color.fromARGB(255, 216, 216, 216),
+                                //       activeColor: Color(0xFFE23744),
+                                //       size: const Size.square(8.0),
+                                //       activeSize: const Size(12.0, 8.0),
+                                //       activeShape: RoundedRectangleBorder(
+                                //         borderRadius: BorderRadius.circular(5.0),
+                                //       ),
+                                //     ),
+                                //   ),
+                                if (carouselpage != null)
+                                  if (carouselpage.isNotEmpty)
+                                    SliderAdWidget(adList: carouselpage),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(21, 0, 0, 5),
+                            child: HeadingWidget(
+                              title: "Restaurant Explore",
+                              fontSize: 17.0,
+                            ),
+                          ),
+                          ListView.builder(
+                            itemCount: dashlistpage.length,
+                            shrinkWrap:
+                                true, // Let the list take only as much space as needed
+                            physics:
+                                NeverScrollableScrollPhysics(), // Disable scrolling for ListView
+                            itemBuilder: (context, index) {
+                              final e = dashlistpage[index];
+                              return Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(15, 0, 18, 5),
+                                  child: e.storeStatus == 1
+                                      ? Container(
+                                          margin: EdgeInsets.only(bottom: 16),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            border: Border.all(
+                                              color: Color(0xFFEEEEEE),
+                                              width: 0.2,
                                             ),
-                                            elevation: 0,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Stack(
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Color.fromARGB(
+                                                        255, 196, 195, 195)
+                                                    .withOpacity(0.2),
+                                                spreadRadius: 2,
+                                                blurRadius: 4,
+                                                offset: Offset(0, 2),
+                                              ),
+                                            ],
+                                          ),
+                                          child: GestureDetector(
+                                              onTap: () {
+                                                _navigateToMenus(e.storeId);
+                                                // Navigator.push(
+                                                //   context,
+                                                //   MaterialPageRoute(
+                                                //     builder: (context) => StorePage(),
+                                                //   ),
+                                                // );
+                                              },
+                                              child: Card(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                                elevation: 0,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
-                                                    e.frontImg == null
-                                                        ? ClipRRect(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        12),
-                                                            child: Image.asset(
-                                                              AppAssets.foodimg,
-                                                              height: 150,
-                                                              width: double
-                                                                  .infinity,
-                                                              fit: BoxFit.cover,
-                                                            ),
-                                                          )
-                                                        : ClipRRect(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        12),
-                                                            child:
-                                                                Image.network(
-                                                              AppConstants
-                                                                      .imgBaseUrl +
-                                                                  e.frontImg
-                                                                      .toString(),
-                                                              height: 150,
-                                                              width: double
-                                                                  .infinity,
-                                                              fit: BoxFit.cover,
-                                                            ),
-                                                          ),
-                                                    // Positioned(
-                                                    //   child: Container(
-                                                    //     padding: EdgeInsets.symmetric(
-                                                    //         horizontal: 7, vertical: 4),
-                                                    //     decoration: BoxDecoration(
-                                                    //       color: Colors.white,
-                                                    //       borderRadius: BorderRadius.only(
-                                                    //           bottomRight:
-                                                    //               Radius.circular(10),
-                                                    //           topLeft: Radius.circular(10)),
-                                                    //     ),
-                                                    //     child: Row(
-                                                    //       mainAxisSize: MainAxisSize.min,
-                                                    //       children: [
-                                                    //         e.type == "Non-Veg"
-                                                    //             ? Image.asset(
-                                                    //                 AppAssets.nonveg_icon,
-                                                    //                 width: 14,
-                                                    //                 height: 14)
-                                                    //             : Image.asset(
-                                                    //                 AppAssets.veg_icon,
-                                                    //                 width: 14,
-                                                    //                 height: 14),
-                                                    //         SizedBox(width: 4),
-                                                    //         HeadingWidget(
-                                                    //           title: e.type,
-                                                    //           color: e.type == "Non-Veg"
-                                                    //               ? Color(0xFFEF4848)
-                                                    //               : Colors.green,
-                                                    //           fontSize: 11.0,
-                                                    //           fontWeight: FontWeight.bold,
-                                                    //         ),
-                                                    //       ],
-                                                    //     ),
-                                                    //   ),
-                                                    // ),
-                                                    // Positioned(
-                                                    //   top: 8,
-                                                    //   right: 8,
-                                                    //   child: Icon(
-                                                    //       Icons.favorite_border,
-                                                    //       color: Colors.white),
-                                                    // ),
-                                                    // Positioned(
-                                                    //   bottom: 8,
-                                                    //   left: 8,
+                                                    Stack(
+                                                      children: [
+                                                        e.frontImg == null
+                                                            ? ClipRRect(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            12),
+                                                                child:
+                                                                    Image.asset(
+                                                                  AppAssets
+                                                                      .foodimg,
+                                                                  height: 150,
+                                                                  width: double
+                                                                      .infinity,
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                ),
+                                                              )
+                                                            : ClipRRect(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            12),
+                                                                child: Image
+                                                                    .network(
+                                                                  AppConstants
+                                                                          .imgBaseUrl +
+                                                                      e.frontImg
+                                                                          .toString(),
+                                                                  height: 150,
+                                                                  width: double
+                                                                      .infinity,
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                ),
+                                                              ),
+                                                        // Positioned(
+                                                        //   child: Container(
+                                                        //     padding: EdgeInsets.symmetric(
+                                                        //         horizontal: 7, vertical: 4),
+                                                        //     decoration: BoxDecoration(
+                                                        //       color: Colors.white,
+                                                        //       borderRadius: BorderRadius.only(
+                                                        //           bottomRight:
+                                                        //               Radius.circular(10),
+                                                        //           topLeft: Radius.circular(10)),
+                                                        //     ),
+                                                        //     child: Row(
+                                                        //       mainAxisSize: MainAxisSize.min,
+                                                        //       children: [
+                                                        //         e.type == "Non-Veg"
+                                                        //             ? Image.asset(
+                                                        //                 AppAssets.nonveg_icon,
+                                                        //                 width: 14,
+                                                        //                 height: 14)
+                                                        //             : Image.asset(
+                                                        //                 AppAssets.veg_icon,
+                                                        //                 width: 14,
+                                                        //                 height: 14),
+                                                        //         SizedBox(width: 4),
+                                                        //         HeadingWidget(
+                                                        //           title: e.type,
+                                                        //           color: e.type == "Non-Veg"
+                                                        //               ? Color(0xFFEF4848)
+                                                        //               : Colors.green,
+                                                        //           fontSize: 11.0,
+                                                        //           fontWeight: FontWeight.bold,
+                                                        //         ),
+                                                        //       ],
+                                                        //     ),
+                                                        //   ),
+                                                        // ),
+                                                        // Positioned(
+                                                        //   top: 8,
+                                                        //   right: 8,
+                                                        //   child: Icon(
+                                                        //       Icons.favorite_border,
+                                                        //       color: Colors.white),
+                                                        // ),
+                                                        // Positioned(
+                                                        //   bottom: 8,
+                                                        //   left: 8,
+                                                        //   child: Row(
+                                                        //     children: [
+                                                        //       Column(
+                                                        //         crossAxisAlignment:
+                                                        //             CrossAxisAlignment
+                                                        //                 .start,
+                                                        //         children: [
+                                                        //           HeadingWidget(
+                                                        //             title: e.name
+                                                        //                 .toString(),
+                                                        //             //  'Grill Chicken Arabian \nRestaurant',
+                                                        //             fontSize: 16.0,
+                                                        //             fontWeight:
+                                                        //                 FontWeight
+                                                        //                     .bold,
+                                                        //             color: Colors
+                                                        //                 .white,
+                                                        //           ),
+                                                        //         ],
+                                                        //       ),
+                                                        //     ],
+                                                        //   ),
+                                                        // ),
+                                                        // Positioned(
+                                                        //   bottom: 21,
+                                                        //   right: 12,
+                                                        //   child: Container(
+                                                        //     padding: EdgeInsets
+                                                        //         .symmetric(
+                                                        //             horizontal: 8),
+                                                        //     height: 30,
+                                                        //     decoration:
+                                                        //         BoxDecoration(
+                                                        //       color:
+                                                        //           Color(0xFFE23744),
+                                                        //       borderRadius:
+                                                        //           BorderRadius
+                                                        //               .circular(16),
+                                                        //     ),
+                                                        //     child: Row(
+                                                        //       children: [
+                                                        //         Icon(Icons.star,
+                                                        //             color: Colors
+                                                        //                 .white,
+                                                        //             size: 16),
+                                                        //         SizedBox(width: 4),
+                                                        //         SubHeadingWidget(
+                                                        //             title: ' 4.5 ',
+                                                        //             color: Colors
+                                                        //                 .white),
+                                                        //       ],
+                                                        //     ),
+                                                        //   ),
+                                                        // ),
+                                                      ],
+                                                    ),
+                                                    Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              HeadingWidget(
+                                                                title: e.name
+                                                                    .toString(), //'40% Off ,
+                                                                color: Colors
+                                                                    .black87,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 18.00,
+                                                              ),
+                                                              SubHeadingWidget(
+                                                                title:
+                                                                    "${e.address.toString()}, ${e.city.toString()}, ${e.state.toString()},", //'40% Off ,
+                                                                color: Colors
+                                                                    .black87,
+                                                              ),
+                                                              SubHeadingWidget(
+                                                                title:
+                                                                    "${e.zipcode.toString()}.", //'40% Off ,
+                                                                color: Colors
+                                                                    .black87,
+                                                              ),
+                                                            ])),
+                                                    // Padding(
+                                                    //   padding:
+                                                    //       const EdgeInsets.all(8.0),
                                                     //   child: Row(
+                                                    //     mainAxisAlignment:
+                                                    //         MainAxisAlignment
+                                                    //             .spaceBetween,
                                                     //     children: [
-                                                    //       Column(
-                                                    //         crossAxisAlignment:
-                                                    //             CrossAxisAlignment
-                                                    //                 .start,
+                                                    //       Row(
                                                     //         children: [
-                                                    //           HeadingWidget(
-                                                    //             title: e.name
-                                                    //                 .toString(),
-                                                    //             //  'Grill Chicken Arabian \nRestaurant',
-                                                    //             fontSize: 16.0,
-                                                    //             fontWeight:
-                                                    //                 FontWeight
-                                                    //                     .bold,
-                                                    //             color: Colors
-                                                    //                 .white,
-                                                    //           ),
-                                                    //         ],
-                                                    //       ),
-                                                    //     ],
-                                                    //   ),
+                                                    // Image.asset(AppAssets.offerimg),
+                                                    // SizedBox(width: 4),
+                                                    // SubHeadingWidget(
+                                                    //   title:
+                                                    //       "${e.offerpercentage}% off", //'40% Off ,
+                                                    //   color: Colors.black87,
                                                     // ),
-                                                    // Positioned(
-                                                    //   bottom: 21,
-                                                    //   right: 12,
-                                                    //   child: Container(
-                                                    //     padding: EdgeInsets
-                                                    //         .symmetric(
-                                                    //             horizontal: 8),
-                                                    //     height: 30,
-                                                    //     decoration:
-                                                    //         BoxDecoration(
+                                                    // SubHeadingWidget(
+                                                    //   title:
+                                                    //       "-Upto ₹${e.offerupto}", // Upto ₹90',
+                                                    //   color: Colors.black87,
+                                                    // ),
+
+                                                    //     SubHeadingWidget(
+                                                    //       title: e.address
+                                                    //           .toString(), //'40% Off ,
                                                     //       color:
-                                                    //           Color(0xFFE23744),
-                                                    //       borderRadius:
-                                                    //           BorderRadius
-                                                    //               .circular(16),
+                                                    //           Colors.black87,
                                                     //     ),
-                                                    //     child: Row(
-                                                    //       children: [
-                                                    //         Icon(Icons.star,
-                                                    //             color: Colors
-                                                    //                 .white,
-                                                    //             size: 16),
-                                                    //         SizedBox(width: 4),
-                                                    //         SubHeadingWidget(
-                                                    //             title: ' 4.5 ',
-                                                    //             color: Colors
-                                                    //                 .white),
-                                                    //       ],
-                                                    //     ),
+                                                    //   ],
+                                                    // ),
+                                                    // Row(
+                                                    //   children: [
+                                                    //     SubHeadingWidget(
+                                                    //         title:
+                                                    //             " ${e.km} Km - ", //'2.5km',
+                                                    //         color: Colors.black),
+                                                    //     SizedBox(width: 3),
+                                                    //     SubHeadingWidget(
+                                                    //         title: e.time, //'10mins',
+                                                    //         color: Colors.black),
+                                                    //   ],
+                                                    // ),
+                                                    //     ],
                                                     //   ),
                                                     // ),
                                                   ],
                                                 ),
-                                                Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          HeadingWidget(
-                                                            title: e.name
-                                                                .toString(), //'40% Off ,
-                                                            color:
-                                                                Colors.black87,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 18.00,
-                                                          ),
-                                                          SubHeadingWidget(
-                                                            title:
-                                                                "${e.address.toString()}, ${e.city.toString()}, ${e.state.toString()},", //'40% Off ,
-                                                            color:
-                                                                Colors.black87,
-                                                          ),
-                                                          SubHeadingWidget(
-                                                            title:
-                                                                "${e.zipcode.toString()}.", //'40% Off ,
-                                                            color:
-                                                                Colors.black87,
-                                                          ),
-                                                        ])),
-                                                // Padding(
-                                                //   padding:
-                                                //       const EdgeInsets.all(8.0),
-                                                //   child: Row(
-                                                //     mainAxisAlignment:
-                                                //         MainAxisAlignment
-                                                //             .spaceBetween,
-                                                //     children: [
-                                                //       Row(
-                                                //         children: [
-                                                // Image.asset(AppAssets.offerimg),
-                                                // SizedBox(width: 4),
-                                                // SubHeadingWidget(
-                                                //   title:
-                                                //       "${e.offerpercentage}% off", //'40% Off ,
-                                                //   color: Colors.black87,
-                                                // ),
-                                                // SubHeadingWidget(
-                                                //   title:
-                                                //       "-Upto ₹${e.offerupto}", // Upto ₹90',
-                                                //   color: Colors.black87,
-                                                // ),
-
-                                                //     SubHeadingWidget(
-                                                //       title: e.address
-                                                //           .toString(), //'40% Off ,
-                                                //       color:
-                                                //           Colors.black87,
-                                                //     ),
-                                                //   ],
-                                                // ),
-                                                // Row(
-                                                //   children: [
-                                                //     SubHeadingWidget(
-                                                //         title:
-                                                //             " ${e.km} Km - ", //'2.5km',
-                                                //         color: Colors.black),
-                                                //     SizedBox(width: 3),
-                                                //     SubHeadingWidget(
-                                                //         title: e.time, //'10mins',
-                                                //         color: Colors.black),
-                                                //   ],
-                                                // ),
-                                                //     ],
-                                                //   ),
-                                                // ),
-                                              ],
-                                            ),
-                                          )),
-                                    )
-                                  : null);
-                        },
-                      ),
-                    ],
-                  )),
-                )
-              ]),
+                                              )),
+                                        )
+                                      : null);
+                            },
+                          ),
+                        ],
+                      )),
+                    )
+                  ]),
         bottomNavigationBar: cartList.isNotEmpty
             ? BottomAppBar(
                 height: 105.0,
@@ -1261,10 +1330,6 @@ class _HomeScreenState extends State<HomeScreen>
             : null);
   }
 }
-
-
-
-
 
 // import 'package:flutter/material.dart';
 // import 'package:namfood/constants/app_assets.dart';

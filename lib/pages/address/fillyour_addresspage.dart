@@ -175,16 +175,16 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
       ),
     ];
 
-    if (type == 'Other') {
-      fields.insert(
-        0,
-        CustomeTextField(
-          borderColor: AppColors.grey1,
-          labelText: 'Save As',
-          width: MediaQuery.of(context).size.width,
-        ),
-      );
-    }
+    // if (type == 'Other') {
+    //   fields.insert(
+    //     0,
+    //     CustomeTextField(
+    //       borderColor: AppColors.grey1,
+    //       labelText: 'Save As',
+    //       width: MediaQuery.of(context).size.width,
+    //     ),
+    //   );
+    // }
 
     return Column(children: fields);
   }
@@ -196,7 +196,7 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
         "type": _selectedAddressType.toString(),
         "address": address1Controller.text,
         "address_line_2": address2Controller.text,
-        "city": selectedcity,
+        "city": "Trichy", //selectedcity,
         "state": selectedstate,
         "postcode": postController.text,
         "landmark": lankmarkController.text
@@ -209,16 +209,15 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
 
       if (response.status.toString() == 'SUCCESS') {
         // showInSnackBar(context, response.message.toString());
-        // Navigator.pop(context, {'type': 1});
-        //  Navigator.pop(context, {'add': true});
-        Navigator.pushNamedAndRemoveUntil(
-            context, '/home', ModalRoute.withName('/home'));
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => MainContainer(),
-        //   ),
-        // );
+
+        // Navigator.pushNamedAndRemoveUntil(
+        //     context, '/home', ModalRoute.withName('/home'));
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MainContainer(initialPage: 2),
+          ),
+        );
       } else {
         print(response.message.toString());
         showInSnackBar(context, response.message.toString());
@@ -302,7 +301,7 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => Addresspage(),
+            builder: (context) => MainContainer(initialPage: 2),
           ),
         );
       } else {
@@ -566,6 +565,14 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
                 //   ),
                 // ),
 
+                SubHeadingWidget(
+                  title:
+                      "Note: Service available only in Thuvarankurichi, Trichy.",
+                  color: const Color.fromARGB(255, 78, 78, 78),
+                  fontSize: 15,
+                ),
+
+                SizedBox(height: 25),
                 GestureDetector(
                     onTap: () {
                       setState(() {
@@ -585,6 +592,7 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
                         });
                       },
                     )),
+
                 SizedBox(height: 15),
                 Row(
                   children: [

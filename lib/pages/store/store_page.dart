@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:namfood/pages/HomeScreen/home_screen.dart';
 import 'package:namfood/pages/cart/cart_page.dart';
 import 'package:namfood/widgets/custom_text_field.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../constants/app_assets.dart';
@@ -181,6 +182,7 @@ class _StorePageState extends State<StorePage> {
           _increment(categoryIndex, productIndex);
         });
       } else {
+        print(response.code);
         if (response.code == '113') {
           setState(() {
             _decrement(categoryIndex, productIndex);
@@ -689,6 +691,29 @@ class _StorePageState extends State<StorePage> {
     setState(() {});
   }
 
+  Widget _buildShimmerPlaceholder() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey.shade300,
+        highlightColor: Colors.grey.shade100,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(13), // Add border radius
+              child: Container(
+                width: double.infinity,
+                height: 183,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return
@@ -701,7 +726,12 @@ class _StorePageState extends State<StorePage> {
         title: HeadingWidget(title: "Back"),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? ListView.builder(
+              itemCount: 5,
+              itemBuilder: (context, index) {
+                return _buildShimmerPlaceholder();
+              },
+            )
           : SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),

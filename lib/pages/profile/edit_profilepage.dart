@@ -313,25 +313,37 @@ class _EditProfilepageState extends State<EditProfilepage> {
                     borderColor: AppColors.grey,
                     width: screenWidth,
                   ),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  ButtonWidget(
+                    borderRadius: 10,
+                    title: "Submit",
+                    width: screenWidth,
+                    color: AppColors.red,
+                    onTap: () {
+                      updateprofile();
+                    },
+                  ),
                 ],
               ),
             ),
           ],
         ),
       )),
-      bottomNavigationBar: Padding(
-        padding: EdgeInsets.symmetric(
-            vertical: screenHeight * 0.04, horizontal: screenWidth * 0.04),
-        child: ButtonWidget(
-          borderRadius: 10,
-          title: "Submit",
-          width: screenWidth,
-          color: AppColors.red,
-          onTap: () {
-            updateprofile();
-          },
-        ),
-      ),
+      // bottomNavigationBar: Padding(
+      //   padding: EdgeInsets.symmetric(
+      //       vertical: screenHeight * 0.04, horizontal: screenWidth * 0.04),
+      //   child: ButtonWidget(
+      //     borderRadius: 10,
+      //     title: "Submit",
+      //     width: screenWidth,
+      //     color: AppColors.red,
+      //     onTap: () {
+      //       updateprofile();
+      //     },
+      //   ),
+      // ),
     );
   }
 }

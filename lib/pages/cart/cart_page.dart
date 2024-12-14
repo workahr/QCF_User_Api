@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:namfood/pages/maincontainer.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../constants/app_assets.dart';
 import '../../constants/app_colors.dart';
@@ -279,6 +280,62 @@ class _CartPageState extends State<CartPage> {
 
   AddressList? selectedAddress;
 
+  Widget _buildShimmerPlaceholder() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey.shade300,
+        highlightColor: Colors.grey.shade100,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(13), // Add border radius
+              child: Container(
+                width: double.infinity,
+                height: 63,
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(13), // Add border radius
+              child: Container(
+                width: double.infinity,
+                height: 103,
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(13), // Add border radius
+              child: Container(
+                width: double.infinity,
+                height: 123,
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(13), // Add border radius
+              child: Container(
+                width: double.infinity,
+                height: 63,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -302,7 +359,12 @@ class _CartPageState extends State<CartPage> {
               ),
             ),
             body: isLoading
-                ? Center(child: CircularProgressIndicator())
+                ? ListView.builder(
+                    itemCount: 5,
+                    itemBuilder: (context, index) {
+                      return _buildShimmerPlaceholder();
+                    },
+                  )
                 : cartdetails == "FAILED"
                     ? Center(child: Text('No Product in  the Cart'))
                     : SingleChildScrollView(

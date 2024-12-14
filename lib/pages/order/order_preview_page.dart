@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:namfood/widgets/heading_widget.dart';
 import 'package:namfood/widgets/sub_heading_widget.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../constants/app_assets.dart';
@@ -119,6 +120,45 @@ class _OrderPreviewPageState extends State<OrderPreviewPage> {
     }
   }
 
+  Widget _buildShimmerPlaceholder() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey.shade300,
+        highlightColor: Colors.grey.shade100,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 16),
+            ClipRRect(
+                borderRadius: BorderRadius.circular(13), // Add border radius
+                child: Container(
+                  width: double.infinity,
+                  height: 106,
+                  color: Colors.white,
+                )),
+            SizedBox(height: 26),
+            ClipRRect(
+                borderRadius: BorderRadius.circular(13), // Add border radius
+                child: Container(
+                  width: double.infinity,
+                  height: 246,
+                  color: Colors.white,
+                )),
+            SizedBox(height: 46),
+            ClipRRect(
+                borderRadius: BorderRadius.circular(13), // Add border radius
+                child: Container(
+                  width: double.infinity,
+                  height: 216,
+                  color: Colors.white,
+                )),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -130,7 +170,12 @@ class _OrderPreviewPageState extends State<OrderPreviewPage> {
         ),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? ListView.builder(
+              itemCount: 7,
+              itemBuilder: (context, index) {
+                return _buildShimmerPlaceholder();
+              },
+            )
           : SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),

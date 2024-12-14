@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../services/comFuncService.dart';
 import '../../services/nam_food_api_service.dart';
+import '../maincontainer.dart';
 import 'cancelorder_model.dart';
 import 'myorder_page.dart';
 
@@ -61,7 +62,7 @@ class _CancelBookingPageState extends State<CancelBookingPage> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => MyorderPage(),
+          builder: (context) => MainContainer(initialPage: 1),
         ),
       );
     } else {
@@ -169,30 +170,52 @@ class _CancelBookingPageState extends State<CancelBookingPage> {
               ),
               maxLines: 4,
             ),
+          SizedBox(height: 30),
+          Center(
+              child: SizedBox(
+                  width: double.infinity,
+                  height: 40,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (selectedReason == '' || selectedReason == null) {
+                        showInSnackBar(
+                            context, "Please select the any one of the Reason");
+                      } else {
+                        ordercancel();
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFFE23744),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    child: Text("Submit", style: TextStyle(fontSize: 16)),
+                  ))),
         ]),
       ),
-      bottomNavigationBar: BottomAppBar(
-          child: SizedBox(
-        width: double.infinity,
-        height: 40,
-        child: ElevatedButton(
-          onPressed: () {
-            if (selectedReason == '' || selectedReason == null) {
-              showInSnackBar(
-                  context, "Please select the any one of the Reason");
-            } else {
-              ordercancel();
-            }
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Color(0xFFE23744),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-          ),
-          child: Text("Submit", style: TextStyle(fontSize: 16)),
-        ),
-      )),
+      // bottomNavigationBar: BottomAppBar(
+      //     child: SizedBox(
+      //   width: double.infinity,
+      //   height: 40,
+      //   child: ElevatedButton(
+      //     onPressed: () {
+      //       if (selectedReason == '' || selectedReason == null) {
+      //         showInSnackBar(
+      //             context, "Please select the any one of the Reason");
+      //       } else {
+      //         ordercancel();
+      //       }
+      //     },
+      //     style: ElevatedButton.styleFrom(
+      //       backgroundColor: Color(0xFFE23744),
+      //       shape: RoundedRectangleBorder(
+      //         borderRadius: BorderRadius.circular(8.0),
+      //       ),
+      //     ),
+      //     child: Text("Submit", style: TextStyle(fontSize: 16)),
+      //   ),
+      // )),
     );
   }
 }
