@@ -313,6 +313,13 @@ formatDateDMYtoYMD(date) {
       .join('/');
 }
 
+formatDateWithSymbol({date, symbol = '/', monthFormat}) {
+  return date != null
+      ? DateFormat("dd${symbol}${monthFormat ?? 'MM'}${symbol}yyyy")
+          .format(DateTime.parse(date.toString()))
+      : '';
+}
+
 // Transform number to decimal
 transformToDecimal(format, num) {
   return (double.parse(num.toString()).toStringAsFixed(int.parse(format)));
@@ -463,7 +470,6 @@ void showSnackBar(
 closeSnackBar({required context}) {
   ScaffoldMessenger.of(context).removeCurrentSnackBar();
 }
-
 
 curFormatWithDecimal({locale, symbol, decimalDigits, required value}) {
   return NumberFormat.currency(

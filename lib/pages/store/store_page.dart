@@ -4,6 +4,7 @@ import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:namfood/pages/HomeScreen/home_screen.dart';
 import 'package:namfood/pages/cart/cart_page.dart';
 import 'package:namfood/widgets/custom_text_field.dart';
@@ -412,227 +413,114 @@ class _StorePageState extends State<StorePage> {
   //   return false;
   // }
 
-  // Future<void> generateInvoice() async {
-  //   ByteData byte =
-  //       await rootBundle.load('assets/fonts/custom_Anand_MuktaMalar.ttf');
-  //   PdfTrueTypeFont font = PdfTrueTypeFont(byte.buffer.asUint8List(), 7);
-  //   PdfTrueTypeFont header_font = PdfTrueTypeFont(byte.buffer.asUint8List(), 13,
-  //       style: PdfFontStyle.bold);
-  //   //Create a PDF document.
-  //   final PdfDocument document = PdfDocument();
+  Future<void> generateInvoice() async {
+    // Load custom font
+    ByteData byte =
+        await rootBundle.load('assets/fonts/custom_Anand_MuktaMalar.ttf');
+    PdfTrueTypeFont font = PdfTrueTypeFont(byte.buffer.asUint8List(), 9);
+    PdfTrueTypeFont headerFont = PdfTrueTypeFont(byte.buffer.asUint8List(), 13,
+        style: PdfFontStyle.bold);
 
-  //   // Set landscape orientation (optional, if not done implicitly)
-  //   document.pageSettings.orientation = PdfPageOrientation.landscape;
-  //   //Add page to the PDF
-  //   final PdfPage page = document.pages.add();
-  //   //Get page client size
-  //   final Size pageSize = page.getClientSize();
-  //   //Draw rectangle
-  //   page.graphics.drawRectangle(
-  //       bounds: Rect.fromLTWH(0, 0, pageSize.width, pageSize.height),
-  //       pen: PdfPen(PdfColor(142, 170, 219)));
-  //   //Generate PDF grid.
-  //   final PdfGrid grid = getGrid(font);
+    // Create a new PDF document
+    final PdfDocument document = PdfDocument();
 
-  //   //Draw the header section by creating text element
-  //   final PdfLayoutResult result =
-  //       drawHeader(page, pageSize, grid, header_font);
-  //   //Draw grid
-  //   drawGrid(page, grid, result);
-  //   //Add invoice footer
-  //   final uniqueKey = UniqueKey();
-  //   //Save the PDF document
-  //   final List<int> bytes = document.save();
-  //   //Dispose the document.
-  //   document.dispose();
-  //   //Save and launch the file.
-  //   await saveAndLaunchFile(
-  //       bytes, uniqueKey.toString() + 'ExpensesReports.pdf');
-  // }
+    // Add a page to the document
+    final PdfPage page = document.pages.add();
+    final Size pageSize = page.getClientSize();
 
-  // PdfLayoutResult drawHeader(
-  //     PdfPage page, Size pageSize, PdfGrid grid, PdfTrueTypeFont font) {
-  //   // final PdfFont contentFont = PdfStandardFont(PdfFontFamily.helvetica, 13, style: PdfFontStyle.bold);
+    // Draw header section with store details
+    drawPDFHeader(page, pageSize, headerFont);
 
-  // //   String address = (
-  // //       'Project          :  ' +
-  // //       ((dropdownValue1.toString() == '0')
-  // //           ? 'All'
-  // //           : dropdown_text.toString()) +
-  // //       '\n' +
-  // //       'Category       :  ' +
-  // //       ((dropdownValue2.toString() == '0')
-  // //           ? 'All'
-  // //           : dropdown_text1.toString())  +
-  // //       '\n' +
-  // //       'Total Qty       :  ' + (dropdown_text3.toString() )+
-  // //       '\n' +
-  // //       'Total Amount:  ' + (dropdown_text2.toString() ));
+    // Prepare and draw category-wise product grid
+    final PdfGrid grid = createCategoryProductGrid(font);
+    drawGrid(page, grid);
 
-  // //   final Size contentSize = font.measureString(address);
+    // Save the document
+    final List<int> bytes = await document.save();
 
-  //   // return PdfTextElement(text: address, font: font).draw(
-  //   //     page: page,
-  //   //     bounds: Rect.fromLTWH(30, 12, pageSize.width - (contentSize.width + 70),
-  //   //         pageSize.height - 100));
-  // }
+    document.dispose();
 
-  // void drawGrid(PdfPage page, PdfGrid grid, PdfLayoutResult result) {
-  //   Rect totalPriceCellBounds;
-  //   Rect quantityCellBounds;
+    // Save and launch PDF
+    final uniqueKey = UniqueKey();
+    await saveAndLaunchFile(bytes, uniqueKey.toString() + 'CategoryMenu.pdf');
+  }
 
-  //   grid.beginCellLayout = (Object sender, PdfGridBeginCellLayoutArgs args) {
-  //     final PdfGrid grid = sender as PdfGrid;
-  //     if (args.cellIndex == grid.columns.count - 1) {
-  //       totalPriceCellBounds = args.bounds;
-  //     } else if (args.cellIndex == grid.columns.count - 2) {
-  //       quantityCellBounds = args.bounds;
-  //     }
-  //   };
-  //   //Draw the PDF grid and get the result.
-  //   result = grid.draw(
-  //       page: page, bounds: Rect.fromLTWH(0, result.bounds.bottom + 20, 0, 0))!;
+  void drawPDFHeader(PdfPage page, Size pageSize, PdfTrueTypeFont font) {
+    String storeName = storeDetails?.name ?? 'Store Name';
+    String storeId = StoreIddetails?.toString() ?? 'Unknown ID';
 
-  //   //Draw grand total.
-  //   page.graphics.drawString('',
-  //       PdfStandardFont(PdfFontFamily.helvetica, 9, style: PdfFontStyle.bold),
-  //       bounds: Rect.fromLTWH(
-  //           quantityCellBounds.left,
-  //           result.bounds.bottom + 10,
-  //           quantityCellBounds.width,
-  //           quantityCellBounds.height));
-  //   page.graphics.drawString('',
-  //       PdfStandardFont(PdfFontFamily.helvetica, 9, style: PdfFontStyle.bold),
-  //       bounds: Rect.fromLTWH(
-  //           totalPriceCellBounds.left,
-  //           result.bounds.bottom + 10,
-  //           totalPriceCellBounds.width,
-  //           totalPriceCellBounds.height));
-  // }
+    // Header content
+    String headerContent =
+        'Store: $storeName\nStore ID: $storeId\nDate: ${DateFormat('dd-MM-yyyy').format(DateTime.now())}';
 
-  // //Create PDF grid and return
-  // PdfGrid getGrid(PdfTrueTypeFont font) {
-  //   //Create a PDF grid
-  //   final PdfGrid grid = PdfGrid();
-  //   //Secify the columns count to the grid.
-  //   grid.columns.add(count: 11);
-  //   PdfGridStyle gridStyle = PdfGridStyle(
-  //     font: font,
-  //     cellSpacing: 2,
-  //     backgroundBrush: PdfBrushes.aliceBlue,
-  //   );
-  //   //Create the header row of the grid.
-  //   final PdfGridRow headerRow = grid.headers.add(1)[0];
+    PdfTextElement headerElement = PdfTextElement(
+        text: headerContent, font: font, brush: PdfBrushes.black);
 
-  //   headerRow.style.backgroundBrush = PdfSolidBrush(PdfColor(68, 114, 196));
-  //   headerRow.style.textBrush = PdfBrushes.white;
-  //   headerRow.cells[0].value = 'S.\nNo';
-  //   headerRow.cells[0].stringFormat.alignment = PdfTextAlignment.center;
-  //   headerRow.cells[1].value = 'Product';
-  //   headerRow.cells[2].value = 'Price';
-  //   headerRow.cells[3].value = 'Discount Price';
-  //   headerRow.cells[4].value = 'Veg Or Non-Veg';
-  //   headerRow.cells[5].value = 'Category';
-  //   headerRow.cells[6].value = 'Uom';
-  //   headerRow.cells[7].value = 'Qty';
-  //   headerRow.cells[7].stringFormat.alignment = PdfTextAlignment.right;
-  //   headerRow.cells[8].value = 'Rate';
-  //   headerRow.cells[8].stringFormat.alignment = PdfTextAlignment.right;
-  //   headerRow.cells[9].value = 'Amount';
-  //   headerRow.cells[9].stringFormat.alignment = PdfTextAlignment.right;
-  //   // headerRow.cells[10].value = 'Paid Amount';
-  //   // headerRow.cells[10].stringFormat.alignment = PdfTextAlignment.right;
-  //   // headerRow.cells[11].value = 'Balance amount';
-  //   // headerRow.cells[11].stringFormat.alignment = PdfTextAlignment.right;
-  //   headerRow.cells[10].value = 'Suppiled Date';
-  //   // headerRow.cells[13].value = 'Paid Date';
+    // Draw header
+    headerElement.draw(
+        page: page, bounds: Rect.fromLTWH(30, 30, pageSize.width - 60, 60));
+  }
 
-  //   //Add rows
-  //   grid.rows.applyStyle(gridStyle);
+  PdfGrid createCategoryProductGrid(PdfTrueTypeFont font) {
+    final PdfGrid grid = PdfGrid();
 
-  //   for (int i = 0; i < expenstablelist.length; i++) {
-  //     addProducts(
-  //         ((i + 1).toString()),
-  //         expenstablelist[i].entryno.toPrintPdf,
-  //         expenstablelist[i].project.toPrintPdf,
-  //         expenstablelist[i].incharge.toPrintPdf,
-  //         expenstablelist[i].vendor.toPrintPdf,
-  //         expenstablelist[i].category.toPrintPdf,
-  //         expenstablelist[i].uom.toPrintPdf,
-  //         expenstablelist[i].qty.toPrintPdf,
-  //         expenstablelist[i].rate.toPrintPdf,
-  //         expenstablelist[i].amount.toPrintPdf,
-  //         // expenstablelist[i].Paid_amount.toPrintPdf,
-  //         // expenstablelist[i].balance_amount.toPrintPdf,
-  //         ((expenstablelist[i].suppileddate.toString() == '0000-00-00')
-  //             ? ''
-  //             : (DateFormat('dd-MM-yyyy')
-  //             .format(
-  //             DateFormat('yyyy-MM-dd')
-  //                 .parse( expenstablelist[i].suppileddate.toString())))),
-  //         // ((expenstablelist[i].paiddate.toString() == '0000-00-00')?'':expenstablelist[i].paiddate.toString()),
-  //         grid);
-  //   }
+    // Define grid columns
+    grid.columns.add(count: 5);
+    grid.headers.add(1);
 
-  //   grid.applyBuiltInStyle(PdfGridBuiltInStyle.listTable4Accent5);
-  //   grid.columns[0].width = 25;
-  //   for (int i = 0; i < headerRow.cells.count; i++) {
-  //     headerRow.cells[i].style.cellPadding =
-  //         PdfPaddings(bottom: 5, left: 5, right: 5, top: 5);
-  //   }
-  //   for (int i = 0; i < grid.rows.count; i++) {
-  //     final PdfGridRow row = grid.rows[i];
-  //     for (int j = 0; j < row.cells.count; j++) {
-  //       final PdfGridCell cell = row.cells[j];
-  //       if (j == 0) {
-  //         cell.stringFormat.alignment = PdfTextAlignment.center;
-  //       }
-  //       cell.style.cellPadding =
-  //           PdfPaddings(bottom: 2, left: 2, right: 2, top: 2);
-  //     }
-  //   }
-  //   return grid;
-  // }
+    // Define header row
+    final PdfGridRow headerRow = grid.headers[0];
+    headerRow.cells[0].value = 'S.No';
+    headerRow.cells[1].value = 'Category';
+    headerRow.cells[2].value = 'Product';
+    headerRow.cells[3].value = 'Price';
+    headerRow.cells[4].value = 'Quantity';
 
-  // //Create and row for the grid.
-  // void addProducts(
-  //     String sno,
-  //     String entryno,
-  //     String project,
-  //     String incharge,
-  //     String vendor,
-  //     String category,
-  //     String uom,
-  //     String qty,
-  //     String rate,
-  //     String amount,
-  //     // String paidamount,
-  //     // String balanceamount,
-  //     String suppileddate,
-  //     // String paiddate,
+    for (int i = 0; i < headerRow.cells.count; i++) {
+      var cell = headerRow.cells[i];
+      cell.style.font = font;
+      cell.style.backgroundBrush = PdfBrushes.lightGray;
+      cell.style.textBrush = PdfBrushes.white;
+      cell.stringFormat = PdfStringFormat(
+          alignment: PdfTextAlignment.center,
+          lineAlignment: PdfVerticalAlignment.middle);
+    }
 
-  //     PdfGrid grid) {
-  //   final PdfGridRow row = grid.rows.add();
-  //   row.cells[0].value = sno;
-  //   row.cells[1].value = entryno;
-  //   row.cells[2].value = project;
-  //   row.cells[3].value = incharge;
-  //   row.cells[4].value = vendor;
-  //   row.cells[5].value = category;
-  //   row.cells[6].value = uom.toString();
-  //   row.cells[7].value = qty.toString();
-  //   row.cells[7].stringFormat.alignment = PdfTextAlignment.right;
-  //   row.cells[8].value = rate.toString();
-  //   row.cells[8].stringFormat.alignment = PdfTextAlignment.right;
-  //   row.cells[9].value = amount.toString();
-  //   row.cells[9].stringFormat.alignment = PdfTextAlignment.right;
-  //   // row.cells[10].value = paidamount.toString();
-  //   // row.cells[10].stringFormat.alignment = PdfTextAlignment.right;
-  //   // row.cells[11].value = balanceamount.toString();
-  //   // row.cells[11].stringFormat.alignment = PdfTextAlignment.right;
-  //   row.cells[10].value = suppileddate.toString();
-  //   // row.cells[13].value = paiddate.toString();
-  // }
+    // Add products grouped by category
+    int serialNo = 1;
+
+    for (int i = 0; i < storedetailslistpage.length; i++) {
+      final category = storedetailslistpage[i];
+      for (int j = 0; j < category.products.length; j++) {
+        final product = category.products[j];
+        final PdfGridRow row = grid.rows.add();
+
+        row.cells[0].value = serialNo.toString();
+        row.cells[1].value = category.categoryName;
+        row.cells[2].value = product.itemName;
+        row.cells[3].value = product.itemOfferPrice ?? '0.0';
+        row.cells[4].value = dishQuantities[i]?[j]?.toString() ?? '0';
+
+        // Corrected cell iteration
+        for (int k = 0; k < row.cells.count; k++) {
+          var cell = row.cells[k];
+          cell.style.font = font;
+          cell.stringFormat = PdfStringFormat(
+              alignment: PdfTextAlignment.center,
+              lineAlignment: PdfVerticalAlignment.middle);
+        }
+
+        serialNo++;
+      }
+    }
+
+    grid.applyBuiltInStyle(PdfGridBuiltInStyle.gridTable5DarkAccent3);
+    return grid;
+  }
+
+  void drawGrid(PdfPage page, PdfGrid grid) {
+    grid.draw(page: page, bounds: Rect.fromLTWH(0, 100, 0, 0));
+  }
 
   void _makePhoneCall(String phoneNumber) async {
     final Uri telUri = Uri(scheme: 'tel', path: phoneNumber);
@@ -777,6 +665,22 @@ class _StorePageState extends State<StorePage> {
                                                   height: 40,
                                                   // color: AppColors.red,
                                                 ))),
+                                        Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                0, 0, 15.0, 0),
+                                            child: ElevatedButton(
+                                              onPressed: () {
+                                                generateInvoice();
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: AppColors.red,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                              ),
+                                              child: Text("PDF"),
+                                            )),
                                       ],
                                     ),
                                     // SizedBox(height: 4),

@@ -99,6 +99,7 @@ class _LoginPageState extends State<LoginPage> {
   bool isLoading = false;
 
   Future getalladdressList() async {
+    await apiService.getBearerToken();
     setState(() {
       isLoading = true;
     });

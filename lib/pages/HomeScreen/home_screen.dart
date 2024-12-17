@@ -478,8 +478,9 @@ class _HomeScreenState extends State<HomeScreen>
   bool isLoadingaddress = false;
 
   Future getalladdressList() async {
+    await apiService.getBearerToken();
     setState(() {
-      isLoadingaddress = true;
+      isLoading = true;
     });
 
     try {
@@ -506,7 +507,7 @@ class _HomeScreenState extends State<HomeScreen>
                 : "${selectedAddress?.state}";
             defaultlandmarkString = (selectedAddress?.landmark == '')
                 ? ''
-                : "${selectedAddress?.landmark},";
+                : "${selectedAddress?.landmark}";
             defaultpostcodeString = (selectedAddress?.postcode == '')
                 ? ''
                 : "${selectedAddress?.postcode}.";
@@ -641,42 +642,38 @@ class _HomeScreenState extends State<HomeScreen>
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                                Text(
-                                                  'Current location',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    Text(
-                                                      "No.132 St, New York",
+                                                GestureDetector(
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              Addresspage(),
+                                                        ),
+                                                      );
+                                                    },
+                                                    child: Text(
+                                                      'Please add Address',
                                                       style: TextStyle(
                                                         color: Colors.white,
-                                                        fontSize: 18,
-                                                        fontWeight:
-                                                            FontWeight.bold,
+                                                        fontSize: 14,
                                                       ),
-                                                    ),
-                                                    // Icon(Icons.arrow_drop_down,
-                                                    //     color: Colors.white),
-                                                  ],
-                                                )
+                                                    )),
                                               ])
                                         : Text(
-                                            'Delivery location',
+                                            'Delivery location :',
                                             style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 14,
                                             ),
                                           ),
                                     Text(
-                                      "$defaultAddressString$defaultAddress2String$defaultcityString$defaultlandmarkString$defaultstateString",
+                                      "$defaultAddressString$defaultAddress2String$defaultcityString$defaultlandmarkString",
                                       style: TextStyle(
-                                          fontSize: 16.0,
+                                          fontSize: 15.0,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.white),
+                                      // softWrap: true,
                                     ),
                                   ],
                                 ),

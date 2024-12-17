@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pinput/pinput.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants/app_colors.dart';
@@ -13,7 +14,6 @@ import '../address/address_list_model.dart';
 import '../address/fillyour_addresspage.dart';
 import '../cart/cart_page.dart';
 import '../maincontainer.dart';
-import 'package:pinput/pinput.dart';
 
 import 'login_model.dart';
 
@@ -111,6 +111,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
   String? auth;
 
   Future getalladdressList() async {
+    await apiService.getBearerToken();
     setState(() {
       isLoading = true;
     });
@@ -278,9 +279,9 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                   length: 6,
                   controller: otpCtrl,
                   focusNode: otpFocusNode,
-                  // androidSmsAutofillMethod:
-                  //     AndroidSmsAutofillMethod.smsUserConsentApi,
-                  // listenForMultipleSmsOnAndroid: true,
+                  androidSmsAutofillMethod:
+                      AndroidSmsAutofillMethod.smsUserConsentApi,
+                  listenForMultipleSmsOnAndroid: true,
                   defaultPinTheme: defaultPinTheme,
                   separatorBuilder: (index) => const SizedBox(width: 8.0),
                   validator: (value) {
@@ -387,13 +388,13 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                   ),
                 ),
                 const SizedBox(height: 20.0),
-                const Center(
-                  child: Text(
-                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
-                ),
+                // const Center(
+                //   child: Text(
+                //     'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod',
+                //     textAlign: TextAlign.center,
+                //     style: TextStyle(fontSize: 14, color: Colors.grey),
+                //   ),
+                // ),
               ],
             ),
           ),

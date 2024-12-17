@@ -569,7 +569,7 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
                   title:
                       "Note: Service available only in Thuvarankurichi, Trichy.",
                   color: const Color.fromARGB(255, 78, 78, 78),
-                  fontSize: 15,
+                  fontSize: 15.0,
                 ),
 
                 SizedBox(height: 25),
