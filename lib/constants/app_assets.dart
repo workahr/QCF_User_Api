@@ -135,4 +135,7 @@ class AppAssets {
       'assets/images/order_icon_selected.png';
   static const String userroundedfill_icon =
       'assets/images/userrounded_icon.png';
+  static const String whatsapp_icon = 'assets/images/whatsapp_icon.png';
+  static const String map = 'assets/images/Map.png';
+  static const String image_plus_icon = 'assets/images/image-plus.png';
 }

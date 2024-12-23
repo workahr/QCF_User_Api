@@ -6,6 +6,7 @@ import 'package:namfood/widgets/custom_text_field.dart';
 import 'package:namfood/widgets/heading_widget.dart';
 import 'package:namfood/widgets/sub_heading_widget.dart';
 import 'package:dots_indicator/dots_indicator.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_constants.dart';
 import '../../services/comFuncService.dart';
@@ -24,6 +25,7 @@ import '../models/locationpopup_model.dart';
 
 import 'cart_list_model.dart';
 import 'deletecart_model.dart';
+import 'search_option.dart';
 import 'stores_list_model.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -73,24 +75,32 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Future deletecart() async {
-    await apiService.getBearerToken();
+    final dialogBoxResult = await showAlertDialogInfo(
+        context: context,
+        title: 'Are you sure?',
+        msg: 'You want to delete this data',
+        status: 'danger',
+        okBtn: false);
+    if (dialogBoxResult == 'OK') {
+      await apiService.getBearerToken();
 
-    Map<String, dynamic> postData = {};
-    print("delete $postData");
+      Map<String, dynamic> postData = {};
+      print("delete $postData");
 
-    var result = await apiService.deletecart(postData);
-    DeleteCartmodel response = deleteCartmodelFromJson(result);
+      var result = await apiService.deletecart(postData);
+      DeleteCartmodel response = deleteCartmodelFromJson(result);
 
-    if (!mounted) return; // Ensure widget is still in the tree
+      if (!mounted) return; // Ensure widget is still in the tree
 
-    if (response.status.toString() == 'SUCCESS') {
-      // showInSnackBar(context, response.message.toString());
-      setState(() {
-        getAllCartList();
-      });
-    } else {
-      print(response.message.toString());
-      showInSnackBar(context, response.message.toString());
+      if (response.status.toString() == 'SUCCESS') {
+        // showInSnackBar(context, response.message.toString());
+        setState(() {
+          getAllCartList();
+        });
+      } else {
+        print(response.message.toString());
+        showInSnackBar(context, response.message.toString());
+      }
     }
   }
 
@@ -318,6 +328,128 @@ class _HomeScreenState extends State<HomeScreen>
             ),
           );
         });
+  }
+
+  void _makePhoneCall(String phoneNumber) async {
+    final Uri telUri = Uri(scheme: 'tel', path: phoneNumber);
+    if (await canLaunchUrl(telUri)) {
+      await launchUrl(telUri);
+    } else {
+      throw 'Could not launch $telUri';
+    }
+  }
+
+  Future<void> whatsapp(String contact) async {
+    String androidUrl = "whatsapp://send?phone=$contact";
+    String iosUrl = "https://wa.me/$contact";
+    String webUrl = "https://api.whatsapp.com/send/?phone=$contact";
+    print("contact number $contact");
+    try {
+      if (await canLaunchUrl(Uri.parse(androidUrl))) {
+        await launchUrl(Uri.parse(androidUrl));
+      } else if (await canLaunchUrl(Uri.parse(iosUrl))) {
+        await launchUrl(Uri.parse(iosUrl),
+            mode: LaunchMode.externalApplication);
+      } else {
+        await launchUrl(Uri.parse(webUrl),
+            mode: LaunchMode.externalApplication);
+      }
+    } catch (e) {
+      print('Could not launch WhatsApp for $contact: $e');
+    }
+  }
+
+  OverlayEntry? _overlayEntry;
+  bool isOverlayVisible = false;
+
+  void _showOverlay(BuildContext context) async {
+    if (_overlayEntry == null) {
+      // Show loading overlay while fetching data
+      OverlayEntry loadingOverlay = OverlayEntry(
+        builder: (context) => Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+      Overlay.of(context)?.insert(loadingOverlay);
+
+      // Remove loading overlay
+      loadingOverlay.remove();
+
+      // Create the overlay with data
+      _overlayEntry = OverlayEntry(
+        builder: (context) => Positioned(
+          bottom: 160.0,
+          right: 20.0,
+          child: Material(
+            color: AppColors.black,
+            borderRadius: BorderRadius.circular(16.0),
+            child: Container(
+              width: 170,
+              padding: EdgeInsets.only(
+                  top: 1.0, left: 20.0, right: 10.0, bottom: 10.0),
+              decoration: BoxDecoration(
+                color: AppColors.red,
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+              child: Column(children: [
+                Row(children: [
+                  Text(
+                    "Call Us       ",
+                    style: TextStyle(color: Colors.white, fontSize: 17),
+                  ),
+                  GestureDetector(
+                      onTap: () async {
+                        _makePhoneCall("9360159625");
+                      },
+                      child: Image.asset(AppAssets.call_icon,
+                          height: 35, width: 35))
+                ]),
+                SizedBox(
+                  height: 15,
+                ),
+                Row(children: [
+                  Text(
+                    "Whats App ",
+                    style: TextStyle(color: Colors.white, fontSize: 17),
+                  ),
+                  GestureDetector(
+                      onTap: () async {
+                        whatsapp("9360159625");
+                      },
+                      child: Image.asset(AppAssets.whatsapp_icon,
+                          //  color: Colors.green,
+                          height: 35,
+                          width: 35))
+                ])
+              ]),
+            ),
+          ),
+        ),
+      );
+
+      // Insert the overlay
+      Overlay.of(context)?.insert(_overlayEntry!);
+
+      // Update the overlay visibility state
+      setState(() {
+        isOverlayVisible = true;
+      });
+    }
+  }
+
+  void _removeOverlay() {
+    // Remove the overlay if it exists
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+    setState(() {
+      isOverlayVisible = false;
+    });
+  }
+
+  Future<bool> _onWillPop() async {
+    Navigator.pop(context, true);
+    _removeOverlay();
+    return false;
   }
 
   //AddtoCart
@@ -596,133 +728,189 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     var screenHeight = MediaQuery.of(context).size.height;
     var screenWidth = MediaQuery.of(context).size.width;
-    return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: Color(0xFFE23744),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              bottom: Radius.circular(20),
-            ),
-          ),
-          toolbarHeight: 130,
-          title: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return WillPopScope(
+        onWillPop: _onWillPop,
+        child: Scaffold(
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              backgroundColor: Color(0xFFE23744),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(20),
+                ),
+              ),
+              toolbarHeight: 130,
+              title: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 2),
-                    child: Row(
-                      children: [
-                        GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => Addresspage(),
-                                ),
-                              );
-                            },
-                            child: Image.asset(AppAssets.map_icon)),
-                        SizedBox(width: 8),
-                        if (myprofilepage.length > 0)
-                          isLoading
-                              ? ListView.builder(
-                                  itemCount: 5,
-                                  itemBuilder: (context, index) {
-                                    return _buildShimmerPlaceholder1();
-                                  },
-                                )
-                              : Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    myprofilepage.isEmpty
-                                        ? Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                                GestureDetector(
-                                                    onTap: () {
-                                                      Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              Addresspage(),
-                                                        ),
-                                                      );
-                                                    },
-                                                    child: Text(
-                                                      'Please add Address',
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 14,
-                                                      ),
-                                                    )),
-                                              ])
-                                        : Text(
-                                            'Delivery location :',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                    Text(
-                                      "$defaultAddressString$defaultAddress2String$defaultcityString$defaultlandmarkString",
-                                      style: TextStyle(
-                                          fontSize: 15.0,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white),
-                                      // softWrap: true,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        child: Row(
+                          children: [
+                            GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Addresspage(),
                                     ),
-                                  ],
-                                ),
-                      ],
+                                  );
+                                },
+                                child: Image.asset(AppAssets.map_icon)),
+                            SizedBox(width: 8),
+                            if (myprofilepage.length > 0)
+                              isLoading
+                                  ? ListView.builder(
+                                      itemCount: 5,
+                                      itemBuilder: (context, index) {
+                                        return _buildShimmerPlaceholder1();
+                                      },
+                                    )
+                                  : Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        myprofilepage.isEmpty
+                                            ? Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                    GestureDetector(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  Addresspage(),
+                                                            ),
+                                                          );
+                                                        },
+                                                        child: Text(
+                                                          'Please add Address',
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 14,
+                                                          ),
+                                                        )),
+                                                  ])
+                                            : Text(
+                                                'Delivery location :',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                        Text(
+                                          "$defaultAddressString$defaultAddress2String$defaultcityString$defaultlandmarkString",
+                                          style: TextStyle(
+                                              fontSize: 15.0,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white),
+                                          // softWrap: true,
+                                        ),
+                                      ],
+                                    ),
+                          ],
+                        ),
+                      ),
+                      // GestureDetector(
+                      //     onTap: () {},
+                      //     child: Image.asset(AppAssets.notification_icon)),
+                    ],
+                  ),
+
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: GestureDetector(
+                      onTap: () {
+                        print("Navigating to TabSearchApp");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => TabSearchApp(),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        child: CustomeTextField(
+                          hint: "Restaurant name",
+                          prefixIcon: Image.asset(AppAssets.search_icon),
+                          boxColor: Colors.white,
+                          borderColor: Colors.white,
+                          focusBorderColor: Colors.blue,
+                          borderRadius: BorderRadius.circular(10),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 12),
+                          boxRadius: BorderRadius.circular(10),
+                          hintColor: const Color.fromARGB(255, 94, 93, 93),
+                          labelColor: const Color.fromARGB(255, 103, 103, 103),
+                          onChanged: (value) {
+                            if (value != '') {
+                              print('Search value: $value');
+                              value = value.toString().toLowerCase();
+                              dashlistpage = dashlistpageAll!
+                                  .where((StoreListData e) => e.name
+                                      .toString()
+                                      .toLowerCase()
+                                      .contains(value))
+                                  .toList();
+                            } else {
+                              dashlistpage = dashlistpageAll;
+                            }
+                            setState(() {});
+                          },
+                          onTap: () {
+                            print("Navigating to TabSearchApp");
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TabSearchApp(),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                     ),
                   ),
-                  // GestureDetector(
-                  //     onTap: () {},
-                  //     child: Image.asset(AppAssets.notification_icon)),
+
+                  // SizedBox(
+                  //         width: MediaQuery.of(context).size.width / 0.1,
+                  //         child: CustomeTextField(
+                  //           hint: "Restaurant name",
+                  //           // prefixIcon: Icon(Icons.search, color: Color(0xFFE23744)),
+                  //           prefixIcon: Image.asset(AppAssets.search_icon),
+                  //           boxColor: Colors.white,
+                  //           borderColor: Colors.white,
+                  //           focusBorderColor: Colors.blue,
+                  //           borderRadius: BorderRadius.circular(10),
+                  //           contentPadding: EdgeInsets.symmetric(
+                  //               horizontal: 20, vertical: 12),
+                  //           boxRadius: BorderRadius.circular(10),
+                  //           hintColor: const Color.fromARGB(255, 94, 93, 93),
+                  //           labelColor:
+                  //               const Color.fromARGB(255, 103, 103, 103),
+                  //           onChanged: (value) {
+                  //             if (value != '') {
+                  //               print('value $value');
+                  //               value = value.toString().toLowerCase();
+                  //               dashlistpage = dashlistpageAll!
+                  //                   .where((StoreListData e) => e.name
+                  //                       .toString()
+                  //                       .toLowerCase()
+                  //                       .contains(value))
+                  //                   .toList();
+                  //             } else {
+                  //               dashlistpage = dashlistpageAll;
+                  //             }
+                  //             setState(() {});
+                  //           },
+                  //         )),
                 ],
               ),
-              SizedBox(
-                  width: MediaQuery.of(context).size.width / 0.1,
-                  child: CustomeTextField(
-                    hint: "Restaurant name",
-                    // prefixIcon: Icon(Icons.search, color: Color(0xFFE23744)),
-                    prefixIcon: Image.asset(AppAssets.search_icon),
-                    boxColor: Colors.white,
-                    borderColor: Colors.white,
-                    focusBorderColor: Colors.blue,
-                    borderRadius: BorderRadius.circular(10),
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                    boxRadius: BorderRadius.circular(10),
-                    hintColor: const Color.fromARGB(255, 94, 93, 93),
-                    labelColor: const Color.fromARGB(255, 103, 103, 103),
-                    onChanged: (value) {
-                      if (value != '') {
-                        print('value $value');
-                        value = value.toString().toLowerCase();
-                        dashlistpage = dashlistpageAll!
-                            .where((StoreListData e) =>
-                                e.name.toString().toLowerCase().contains(value))
-                            .toList();
-                      } else {
-                        dashlistpage = dashlistpageAll;
-                      }
-                      setState(() {});
-                    },
-                  )),
-            ],
-          ),
-        ),
-        body:
-            // isLoading
-            //     ? Center(child: CircularProgressIndicator())
-            //     :
-
-            isLoading
+            ),
+            body: isLoading
                 ? ListView.builder(
                     itemCount: 5,
                     itemBuilder: (context, index) {
@@ -739,6 +927,29 @@ class _HomeScreenState extends State<HomeScreen>
                             padding: const EdgeInsets.fromLTRB(21, 23, 21, 15),
                             child: Column(
                               children: [
+                                if (carouselpage != null &&
+                                    carouselpage.isNotEmpty)
+                                  ClipRRect(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10.0)),
+                                    child: Image.network(
+                                      AppConstants.imgBaseUrl +
+                                          (carouselpage[0].imageUrl ??
+                                              AppAssets.Banner),
+                                      fit: BoxFit.fill,
+                                      errorBuilder: (BuildContext context,
+                                          Object exception,
+                                          StackTrace? stackTrace) {
+                                        return Image.asset(
+                                          AppAssets.Banner,
+                                          width: double.infinity,
+                                          fit: BoxFit.fill,
+                                          height: 180,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                SizedBox(height: 16),
                                 // if (carouselpage.isNotEmpty)
                                 //   CarouselSlider.builder(
                                 //     itemCount: carouselpage.length,
@@ -1086,245 +1297,474 @@ class _HomeScreenState extends State<HomeScreen>
                                       : null);
                             },
                           ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Top Section with Icons and Text
+                              Container(
+                                color: AppColors.red,
+                                padding: EdgeInsets.symmetric(vertical: 16.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Column(
+                                      children: [
+                                        Icon(Icons.local_shipping,
+                                            color: Colors.white, size: 40),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          'Free Delivery\n(above ₹1000)',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
+                                    ),
+                                    Column(
+                                      children: [
+                                        Icon(Icons.verified,
+                                            color: Colors.yellow, size: 40),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          'Buyer\nProtection',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
+                                    ),
+                                    Column(
+                                      children: [
+                                        Icon(Icons.support_agent,
+                                            color: Colors.blue, size: 40),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          'Customer\nSupport',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              // Address Section
+                              Padding(
+                                padding: EdgeInsets.all(16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Food Delivery',
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    SizedBox(height: 8),
+                                    Text(
+                                      'Nirajana complax, high school road, Thuvarankurichi, Tamil Nadu 621314',
+                                      style: TextStyle(fontSize: 14),
+                                    ),
+                                    //  SizedBox(height: 4),
+                                    // Text(
+                                    //   'Nirajana complex high school road\nthuvavankurichi',
+                                    //   style: TextStyle(fontSize: 14),
+                                    // ),
+                                  ],
+                                ),
+                              ),
+
+                              // Social Media Links
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 16.0, vertical: 8.0),
+                                child: Row(
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.facebook,
+                                        color: Colors.blue,
+                                        size: 45,
+                                      ),
+                                      onPressed: () {},
+                                    ),
+                                    // IconButton(
+                                    //   icon: Icon(
+                                    //     Icons.youtube_searched_for_outlined,
+                                    //     color: Colors.red,
+                                    //     size: 45,
+                                    //   ),
+                                    //   onPressed: () {},
+                                    // ),
+                                    GestureDetector(
+                                        onTap: () async {
+                                          whatsapp("9360159625");
+                                        },
+                                        child:
+                                            Image.asset(AppAssets.whatsapp_icon,
+                                                //  color: Colors.green,
+                                                height: 35,
+                                                width: 35))
+                                  ],
+                                ),
+                              ),
+
+                              // Links Section
+                              Padding(
+                                padding: EdgeInsets.all(16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    LinkText('TERMS AND CONDITIONS'),
+                                    LinkText('PRIVACY POLICIES'),
+                                    LinkText('REFUND POLICIES'),
+                                    LinkText('SITEMAP'),
+                                    LinkText('CONTACT US'),
+                                    LinkText('ABOUT US'),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
                       )),
                     )
                   ]),
-        bottomNavigationBar: cartList.isNotEmpty
-            ? BottomAppBar(
-                height: 105.0,
-                elevation: 0,
-                color: AppColors.light,
-                child: SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // Store Image
-                        // cartList[0].store_image == null ||
-                        //         cartList[0].store_image == ""
-                        //     ? ClipRRect(
-                        //         borderRadius: BorderRadius.circular(12),
-                        //         child: Image.asset(
-                        //           AppAssets.storeBiriyaniImg,
-                        //           height: 70,
-                        //           width: 50,
-                        //           fit: BoxFit.cover,
-                        //         ),
-                        //       )
-                        //     : ClipRRect(
-                        //         borderRadius: BorderRadius.circular(26),
-                        //         child: Container(
-                        //           height: 70,
-                        //           width: 50,
-                        //           decoration: BoxDecoration(
-                        //             image: DecorationImage(
-                        //               image: NetworkImage(
-                        //                 AppConstants.imgBaseUrl +
-                        //                     cartList[0].store_image.toString(),
-                        //               ),
-                        //               fit: BoxFit.cover,
-                        //             ),
-                        //           ),
-                        //         ),
-                        //       ),
-
-                        SizedBox(width: 5),
-
-                        // Store Details
-                        Expanded(
-                            child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
+            // floatingActionButton: GestureDetector(
+            //   onTap: () {
+            //     if (isOverlayVisible) {
+            //       _removeOverlay();
+            //     } else {
+            //       _showOverlay(context);
+            //     }
+            //   },
+            //   child: isOverlayVisible
+            //       ? Container(
+            //           width: 80,
+            //           height: 80,
+            //           decoration: BoxDecoration(
+            //             color: AppColors.red,
+            //             shape: BoxShape.circle,
+            //           ),
+            //           child: Padding(
+            //             padding: const EdgeInsets.all(1.0),
+            //             child: Column(
+            //               mainAxisAlignment: MainAxisAlignment.center,
+            //               crossAxisAlignment: CrossAxisAlignment.center,
+            //               children: [
+            //                 Icon(
+            //                   Icons.close,
+            //                   color: Colors.white,
+            //                 ),
+            //                 Text(
+            //                   "Close",
+            //                   style: TextStyle(
+            //                     color: Colors.white,
+            //                   ),
+            //                 ),
+            //               ],
+            //             ),
+            //           ),
+            //         )
+            //       : Container(
+            //           width: 80,
+            //           height: 80,
+            //           decoration: BoxDecoration(
+            //             color: AppColors.red,
+            //             shape: BoxShape.circle,
+            //           ),
+            //           child: Padding(
+            //             padding: const EdgeInsets.all(8.0),
+            //             child: Column(
+            //               mainAxisAlignment: MainAxisAlignment.center,
+            //               crossAxisAlignment: CrossAxisAlignment.center,
+            //               children: [
+            //                 // Image.asset(
+            //                 //   AppAssets.call_icon,
+            //                 //   width: 20,
+            //                 //   height: 20,
+            //                 //   //color: AppColors.light,
+            //                 // ),
+            //                 Text(
+            //                   "Customer",
+            //                   style: TextStyle(
+            //                     color: Colors.white,
+            //                   ),
+            //                 ),
+            //                 Text(
+            //                   "Care",
+            //                   style: TextStyle(
+            //                     color: Colors.white,
+            //                   ),
+            //                 ),
+            //               ],
+            //             ),
+            //           ),
+            //         ),
+            // ),
+            bottomNavigationBar: cartList.isNotEmpty
+                ? BottomAppBar(
+                    height: 105.0,
+                    elevation: 0,
+                    color: AppColors.light,
+                    child: SafeArea(
+                      child: Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  cartList[0].store_name.toString(),
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                // Text(
-                                //   '${totalCartItems.toString()} items | ₹${finalTotal.toString()}',
-                                //   style: TextStyle(
-                                //     fontSize: 14,
-                                //     fontWeight: FontWeight.bold,
-                                //   ),
-                                //   overflow: TextOverflow.ellipsis,
-                                // ),
-                              ],
-                            ),
-                            SizedBox(height: 5),
-                            // Row(
-                            //   mainAxisAlignment: MainAxisAlignment.start,
-                            //   children: [
-                            //     //  Expanded(
-                            //     // child:
-                            //     Text(
-                            //       'View all menu',
-                            //       style: TextStyle(
-                            //         fontSize: 14,
-                            //         color: Colors.black,
-                            //         decoration: TextDecoration.underline,
+                            // Store Image
+                            // cartList[0].store_image == null ||
+                            //         cartList[0].store_image == ""
+                            //     ? ClipRRect(
+                            //         borderRadius: BorderRadius.circular(12),
+                            //         child: Image.asset(
+                            //           AppAssets.storeBiriyaniImg,
+                            //           height: 70,
+                            //           width: 50,
+                            //           fit: BoxFit.cover,
+                            //         ),
+                            //       )
+                            //     : ClipRRect(
+                            //         borderRadius: BorderRadius.circular(26),
+                            //         child: Container(
+                            //           height: 70,
+                            //           width: 50,
+                            //           decoration: BoxDecoration(
+                            //             image: DecorationImage(
+                            //               image: NetworkImage(
+                            //                 AppConstants.imgBaseUrl +
+                            //                     cartList[0].store_image.toString(),
+                            //               ),
+                            //               fit: BoxFit.cover,
+                            //             ),
+                            //           ),
+                            //         ),
                             //       ),
-                            //       // ),
-                            //     ),
-                            //     Icon(
-                            //       Icons.arrow_forward_ios,
-                            //       color: Colors.black,
-                            //       size: 12,
-                            //     ),
-                            //   ],
-                            // ),
-                            //     ],
-                            //   ),
-                            // ),
 
-                            // Column(
-                            //   mainAxisAlignment: MainAxisAlignment.center,
-                            //   children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            SizedBox(width: 5),
+
+                            // Store Details
+                            Expanded(
+                                child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                //  Expanded(
-                                // child:
                                 Row(
-                                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      // Text(
-                                      //   'View all menu',
-                                      //   style: TextStyle(
-                                      //     fontSize: 14,
-                                      //     color: Colors.black,
-                                      //     decoration: TextDecoration.underline,
-                                      //   ),
-                                      //   // ),
-                                      // ),
-                                      // Icon(
-                                      //   Icons.arrow_forward_ios,
-                                      //   color: Colors.black,
-                                      //   size: 12,
-                                      // ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            '${totalCartItems.toString()} items | ₹${finalTotal.toString()}',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ],
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      cartList[0].store_name.toString(),
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                    ]),
-
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    // Text(
+                                    //   '${totalCartItems.toString()} items | ₹${finalTotal.toString()}',
+                                    //   style: TextStyle(
+                                    //     fontSize: 14,
+                                    //     fontWeight: FontWeight.bold,
+                                    //   ),
+                                    //   overflow: TextOverflow.ellipsis,
+                                    // ),
+                                  ],
+                                ),
+                                SizedBox(height: 5),
                                 // Row(
+                                //   mainAxisAlignment: MainAxisAlignment.start,
                                 //   children: [
+                                //     //  Expanded(
+                                //     // child:
                                 //     Text(
-                                //       '${totalCartItems.toString()} items | ₹${finalTotal.toString()}',
+                                //       'View all menu',
                                 //       style: TextStyle(
                                 //         fontSize: 14,
-                                //         fontWeight: FontWeight.bold,
+                                //         color: Colors.black,
+                                //         decoration: TextDecoration.underline,
                                 //       ),
-                                //       overflow: TextOverflow.ellipsis,
+                                //       // ),
+                                //     ),
+                                //     Icon(
+                                //       Icons.arrow_forward_ios,
+                                //       color: Colors.black,
+                                //       size: 12,
                                 //     ),
                                 //   ],
                                 // ),
-                                // SizedBox(height: 10),
-                                // ElevatedButton(
-                                //   style: ElevatedButton.styleFrom(
-                                //     backgroundColor: Color(0xFFE23744),
-                                //     shape: RoundedRectangleBorder(
-                                //       borderRadius: BorderRadius.circular(10),
-                                //     ),
-                                //     padding: EdgeInsets.symmetric(
-                                //         horizontal: 15, vertical: 5),
-                                //   ),
-                                //   onPressed: () {
-                                //     Navigator.push(
-                                //       context,
-                                //       MaterialPageRoute(
-                                //         builder: (context) => CartPage(),
-                                //       ),
-                                //     );
-                                //   },
-                                //   child: Text(
-                                //     'View Cart',
-                                //     style: TextStyle(
-                                //       color: Colors.white,
-                                //       fontSize: 16,
-                                //     ),
+                                //     ],
                                 //   ),
                                 // ),
+
+                                // Column(
+                                //   mainAxisAlignment: MainAxisAlignment.center,
+                                //   children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    //  Expanded(
+                                    // child:
+                                    Row(
+                                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          // Text(
+                                          //   'View all menu',
+                                          //   style: TextStyle(
+                                          //     fontSize: 14,
+                                          //     color: Colors.black,
+                                          //     decoration: TextDecoration.underline,
+                                          //   ),
+                                          //   // ),
+                                          // ),
+                                          // Icon(
+                                          //   Icons.arrow_forward_ios,
+                                          //   color: Colors.black,
+                                          //   size: 12,
+                                          // ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                '${totalCartItems.toString()} items | ₹${finalTotal.toString()}',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ],
+                                          ),
+                                        ]),
+
+                                    // Row(
+                                    //   children: [
+                                    //     Text(
+                                    //       '${totalCartItems.toString()} items | ₹${finalTotal.toString()}',
+                                    //       style: TextStyle(
+                                    //         fontSize: 14,
+                                    //         fontWeight: FontWeight.bold,
+                                    //       ),
+                                    //       overflow: TextOverflow.ellipsis,
+                                    //     ),
+                                    //   ],
+                                    // ),
+                                    // SizedBox(height: 10),
+                                    // ElevatedButton(
+                                    //   style: ElevatedButton.styleFrom(
+                                    //     backgroundColor: Color(0xFFE23744),
+                                    //     shape: RoundedRectangleBorder(
+                                    //       borderRadius: BorderRadius.circular(10),
+                                    //     ),
+                                    //     padding: EdgeInsets.symmetric(
+                                    //         horizontal: 15, vertical: 5),
+                                    //   ),
+                                    //   onPressed: () {
+                                    //     Navigator.push(
+                                    //       context,
+                                    //       MaterialPageRoute(
+                                    //         builder: (context) => CartPage(),
+                                    //       ),
+                                    //     );
+                                    //   },
+                                    //   child: Text(
+                                    //     'View Cart',
+                                    //     style: TextStyle(
+                                    //       color: Colors.white,
+                                    //       fontSize: 16,
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                  ],
+                                ),
                               ],
+                            )),
+                            SizedBox(width: 15),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Color(0xFFE23744),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 15, vertical: 5),
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CartPage(),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                'View Cart',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 12,
+                            ),
+                            // Delete Cart Button
+                            GestureDetector(
+                              onTap: () async {
+                                await deletecart();
+                              },
+                              child: Container(
+                                width: 30,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Color(0xFFE23744),
+                                ),
+                                child: Center(
+                                  child: Icon(
+                                    Icons.close,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
-                        )),
-                        SizedBox(width: 15),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFFE23744),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 5),
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => CartPage(),
-                              ),
-                            );
-                          },
-                          child: Text(
-                            'View Cart',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                            ),
-                          ),
                         ),
-                        SizedBox(
-                          width: 12,
-                        ),
-                        // Delete Cart Button
-                        GestureDetector(
-                          onTap: () async {
-                            await deletecart();
-                          },
-                          child: Container(
-                            width: 30,
-                            height: 30,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Color(0xFFE23744),
-                            ),
-                            child: Center(
-                              child: Icon(
-                                Icons.close,
-                                color: Colors.white,
-                                size: 16,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-              )
-            : null);
+                  )
+                : null));
+  }
+}
+
+class LinkText extends StatelessWidget {
+  final String text;
+
+  const LinkText(this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: Colors.blue,
+          decoration: TextDecoration.underline,
+        ),
+      ),
+    );
   }
 }
 
