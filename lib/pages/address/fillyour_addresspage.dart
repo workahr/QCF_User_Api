@@ -21,6 +21,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 
+import 'get_latlog_address.dart';
+
 // import 'package:geocoding/geocoding.dart';
 // import 'package:geolocator/geolocator.dart';
 // import 'package:intl/intl.dart';
@@ -660,14 +662,14 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
                 GestureDetector(
                     onTap: () {
                       setState(() {
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, '/home', ModalRoute.withName('/home'));
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => MainContainer(),
-                        //   ),
-                        // );
+                        // Navigator.pushNamedAndRemoveUntil(
+                        //     context, '/home', ModalRoute.withName('/home'));
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MapScreen(),
+                          ),
+                        );
                       });
                     },
                     child: HeadingWidget(

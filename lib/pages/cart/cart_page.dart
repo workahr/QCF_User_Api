@@ -203,27 +203,35 @@ class _CartPageState extends State<CartPage> {
   }
 
   Future deleteCart(int productId, int? storeId) async {
-    Map<String, dynamic> postData = {
-      "store_id": storeId,
-      "product_id": productId
-    };
+    final dialogBoxResult = await showAlertDialogInfo(
+        context: context,
+        title: 'Are you sure?',
+        msg: 'You want to delete this data',
+        status: 'danger',
+        okBtn: false);
+    if (dialogBoxResult == 'OK') {
+      Map<String, dynamic> postData = {
+        "store_id": storeId,
+        "product_id": productId
+      };
 
-    var result = await apiService.deleteCart(postData);
-    var response = addQuantityModelFromJson(result);
-    if (response.status.toString() == 'SUCCESS') {
-      showInSnackBar(context, response.message.toString());
-      //   SharedPreferences prefs = await SharedPreferences.getInstance();
-      // String rawJson = prefs.getString('cartList') ?? '[]';
-      // List<dynamic> jsonList = jsonDecode(rawJson);
-      // List<dynamic> updatedList = jsonList.where((item) => item['item_id'] != itemId).toList();
-      // String updatedJson = jsonEncode(updatedList);
-      // await prefs.setString('cartList', updatedJson);
-      getAllCartList();
-      //Navigator.of(context).pop();
-    } else {
-      showInSnackBar(context, response.message.toString());
+      var result = await apiService.deleteCart(postData);
+      var response = addQuantityModelFromJson(result);
+      if (response.status.toString() == 'SUCCESS') {
+        showInSnackBar(context, response.message.toString());
+        //   SharedPreferences prefs = await SharedPreferences.getInstance();
+        // String rawJson = prefs.getString('cartList') ?? '[]';
+        // List<dynamic> jsonList = jsonDecode(rawJson);
+        // List<dynamic> updatedList = jsonList.where((item) => item['item_id'] != itemId).toList();
+        // String updatedJson = jsonEncode(updatedList);
+        // await prefs.setString('cartList', updatedJson);
+        getAllCartList();
+        //Navigator.of(context).pop();
+      } else {
+        showInSnackBar(context, response.message.toString());
+      }
+      setState(() {});
     }
-    setState(() {});
   }
 
   List<AddressList> myprofilepage = [];
