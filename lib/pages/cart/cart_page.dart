@@ -86,14 +86,28 @@ class _CartPageState extends State<CartPage> {
     setState(() {});
   }
 
+  // void calculateTotalDiscount() {
+  //   totalDiscountPrice = cartList.fold(
+  //     0.0,
+  //     (sum, item) => sum + (double.tryParse(item.quantityPrice) ?? 0.0),
+  //   );
+
+  //   finalTotal =
+  //       totalDiscountPrice + deliverycharge + platformFee + gstFee - discount;
+
+  //   setState(() {});
+  // }
+
   void calculateTotalDiscount() {
     totalDiscountPrice = cartList.fold(
       0.0,
       (sum, item) => sum + (double.tryParse(item.quantityPrice) ?? 0.0),
     );
 
-    finalTotal =
-        totalDiscountPrice + deliveryFee + platformFee + gstFee - discount;
+    // Parse the nullable strings to double, defaulting to 0.0 if null or invalid
+    double deliveryChargeValue = double.tryParse(deliverycharge ?? '') ?? 0.0;
+
+    finalTotal = totalDiscountPrice + deliveryChargeValue;
 
     setState(() {});
   }
@@ -173,7 +187,7 @@ class _CartPageState extends State<CartPage> {
   int? selectedaddressid;
   Future createorder() async {
     Map<String, dynamic> postData = {
-      "delivery_charges": 0,
+      "delivery_charges": deliverycharge,
       "payment_method": selectedValue,
       "address_id": selectedaddressid
     };
@@ -259,11 +273,12 @@ class _CartPageState extends State<CartPage> {
             );
             // Assign the ID of the selected address
             selectedaddressid = selectedAddress?.id;
+            deliverycharge = selectedAddress?.price;
           } else {
             selectedAddress = null;
             selectedaddressid = null;
           }
-
+          calculateTotalDiscount();
           print("Selected Address ID: $selectedaddressid");
         });
       } else {
@@ -343,6 +358,8 @@ class _CartPageState extends State<CartPage> {
       ),
     );
   }
+
+  String? deliverycharge;
 
   @override
   Widget build(BuildContext context) {
@@ -437,6 +454,10 @@ class _CartPageState extends State<CartPage> {
                                                 selectedAddress = newAddress;
                                                 print(
                                                     "Selected Address ID: ${newAddress?.id}");
+                                                print(
+                                                    "Selected Address ID: ${newAddress?.price}");
+                                                deliverycharge =
+                                                    newAddress?.price;
                                               });
                                             },
                                             items: myprofilepage.map<
@@ -824,8 +845,9 @@ class _CartPageState extends State<CartPage> {
                                                     "Delivery Fee ", // "Delivery Fee | 9.8 km",
                                                 color: AppColors.black),
                                             SubHeadingWidget(
-                                                title:
-                                                    "₹${deliveryFee.toStringAsFixed(2)}",
+                                                title: deliverycharge == null
+                                                    ? 0
+                                                    : "₹${deliverycharge}",
                                                 color: AppColors.black),
                                           ],
                                         ),

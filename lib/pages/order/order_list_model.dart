@@ -56,6 +56,7 @@ class OrderListData {
   String? paymentMethod;
   String? cancelReason;
   int? code;
+  String? customer_code;
   int status;
   int? createdBy;
   DateTime? createdDate;
@@ -83,6 +84,7 @@ class OrderListData {
     this.paymentMethod,
     this.cancelReason,
     this.code,
+    this.customer_code,
     required this.status,
     required this.createdBy,
     required this.createdDate,
@@ -111,6 +113,7 @@ class OrderListData {
         paymentMethod: json["payment_method"],
         cancelReason: json["cancel_reason"],
         code: json["code"],
+        customer_code: json["customer_code"],
         status: json["status"],
         createdBy: json["created_by"],
         createdDate: DateTime.parse(json["created_date"]),
@@ -141,6 +144,7 @@ class OrderListData {
         "payment_method": paymentMethod,
         "cancel_reason": cancelReason,
         "code": code,
+        "customer_code": customer_code,
         "status": status,
         "created_by": createdBy,
         "created_date": createdDate?.toIso8601String(),

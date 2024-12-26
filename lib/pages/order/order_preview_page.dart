@@ -62,11 +62,9 @@ class _OrderPreviewPageState extends State<OrderPreviewPage> {
           orderPreviewList = response.items ?? [];
           orderPreviewListAll = orderPreviewList;
           storeAddress = response.storeAddress;
-          customerAddress =
-              // (response.address?.isNotEmpty ?? false)
-              //     ?
-              response.address![0];
-          //  : null;
+          customerAddress = (response.address?.isNotEmpty ?? false)
+              ? response.address![0]
+              : null;
           CustomerDetails = response.customer;
           isLoading = false;
         });
@@ -107,7 +105,7 @@ class _OrderPreviewPageState extends State<OrderPreviewPage> {
       String formattedDate = DateFormat('dd-MMM-yyyy').format(dateTime);
       return "$formattedTime | $formattedDate";
     } catch (e) {
-      return "Invalid date"; // Fallback for invalid date format
+      return "Invalid date"; 
     }
   }
 

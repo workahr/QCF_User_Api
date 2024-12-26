@@ -47,6 +47,11 @@ class AddressList {
   int? userId;
   String? address;
   String? addressLine2;
+  int? main_location_id;
+  int? sub_location_id;
+  String? latitude;
+  String? longitude;
+  String? price;
   String? city;
   String? state;
   int? country;
@@ -65,6 +70,11 @@ class AddressList {
     this.userId,
     this.address,
     this.addressLine2,
+    this.main_location_id,
+    this.sub_location_id,
+    this.latitude,
+    this.longitude,
+    this.price,
     this.city,
     this.state,
     this.country,
@@ -85,11 +95,16 @@ class AddressList {
         address: json["address"] == null ? '' : json["address"],
         addressLine2:
             json["address_line_2"] == null ? '' : json["address_line_2"],
+        main_location_id: json["main_location_id"],
+        sub_location_id: json["sub_location_id"],
+        latitude: json["latitude"] == null ? '' : json["latitude"],
+        longitude: json["longitude"] == null ? '' : json["longitude"],
         city: json["city"] == null ? '' : json["city"],
         state: json["state"] == null ? '' : json["state"],
         country: json["country"] == null ? '' : json["country"],
         postcode: json["postcode"] == null ? '' : json["postcode"],
         landmark: json["landmark"] == null ? '' : json["landmark"],
+        price: json["price"] == null ? '' : json["price"],
         status: json["status"],
         // createdBy: json["created_by"],
         // createdDate: json["created_date"] == null
@@ -108,11 +123,16 @@ class AddressList {
         "user_id": userId,
         "address": address,
         "address_line_2": addressLine2,
+        "main_location_id": main_location_id,
+        "sub_location_id": sub_location_id,
+        "latitude": latitude,
+        "longitude": longitude,
         "city": city,
         "state": state,
         "country": country,
         "postcode": postcode,
         "landmark": landmark,
+        "price": price,
         "status": status,
         "created_by": createdBy,
         "created_date": createdDate!.toIso8601String(),

@@ -812,7 +812,9 @@ class _MyorderPageState extends State<MyorderPage>
                                               color: AppColors.n_black,
                                             ),
                                             SubHeadingWidget(
-                                              title: e.code,
+                                              title: e.customer_code == null
+                                                  ? ''
+                                                  : e.customer_code,
                                               color: AppColors.n_black,
                                             ),
                                           ],

@@ -46,6 +46,10 @@ class EditAddressList {
   int? userId;
   String? address;
   String? addressLine2;
+  int? main_location_id;
+  String? main_location;
+  String? sub_location;
+  int? sub_location_id;
   String? city;
   String? state;
   int? country;
@@ -64,6 +68,10 @@ class EditAddressList {
     this.userId,
     this.address,
     this.addressLine2,
+    this.main_location_id,
+    this.main_location,
+    this.sub_location,
+    this.sub_location_id,
     this.city,
     this.state,
     this.country,
@@ -84,6 +92,10 @@ class EditAddressList {
         userId: json["user_id"],
         address: json["address"],
         addressLine2: json["address_line_2"],
+        main_location_id: json["main_location_id"],
+        main_location: json["main_location"],
+        sub_location: json["sub_location"],
+        sub_location_id: json["sub_location_id"],
         city: json["city"],
         state: json["state"],
         country: json["country"],
@@ -103,6 +115,10 @@ class EditAddressList {
         "user_id": userId,
         "address": address,
         "address_line_2": addressLine2,
+        "main_location_id": main_location_id,
+        "main_location": main_location,
+        "sub_location": sub_location,
+        "sub_location_id": sub_location_id,
         "city": city,
         "state": state,
         "country": country,

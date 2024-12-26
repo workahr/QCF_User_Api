@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1043229933176",
+    "project_id": "namdelivery-db436",
+    "storage_bucket": "namdelivery-db436.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1043229933176:android:03002c4a6e5cddaeb3f78d",
+        "android_client_info": {
+          "package_name": "com.workahr.namfooddelivery"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBligg3anTNjoFf9MAgCBv6SqbC_AuLq5A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

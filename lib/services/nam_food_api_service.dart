@@ -2080,4 +2080,41 @@ class NamFoodApiService {
       return e;
     }
   }
+
+// main location
+  Future getallmainlocationList() async {
+    try {
+      final url = Uri.parse('${liveApiPath}v1/getallmainlocation');
+      final response = await client.get(
+        url,
+        headers: headerData,
+      );
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        return response;
+      }
+    } catch (e) {
+      return e;
+    }
+  }
+
+  // Sub location
+  Future getallsublocationbymainList(id) async {
+    try {
+      final url =
+          Uri.parse('${liveApiPath}v1/getallsublocationbymainlocation?id=$id');
+      final response = await client.get(
+        url,
+        headers: headerData,
+      );
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        return response;
+      }
+    } catch (e) {
+      return e;
+    }
+  }
 }

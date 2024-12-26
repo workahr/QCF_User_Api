@@ -138,4 +138,5 @@ class AppAssets {
   static const String whatsapp_icon = 'assets/images/whatsapp_icon.png';
   static const String map = 'assets/images/Map.png';
   static const String image_plus_icon = 'assets/images/image-plus.png';
+  static const String location_map_pic = 'assets/images/location_map_pic.jpeg';
 }

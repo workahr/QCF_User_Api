@@ -13,9 +13,14 @@ import 'pages/HomeScreen/home_screen.dart';
 import 'pages/auth/login_page.dart';
 import 'pages/landing_page.dart';
 import 'pages/maincontainer.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+
+import 'services/firebase_service/firebase_api_services.dart';
 
 // import 'package:flutter/services.dart';
-
+final navigatorKey = GlobalKey<NavigatorState>();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -95,6 +100,23 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     } else if (state == AppLifecycleState.paused) {
       // checkuserlog("-pause");
     }
+  }
+
+  Future<void> main() async {
+    WidgetsFlutterBinding.ensureInitialized();
+
+    if (!kIsWeb) {
+      await Firebase.initializeApp();
+      await FirebaseAPIServices().initNotifications();
+    }
+
+    BaseController baseCtrl = Get.put(BaseController());
+
+    String? token = baseCtrl.fbUserId;
+
+    print("token $token");
+
+    runApp(MyApp());
   }
 
   @override
