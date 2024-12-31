@@ -1608,7 +1608,7 @@ class NamFoodApiService {
 // get All Banners image
   Future getBannerList() async {
     try {
-      final url = Uri.parse('${liveApiPath}v1/getallbanner');
+      final url = Uri.parse('${liveApiPath}v1/getallbanner?type=2');
       final response = await client.get(
         url,
         headers: headerData,
@@ -2109,6 +2109,27 @@ class NamFoodApiService {
         headers: headerData,
       );
       if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        return response;
+      }
+    } catch (e) {
+      return e;
+    }
+  }
+
+  // Static  banner image  For User
+
+  Future getstaticbannerimage() async {
+    try {
+      final url = Uri.parse('${liveApiPath}v1/getallbanner?type=1');
+      final response = await client.get(
+        url,
+        headers: headerData,
+      );
+      if (response.statusCode == 200) {
+        print(response.toString());
+
         return response.body;
       } else {
         return response;

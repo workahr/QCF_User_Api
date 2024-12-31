@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -22,12 +23,30 @@ import 'services/firebase_service/firebase_api_services.dart';
 // import 'package:flutter/services.dart';
 final navigatorKey = GlobalKey<NavigatorState>();
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  // Initialize Firebase Notifications (if applicable)
+  if (!kIsWeb) {
+    WidgetsFlutterBinding.ensureInitialized();
 
-  BaseController baseCtrl = Get.put(BaseController());
+    // Initialize Firebase
+    await Firebase.initializeApp();
+    await FirebaseAPIServices().initNotifications();
+    BaseController baseCtrl = Get.put(BaseController());
+
+    // Ensure the token is retrieved after initialization
+    String? token = await FirebaseMessaging.instance.getToken();
+    print("token $token");
+  }
 
   runApp(MyApp());
 }
+
+// Future<void> main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+
+//   BaseController baseCtrl = Get.put(BaseController());
+
+//   runApp(MyApp());
+// }
 
 class MyApp extends StatefulWidget with WidgetsBindingObserver {
   const MyApp({Key? key}) : super(key: key);
@@ -100,23 +119,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     } else if (state == AppLifecycleState.paused) {
       // checkuserlog("-pause");
     }
-  }
-
-  Future<void> main() async {
-    WidgetsFlutterBinding.ensureInitialized();
-
-    if (!kIsWeb) {
-      await Firebase.initializeApp();
-      await FirebaseAPIServices().initNotifications();
-    }
-
-    BaseController baseCtrl = Get.put(BaseController());
-
-    String? token = baseCtrl.fbUserId;
-
-    print("token $token");
-
-    runApp(MyApp());
   }
 
   @override

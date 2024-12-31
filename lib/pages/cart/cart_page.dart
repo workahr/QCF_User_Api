@@ -119,7 +119,7 @@ class _CartPageState extends State<CartPage> {
   double gstFee = 0.0;
   double discount = 0.0;
   bool isTripAdded = false;
-  double finalTotal = 0.0;
+  double finalTotal = 0.00;
 
   int selectedOption =
       0; // 0 for no selection, 1 for first option, 2 for second option
@@ -361,13 +361,16 @@ class _CartPageState extends State<CartPage> {
 
   String? deliverycharge;
 
+  Future<bool> _onWillPop() async {
+    Navigator.pop(context, true);
+
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-        onWillPop: () async {
-          // Perform any action before navigating back
-          return true; // Allow back navigation
-        },
+        onWillPop: _onWillPop,
         child: Scaffold(
             backgroundColor: Color(0xFFF6F6F6),
             appBar: AppBar(
@@ -380,7 +383,7 @@ class _CartPageState extends State<CartPage> {
               elevation: 0,
               leading: IconButton(
                 icon: Icon(Icons.arrow_back),
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => Navigator.pop(context, true),
               ),
             ),
             body: isLoading
@@ -666,8 +669,14 @@ class _CartPageState extends State<CartPage> {
                                                                           .visible,
                                                                   maxLines: 2,
                                                                   title: item
-                                                                      .itemName
-                                                                      .toString(),
+                                                                          .itemName
+                                                                          .toString()![
+                                                                              0]
+                                                                          .toUpperCase() +
+                                                                      item.itemName
+                                                                          .toString()!
+                                                                          .substring(
+                                                                              1),
                                                                   fontSize:
                                                                       16.0,
                                                                   fontWeight:
@@ -1189,7 +1198,7 @@ class _CartPageState extends State<CartPage> {
                                     color: AppColors.black,
                                   ),
                                   HeadingWidget(
-                                    title: '₹${finalTotal.toString()}',
+                                    title: '₹${finalTotal.toStringAsFixed(2)}',
                                     color: AppColors.red,
                                     fontSize: 18.0,
                                   ),
@@ -1226,7 +1235,7 @@ class _CartPageState extends State<CartPage> {
                                     child: Row(
                                       children: [
                                         SubHeadingWidget(
-                                          title: "Pay now   ",
+                                          title: "Confirm Order   ",
                                           color: Colors.white,
                                         ),
                                         Icon(Icons.arrow_forward)

@@ -105,7 +105,7 @@ class _OrderPreviewPageState extends State<OrderPreviewPage> {
       String formattedDate = DateFormat('dd-MMM-yyyy').format(dateTime);
       return "$formattedTime | $formattedDate";
     } catch (e) {
-      return "Invalid date"; 
+      return "Invalid date";
     }
   }
 
@@ -386,7 +386,7 @@ class _OrderPreviewPageState extends State<OrderPreviewPage> {
                                 Text(
                                   orderDetailsList?.totalPrice == null
                                       ? ''
-                                      : "₹${orderDetailsList?.totalPrice?.toString() ?? '0'}",
+                                      : "₹${(double.tryParse(orderDetailsList?.totalPrice?.toString() ?? "0") ?? 0) - (double.tryParse(orderDetailsList?.deliveryCharges?.toString() ?? "0") ?? 0)}",
                                   style: TextStyle(
                                     fontWeight: FontWeight.normal,
                                     fontSize: 14,
@@ -410,7 +410,9 @@ class _OrderPreviewPageState extends State<OrderPreviewPage> {
                                   height: 5,
                                 ),
                                 Text(
-                                  "₹0.00",
+                                  orderDetailsList?.deliveryCharges == null
+                                      ? ''
+                                      : "₹${orderDetailsList?.deliveryCharges?.toString() ?? '0'}",
                                   style: TextStyle(
                                     fontWeight: FontWeight.normal,
                                     fontSize: 14,

@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:namfood/constants/app_assets.dart';
@@ -57,6 +59,8 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
   TextEditingController cityController = TextEditingController();
   TextEditingController stateController = TextEditingController();
   TextEditingController postController = TextEditingController();
+  TextEditingController latController = TextEditingController();
+  TextEditingController logController = TextEditingController();
 
   String? selectedmainlocation;
   int? selectedmainlocationId;
@@ -215,28 +219,28 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
       //   width: MediaQuery.of(context).size.width,
       // ),
 
-      GestureDetector(
-          onTap: () {
-            setState(() {
-              // _getCurrentPosition();
-            });
-          },
-          child: OutlineBtnWidget(
-            borderColor: AppColors.red,
-            titleColor: AppColors.red,
-            icon: Icons.my_location,
-            iconColor: AppColors.red,
-            title: "Mark a Place In Map",
-            height: 50,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MapScreen(),
-                ),
-              );
-            },
-          )),
+      // GestureDetector(
+      //     onTap: () {
+      //       setState(() {
+      //         // _getCurrentPosition();
+      //       });
+      //     },
+      //     child: OutlineBtnWidget(
+      //       borderColor: AppColors.red,
+      //       titleColor: AppColors.red,
+      //       icon: Icons.my_location,
+      //       iconColor: AppColors.red,
+      //       title: "Mark a Place In Map",
+      //       height: 50,
+      //       onTap: () {
+      //         Navigator.push(
+      //           context,
+      //           MaterialPageRoute(
+      //             builder: (context) => MapScreen(),
+      //           ),
+      //         );
+      //       },
+      //     )),
       SizedBox(
         height: 10,
       ),
@@ -390,8 +394,8 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
         "landmark": lankmarkController.text,
         "main_location_id": selectedmainlocationId,
         "sub_location_id": selectedsublocationId,
-        "latitude": widget.lat,
-        "longitude": widget.long,
+        "latitude": widget.lat, //latController.text,
+        "longitude": widget.long //logController.text,
       };
       print('postData $postData');
 
@@ -487,8 +491,8 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
         "landmark": lankmarkController.text,
         "main_location_id": selectedmainlocationId,
         "sub_location_id": selectedsublocationId,
-        "latitude": widget.lat,
-        "longitude": widget.long,
+        "latitude": widget.lat, //latController.text,
+        "longitude": widget.long //logController.text,
       };
       print("updateaddressupdate $postData");
       var result = await apiService.updateaddress(postData);
@@ -574,7 +578,9 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
           cityController.text = (place.locality ?? "").toString();
           stateController.text = (place.administrativeArea ?? "").toString();
           postController.text = (place.postalCode ?? "").toString();
-
+          latController.text = latitude.toString();
+          logController.text = longitude.toString();
+          print("lat : $latitude");
           address =
               "${place.street}, ${place.locality}, ${place.subLocality} ${place.administrativeArea}, ${place.postalCode}, ${place.country}";
         });
@@ -851,7 +857,28 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
               width: screenWidth,
               color: AppColors.red,
               onTap: () {
-                widget.addressId == null ? saveaddress() : updateaddress();
+                // "latitude": widget.lat,
+                // "longitude": widget.long,
+
+                if (address1Controller.text.toString() == '' ||
+                    address2Controller.text.toString() == '' ||
+                    selectedstate == '' ||
+                    postController.text.toString() == '' ||
+                    lankmarkController.text.toString() == '' ||
+                    selectedmainlocationId == '' ||
+                    selectedmainlocationId == null ||
+                    selectedmainlocationId == "null" ||
+                    selectedsublocationId == '' ||
+                    selectedsublocationId == null ||
+                    selectedsublocationId == "null") {
+                  showInSnackBar(context, "Please , Enter the All Fields");
+                } else if (address1Controller.text.toString() == '' ||
+                    address2Controller.text.toString() == '' ||
+                    selectedstate == '') {
+                  showInSnackBar(context, "Please , Enter the All Fields");
+                } else {
+                  widget.addressId == null ? saveaddress() : updateaddress();
+                }
               },
             ),
             SizedBox(height: 20),
@@ -926,17 +953,7 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
   }
 }
 
-
-
-
-
-
-
-
-
-
-// before add main location dropdown 
-
+// before add main location dropdown
 
 // import 'package:flutter/material.dart';
 // import 'package:flutter/services.dart';
@@ -1040,7 +1057,7 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
 //         labelText: 'Land Mark',
 //         width: MediaQuery.of(context).size.width,
 //       ),
-      
+
 //       // CustomeTextField(
 //       //   control: cityController,
 //       //   borderColor: AppColors.grey1,
@@ -1131,7 +1148,6 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
 
 //     return Column(children: fields);
 //   }
-  
 
 //   Future saveaddress() async {
 //     if (addressForm.currentState!.validate()) {

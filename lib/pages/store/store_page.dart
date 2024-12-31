@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,6 @@ import 'package:namfood/pages/cart/cart_page.dart';
 import 'package:namfood/widgets/custom_text_field.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../constants/app_assets.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_constants.dart';
@@ -89,6 +87,7 @@ class _StorePageState extends State<StorePage> {
     getAllCartList();
     getstoredetailmenuList();
     getStoreDetails();
+    getAllCartListforitemvalue();
   }
 
   Future<void> getStoreDetails() async {
@@ -183,12 +182,14 @@ class _StorePageState extends State<StorePage> {
         // showInSnackBar(context, response.message);
         setState(() {
           _increment(categoryIndex, productIndex);
+          getAllCartListforitemvalue();
         });
       } else {
         print(response.code);
         if (response.code == '113') {
           setState(() {
             _decrement(categoryIndex, productIndex);
+            getAllCartListforitemvalue();
             showInSnackBar(
                 context, "Need to delete your Cart and Add this Menu");
           });
@@ -212,7 +213,9 @@ class _StorePageState extends State<StorePage> {
       RemoveQtymodel response = removeQtymodelFromJson(result);
 
       if (response.status.toString() == 'SUCCESS') {
-        setState(() {});
+        setState(() {
+          getAllCartListforitemvalue();
+        });
         //  showInSnackBar(context, response.message.toString());
       } else {
         showInSnackBar(context, response.message.toString());
@@ -234,7 +237,9 @@ class _StorePageState extends State<StorePage> {
       RemoveQtymodel response = removeQtymodelFromJson(result);
 
       if (response.status.toString() == 'SUCCESS') {
-        setState(() {});
+        setState(() {
+          getAllCartListforitemvalue();
+        });
         showInSnackBar(context, response.message.toString());
       } else {
         showInSnackBar(context, response.message.toString());
@@ -591,6 +596,69 @@ class _StorePageState extends State<StorePage> {
     setState(() {});
   }
 
+  Future getAllCartListforitemvalue() async {
+    await apiService.getBearerToken();
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      var result = await apiService.getCartList();
+      var response = cartListModelFromJson(result);
+      if (response.status.toString() == 'SUCCESS') {
+        setState(() {
+          cartList = response.list;
+          cartListAll = cartList;
+          isLoading = false;
+          if (widget.storeid == cartList.first.storeId) {
+            calculateTotalDiscount();
+          }
+        });
+      } else {
+        setState(() {
+          cartList = [];
+          cartListAll = [];
+          isLoading = false;
+        });
+        showInSnackBar(context, response.message.toString());
+      }
+    } catch (e) {
+      setState(() {
+        cartList = [];
+        cartListAll = [];
+        isLoading = false;
+      });
+      // showInSnackBar(context, 'Error occurred: $e');
+    }
+
+    setState(() {});
+  }
+
+  double totalDiscountPrice = 0.0;
+
+  void calculateTotalDiscount() {
+    totalDiscountPrice = cartList.fold(
+      0.0,
+      (sum, item) => sum + (double.tryParse(item.quantityPrice) ?? 0.0),
+    );
+    totalCartItems = cartList.fold(
+      0,
+      (sum, item) => sum + item.quantity,
+    );
+
+    finalTotal =
+        totalDiscountPrice + deliveryFee + platformFee + gstFee - discount;
+    setState(() {});
+  }
+
+  int totalCartItems = 0;
+  double deliveryFee = 0.0;
+  double platformFee = 0.0;
+  double gstFee = 0.0;
+  double discount = 0.0;
+  bool isTripAdded = false;
+  double finalTotal = 0.0;
+
   Widget _buildShimmerPlaceholder() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -612,6 +680,23 @@ class _StorePageState extends State<StorePage> {
         ),
       ),
     );
+  }
+
+  Future<void> _navigateToMenus() async {
+    // Navigate to Menus and await the result
+    final updatedCartItems = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CartPage(),
+      ),
+    );
+
+    if (updatedCartItems == true) {
+      setState(() {
+        getAllCartListforitemvalue();
+        //  cartItems = updatedCartItems;
+      });
+    }
   }
 
   @override
@@ -949,6 +1034,15 @@ class _StorePageState extends State<StorePage> {
                                             categoryProductQuantities[storeId]
                                                     ?[productId] ??
                                                 0;
+
+                                        int cartQuantity = 0;
+                                        for (var item in cartList) {
+                                          if (item.productId == productId &&
+                                              item.storeId == storeId) {
+                                            cartQuantity = item.quantity;
+                                            break;
+                                          }
+                                        }
                                         return Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
@@ -1009,16 +1103,8 @@ class _StorePageState extends State<StorePage> {
                                                           bottom: -13,
                                                           left: 8,
                                                           right: 8,
-                                                          child: dishQuantities[
-                                                                              categoryIndex]
-                                                                          ?[
-                                                                          productIndex] !=
-                                                                      null &&
-                                                                  dishQuantities[
-                                                                              categoryIndex]
-                                                                          ?[
-                                                                          productIndex] !=
-                                                                      0
+                                                          child: cartQuantity >
+                                                                  0
                                                               ? Container(
                                                                   height: 35,
                                                                   padding: EdgeInsets
@@ -1048,7 +1134,7 @@ class _StorePageState extends State<StorePage> {
                                                                               categoryIndex,
                                                                               productIndex);
 
-                                                                          if (dishQuantities[categoryIndex]![productIndex] >
+                                                                          if (cartQuantity >
                                                                               0) {
                                                                             removequantity(storeId.toString(),
                                                                                 productId.toString());
@@ -1069,7 +1155,7 @@ class _StorePageState extends State<StorePage> {
                                                                             EdgeInsets.symmetric(horizontal: 5.0),
                                                                         child:
                                                                             Text(
-                                                                          '${dishQuantities[categoryIndex]?[productIndex]}',
+                                                                          '$cartQuantity',
                                                                           style:
                                                                               TextStyle(
                                                                             color:
@@ -1215,13 +1301,19 @@ class _StorePageState extends State<StorePage> {
                                                           ),
                                                           HeadingWidget(
                                                             title: product
-                                                                .itemName,
-                                                            // e.dishname, // "Chicken Biryani",
+                                                                    .itemName![
+                                                                        0]
+                                                                    .toUpperCase() +
+                                                                product
+                                                                    .itemName!
+                                                                    .substring(
+                                                                        1),
                                                             fontSize: 16.0,
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             vMargin: 1.0,
                                                           ),
+
                                                           Row(children: [
                                                             Text(
                                                               "₹${product.itemPrice.toString()}",
@@ -1514,12 +1606,13 @@ class _StorePageState extends State<StorePage> {
                         children: [
                           SubHeadingWidget(
                             title:
-                                "${selectedItems.length} item${selectedItems.length == 1 ? '' : 's'}",
+                                "${totalCartItems.toString()} item${totalCartItems.toString() == 1 ? '' : 's'}",
+                            //  "${selectedItems.length} item${selectedItems.length == 1 ? '' : 's'}",
                             color: AppColors.black,
                             fontSize: 15.0,
                           ),
                           HeadingWidget(
-                            title: "Price: ₹${totalPrice.toStringAsFixed(2)}",
+                            title: "Price: ₹${finalTotal.toStringAsFixed(2)}",
                             color: AppColors.red,
                             fontSize: 18.0,
                           ),
@@ -1546,12 +1639,13 @@ class _StorePageState extends State<StorePage> {
                                   GestureDetector(
                                     onTap: () {
                                       _removeOverlay();
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => CartPage(),
-                                        ),
-                                      );
+                                      _navigateToMenus();
+                                      // Navigator.push(
+                                      //   context,
+                                      //   MaterialPageRoute(
+                                      //     builder: (context) => CartPage(),
+                                      //   ),
+                                      // );
                                     },
                                     child: SubHeadingWidget(
                                       title: "Go to cart",
@@ -1800,7 +1894,7 @@ class _StorePageState extends State<StorePage> {
 //           storedetailslistpageAll = [];
 //           isLoading = false;
 //         });
-//         showInSnackBar(context, response.message.toString());
+//         // showInSnackBar(context, response.message.toString());
 //         print(response.message.toString());
 //       }
 //     } catch (e) {
@@ -1809,7 +1903,7 @@ class _StorePageState extends State<StorePage> {
 //         storedetailslistpageAll = [];
 //         isLoading = false;
 //       });
-//       showInSnackBar(context, 'Error occurred: $e');
+//       // showInSnackBar(context, 'Error occurred: $e');
 //       print(e);
 //     }
 //   }
@@ -1968,8 +2062,11 @@ class _StorePageState extends State<StorePage> {
 //   bool isOverlayVisible = false;
 
 //   void _showOverlay(BuildContext context) async {
-//     if (_overlayEntry == null) {
-//       // Show loading overlay while fetching data
+//     // Prevent duplicate overlays
+//     if (_overlayEntry != null) return;
+
+//     // Show loading overlay while fetching data only if not already fetched
+//     if (storedetailslistpage.isEmpty) {
 //       OverlayEntry loadingOverlay = OverlayEntry(
 //         builder: (context) => Center(
 //           child: CircularProgressIndicator(),
@@ -1977,43 +2074,45 @@ class _StorePageState extends State<StorePage> {
 //       );
 //       Overlay.of(context)?.insert(loadingOverlay);
 
-//       // Fetch data from API
-//       await getstoredetailmenuList();
+//       await getstoredetailmenuList(); // Fetch data from API
 
-//       // Remove loading overlay
-//       loadingOverlay.remove();
+//       loadingOverlay.remove(); // Remove loading overlay
+//     }
 
-//       // Check if there are categories to display
-//       if (storedetailslistpage.isEmpty) {
-//         showInSnackBar(context, "No categories available.");
-//         return;
-//       }
+//     if (storedetailslistpage.isEmpty) {
+//       showInSnackBar(context, "No categories available.");
+//       return;
+//     }
 
-//       // Create the overlay with data
-//       _overlayEntry = OverlayEntry(
-//         builder: (context) => Positioned(
-//           bottom: 170.0,
-//           right: 20.0,
-//           child: Material(
-//             color: Colors.transparent,
-//             child: Container(
-//               width: 250,
-//               padding: EdgeInsets.only(
-//                   top: 1.0, left: 20.0, right: 25.0, bottom: 10.0),
-//               decoration: BoxDecoration(
-//                 color: Colors.black,
-//                 borderRadius: BorderRadius.circular(16.0),
-//               ),
-//               child: ListView.builder(
-//                 shrinkWrap: true,
-//                 physics: NeverScrollableScrollPhysics(),
-//                 itemCount: storedetailslistpage.length,
-//                 itemBuilder: (context, categoryIndex) {
-//                   final category = storedetailslistpage[categoryIndex];
-//                   final String? categoryName = category.categoryName;
-//                   final List<Product> products = category.products;
+//     // Create the overlay with data
+//     _overlayEntry = OverlayEntry(
+//       builder: (context) => Positioned(
+//         bottom: 170.0,
+//         right: 20.0,
+//         child: Material(
+//           color: Colors.transparent,
+//           child: Container(
+//             width: 250,
+//             padding: EdgeInsets.only(
+//                 top: 1.0, left: 20.0, right: 25.0, bottom: 10.0),
+//             decoration: BoxDecoration(
+//               color: Colors.black,
+//               borderRadius: BorderRadius.circular(16.0),
+//             ),
+//             child: ListView.builder(
+//               shrinkWrap: true,
+//               physics: NeverScrollableScrollPhysics(),
+//               itemCount: storedetailslistpage.length,
+//               itemBuilder: (context, categoryIndex) {
+//                 final category = storedetailslistpage[categoryIndex];
+//                 final String? categoryName = category.categoryName;
 
-//                   return Column(
+//                 return GestureDetector(
+//                   onTap: () {
+//                     _reorderCategories(categoryIndex); // Move selected to top
+//                     _removeOverlay(); // Close overlay
+//                   },
+//                   child: Column(
 //                     crossAxisAlignment: CrossAxisAlignment.start,
 //                     children: [
 //                       Row(
@@ -2024,33 +2123,39 @@ class _StorePageState extends State<StorePage> {
 //                             style: TextStyle(color: Colors.white, fontSize: 16),
 //                           ),
 //                           Text(
-//                             '${products.length}',
+//                             '${category.products.length}',
 //                             style: TextStyle(color: Colors.white, fontSize: 16),
 //                           ),
 //                         ],
 //                       ),
 //                       SizedBox(height: 15),
 //                     ],
-//                   );
-//                 },
-//               ),
+//                   ),
+//                 );
+//               },
 //             ),
 //           ),
 //         ),
-//       );
+//       ),
+//     );
 
-//       // Insert the overlay
-//       Overlay.of(context)?.insert(_overlayEntry!);
+//     Overlay.of(context)?.insert(_overlayEntry!);
 
-//       // Update the overlay visibility state
-//       setState(() {
-//         isOverlayVisible = true;
-//       });
+//     // Update the overlay visibility state
+//     setState(() {
+//       isOverlayVisible = true;
+//     });
+//   }
+
+//   void _reorderCategories(int selectedIndex) {
+//     if (selectedIndex < storedetailslistpage.length) {
+//       final selectedCategory = storedetailslistpage.removeAt(selectedIndex);
+//       storedetailslistpage.insert(0, selectedCategory);
+//       // No need for setState here as ListView.builder will reflect changes
 //     }
 //   }
 
 //   void _removeOverlay() {
-//     // Remove the overlay if it exists
 //     _overlayEntry?.remove();
 //     _overlayEntry = null;
 //     setState(() {
@@ -2506,23 +2611,35 @@ class _StorePageState extends State<StorePage> {
 //                           //   ),
 //                           //   labelColor: Colors.grey[900],
 //                           //   focusBorderColor: AppColors.primary,
-//                           //   borderRadius: BorderRadius.all(Radius.circular(20.0)),
+//                           //   borderRadius:
+//                           //       BorderRadius.all(Radius.circular(20.0)),
 //                           //   borderColor: AppColors.lightGrey3,
 //                           //   onChanged: (value) {
 //                           //     if (value.isNotEmpty) {
-//                           //       print('Search term: $value');
-//                           //       String searchValue = value.toLowerCase();
+//                           //       storedetailslistpage = storedetailslistpageAll
+//                           //           .map((category) {
+//                           //             final filteredProducts =
+//                           //                 category.products.where((product) {
+//                           //               return product.itemName != null &&
+//                           //                   product.itemName!
+//                           //                       .toLowerCase()
+//                           //                       .contains(value.toLowerCase());
+//                           //             }).toList();
 
-//                           //       storedetailslistpage =
-//                           //           storedetailslistpageAll!.where((category) {
-//                           //         return category.products.any((product) {
-//                           //           print('Checking product: ${product.itemName}');
-//                           //           return product.itemName != null &&
-//                           //               product.itemName
-//                           //                   .toLowerCase()
-//                           //                   .contains(searchValue);
-//                           //         });
-//                           //       }).toList();
+//                           //             return CategoryProductList(
+//                           //               categoryId: category.categoryId,
+//                           //               categoryName: category.categoryName,
+//                           //               description: category.description,
+//                           //               slug: category.slug,
+//                           //               serial: category.serial,
+//                           //               imageUrl: category.imageUrl,
+//                           //               products: filteredProducts,
+//                           //               createdDate: category.createdDate,
+//                           //             );
+//                           //           })
+//                           //           .where((category) =>
+//                           //               category.products.isNotEmpty)
+//                           //           .toList();
 //                           //     } else {
 //                           //       storedetailslistpage = storedetailslistpageAll;
 //                           //     }
@@ -2543,6 +2660,7 @@ class _StorePageState extends State<StorePage> {
 //                               if (category.products.isEmpty) {
 //                                 return SizedBox.shrink();
 //                               }
+
 //                               return Column(
 //                                   crossAxisAlignment: CrossAxisAlignment.start,
 //                                   children: [
@@ -2552,114 +2670,215 @@ class _StorePageState extends State<StorePage> {
 //                                       child: Text(
 //                                         category.categoryName!,
 //                                         style: TextStyle(
-//                                           fontSize: 18,
-//                                           fontWeight: FontWeight.bold,
-//                                         ),
+//                                             fontSize: 18,
+//                                             fontWeight: FontWeight.bold),
 //                                       ),
 //                                     ),
-//                                     // Check if there are any products in the category
-//                                     if (category.products.isEmpty)
-//                                       Padding(
-//                                         padding: const EdgeInsets.symmetric(
-//                                             horizontal: 16.0),
-//                                         child: Text(
-//                                           'No products available in this category.',
-//                                           style: TextStyle(
-//                                               fontSize: 16, color: Colors.grey),
-//                                         ),
-//                                       )
-//                                     else
-//                                       ListView.builder(
-//                                         shrinkWrap: true,
-//                                         physics: NeverScrollableScrollPhysics(),
-//                                         itemCount: category.products.length,
-//                                         itemBuilder: (context, productIndex) {
-//                                           final product =
-//                                               category.products[productIndex];
-//                                           int productId = int.tryParse(
-//                                                   product.itemId.toString()) ??
-//                                               0;
-//                                           int storeId = int.tryParse(
-//                                                   product.storeId.toString()) ??
-//                                               0;
-//                                           int quantity =
-//                                               categoryProductQuantities[storeId]
-//                                                       ?[productId] ??
-//                                                   0;
-//                                           return Column(
-//                                             crossAxisAlignment:
-//                                                 CrossAxisAlignment.start,
-//                                             children: [
-//                                               SizedBox(height: 10),
-//                                               if (product.itemStock == 1)
-//                                                 Padding(
-//                                                   padding: const EdgeInsets
-//                                                       .symmetric(
-//                                                       horizontal: 16.0,
-//                                                       vertical: 8.0),
-//                                                   child: Row(
-//                                                     children: [
-//                                                       Stack(
-//                                                         clipBehavior: Clip.none,
-//                                                         children: [
-//                                                           if (product
-//                                                                   .itemImageUrl
-//                                                                   .toString() !=
-//                                                               null)
-//                                                             ClipRRect(
-//                                                               borderRadius:
-//                                                                   BorderRadius
-//                                                                       .circular(
-//                                                                           10),
-//                                                               child: SizedBox(
-//                                                                 width: 100,
-//                                                                 height: 100,
-//                                                                 child: Image
-//                                                                     .network(
-//                                                                   AppConstants
-//                                                                           .imgBaseUrl +
-//                                                                       product
-//                                                                           .itemImageUrl
-//                                                                           .toString(),
-//                                                                   fit: BoxFit
-//                                                                       .contain,
-//                                                                   height: 60.0,
-//                                                                   errorBuilder: (BuildContext
-//                                                                           context,
-//                                                                       Object
-//                                                                           exception,
-//                                                                       StackTrace?
-//                                                                           stackTrace) {
-//                                                                     return Image.asset(
-//                                                                         AppAssets
-//                                                                             .storeBiriyaniImg,
-//                                                                         width:
-//                                                                             120.0,
-//                                                                         height:
-//                                                                             120.0,
-//                                                                         fit: BoxFit
-//                                                                             .cover);
-//                                                                   },
-//                                                                 ),
+//                                     ListView.builder(
+//                                       shrinkWrap: true,
+//                                       physics: NeverScrollableScrollPhysics(),
+//                                       itemCount: category.products.length,
+//                                       itemBuilder: (context, productIndex) {
+//                                         final product =
+//                                             category.products[productIndex];
+
+//                                         int productId = int.tryParse(
+//                                                 product.itemId.toString()) ??
+//                                             0;
+//                                         int storeId = int.tryParse(
+//                                                 product.storeId.toString()) ??
+//                                             0;
+//                                         int quantity =
+//                                             categoryProductQuantities[storeId]
+//                                                     ?[productId] ??
+//                                                 0;
+//                                         return Column(
+//                                           crossAxisAlignment:
+//                                               CrossAxisAlignment.start,
+//                                           children: [
+//                                             SizedBox(height: 10),
+//                                             if (product.itemStock == 1)
+//                                               Padding(
+//                                                 padding:
+//                                                     const EdgeInsets.symmetric(
+//                                                         horizontal: 16.0,
+//                                                         vertical: 8.0),
+//                                                 child: Row(
+//                                                   children: [
+//                                                     Stack(
+//                                                       clipBehavior: Clip.none,
+//                                                       children: [
+//                                                         if (product.itemImageUrl
+//                                                                 .toString() !=
+//                                                             null)
+//                                                           ClipRRect(
+//                                                             borderRadius:
+//                                                                 BorderRadius
+//                                                                     .circular(
+//                                                                         10),
+//                                                             child: SizedBox(
+//                                                               width: 100,
+//                                                               height: 100,
+//                                                               child:
+//                                                                   Image.network(
+//                                                                 AppConstants
+//                                                                         .imgBaseUrl +
+//                                                                     product
+//                                                                         .itemImageUrl
+//                                                                         .toString(),
+//                                                                 fit: BoxFit
+//                                                                     .contain,
+//                                                                 height: 60.0,
+//                                                                 errorBuilder: (BuildContext
+//                                                                         context,
+//                                                                     Object
+//                                                                         exception,
+//                                                                     StackTrace?
+//                                                                         stackTrace) {
+//                                                                   return Image.asset(
+//                                                                       AppAssets
+//                                                                           .storeBiriyaniImg,
+//                                                                       width:
+//                                                                           120.0,
+//                                                                       height:
+//                                                                           120.0,
+//                                                                       fit: BoxFit
+//                                                                           .cover);
+//                                                                 },
 //                                                               ),
 //                                                             ),
-//                                                           Positioned(
-//                                                             bottom: -13,
-//                                                             left: 8,
-//                                                             right: 8,
-//                                                             child: dishQuantities[categoryIndex]
-//                                                                             ?[
-//                                                                             productIndex] !=
-//                                                                         null &&
-//                                                                     dishQuantities[categoryIndex]
-//                                                                             ?[
-//                                                                             productIndex] !=
-//                                                                         0
-//                                                                 ? Container(
-//                                                                     height: 35,
-//                                                                     padding: EdgeInsets.symmetric(
-//                                                                         horizontal:
-//                                                                             2.0),
+//                                                           ),
+//                                                         Positioned(
+//                                                           bottom: -13,
+//                                                           left: 8,
+//                                                           right: 8,
+//                                                           child: dishQuantities[
+//                                                                               categoryIndex]
+//                                                                           ?[
+//                                                                           productIndex] !=
+//                                                                       null &&
+//                                                                   dishQuantities[
+//                                                                               categoryIndex]
+//                                                                           ?[
+//                                                                           productIndex] !=
+//                                                                       0
+//                                                               ? Container(
+//                                                                   height: 35,
+//                                                                   padding: EdgeInsets
+//                                                                       .symmetric(
+//                                                                           horizontal:
+//                                                                               2.0),
+//                                                                   decoration:
+//                                                                       BoxDecoration(
+//                                                                     border: Border.all(
+//                                                                         color: Colors
+//                                                                             .red),
+//                                                                     borderRadius:
+//                                                                         BorderRadius.circular(
+//                                                                             10),
+//                                                                     color: Colors
+//                                                                         .white,
+//                                                                   ),
+//                                                                   child: Row(
+//                                                                     mainAxisAlignment:
+//                                                                         MainAxisAlignment
+//                                                                             .center,
+//                                                                     children: [
+//                                                                       GestureDetector(
+//                                                                         onTap: () =>
+//                                                                             setState(() {
+//                                                                           _decrement(
+//                                                                               categoryIndex,
+//                                                                               productIndex);
+
+//                                                                           if (dishQuantities[categoryIndex]![productIndex] >
+//                                                                               0) {
+//                                                                             removequantity(storeId.toString(),
+//                                                                                 productId.toString());
+//                                                                           } else {
+//                                                                             deletequantity(storeId.toString(),
+//                                                                                 productId.toString());
+//                                                                           }
+//                                                                         }),
+//                                                                         child: Icon(
+//                                                                             Icons
+//                                                                                 .remove,
+//                                                                             color:
+//                                                                                 Colors.red,
+//                                                                             size: 22),
+//                                                                       ),
+//                                                                       Padding(
+//                                                                         padding:
+//                                                                             EdgeInsets.symmetric(horizontal: 5.0),
+//                                                                         child:
+//                                                                             Text(
+//                                                                           '${dishQuantities[categoryIndex]?[productIndex]}',
+//                                                                           style:
+//                                                                               TextStyle(
+//                                                                             color:
+//                                                                                 Colors.red,
+//                                                                             fontSize:
+//                                                                                 20,
+//                                                                             fontWeight:
+//                                                                                 FontWeight.bold,
+//                                                                           ),
+//                                                                         ),
+//                                                                       ),
+//                                                                       GestureDetector(
+//                                                                         onTap: () =>
+//                                                                             setState(() {
+//                                                                           addquantity(
+//                                                                               storeId.toString(),
+//                                                                               productId.toString(),
+//                                                                               categoryIndex,
+//                                                                               productIndex);
+//                                                                           // _increment(
+//                                                                           // categoryIndex,
+//                                                                           // productIndex);
+//                                                                         }),
+//                                                                         child: Icon(
+//                                                                             Icons
+//                                                                                 .add,
+//                                                                             color:
+//                                                                                 Colors.red,
+//                                                                             size: 22),
+//                                                                       ),
+//                                                                     ],
+//                                                                   ))
+//                                                               : GestureDetector(
+//                                                                   onTap: () =>
+//                                                                       setState(
+//                                                                           () {
+//                                                                     print(
+//                                                                         "cart test $cartdetails");
+//                                                                     addquantity(
+//                                                                         product
+//                                                                             .storeId
+//                                                                             .toString(),
+//                                                                         product
+//                                                                             .itemId
+//                                                                             .toString(),
+//                                                                         categoryIndex,
+//                                                                         productIndex);
+//                                                                     // print(
+//                                                                     //     "storeid $StoreIddetails");
+//                                                                     // print(
+//                                                                     //     "cartstoreid $cartstoreid");
+//                                                                     // StoreIddetails != cartstoreid ||
+//                                                                     //         cartstoreid !=
+//                                                                     //             0 ||
+//                                                                     //         cartstoreid !=
+//                                                                     //             null
+//                                                                     //     ? _increment(
+//                                                                     //         categoryIndex,
+//                                                                     //         productIndex)
+//                                                                     //     : showInSnackBar(
+//                                                                     //         context,
+//                                                                     //         "Need To Clear Your Old Cart and Add this Hotel Menu");
+//                                                                   }),
+//                                                                   child:
+//                                                                       Container(
+//                                                                     height: 33,
 //                                                                     decoration:
 //                                                                         BoxDecoration(
 //                                                                       border: Border.all(
@@ -2667,7 +2886,7 @@ class _StorePageState extends State<StorePage> {
 //                                                                               Colors.red),
 //                                                                       borderRadius:
 //                                                                           BorderRadius.circular(
-//                                                                               10),
+//                                                                               10.0),
 //                                                                       color: Colors
 //                                                                           .white,
 //                                                                     ),
@@ -2676,446 +2895,351 @@ class _StorePageState extends State<StorePage> {
 //                                                                           MainAxisAlignment
 //                                                                               .center,
 //                                                                       children: [
-//                                                                         GestureDetector(
-//                                                                           onTap: () =>
-//                                                                               setState(() {
-//                                                                             _decrement(categoryIndex,
-//                                                                                 productIndex);
-
-//                                                                             if (dishQuantities[categoryIndex]![productIndex] >
-//                                                                                 0) {
-//                                                                               removequantity(storeId.toString(), productId.toString());
-//                                                                             } else {
-//                                                                               deletequantity(storeId.toString(), productId.toString());
-//                                                                             }
-//                                                                           }),
-//                                                                           child: Icon(
-//                                                                               Icons.remove,
-//                                                                               color: Colors.red,
-//                                                                               size: 22),
+//                                                                         Icon(
+//                                                                           Icons
+//                                                                               .add,
+//                                                                           color:
+//                                                                               Colors.red,
 //                                                                         ),
-//                                                                         Padding(
-//                                                                           padding:
-//                                                                               EdgeInsets.symmetric(horizontal: 5.0),
-//                                                                           child:
-//                                                                               Text(
-//                                                                             '${dishQuantities[categoryIndex]?[productIndex]}',
-//                                                                             style:
-//                                                                                 TextStyle(
+//                                                                         SizedBox(
+//                                                                             width:
+//                                                                                 5.0),
+//                                                                         Text(
+//                                                                           "Add",
+//                                                                           style: TextStyle(
 //                                                                               color: Colors.red,
-//                                                                               fontSize: 20,
-//                                                                               fontWeight: FontWeight.bold,
-//                                                                             ),
-//                                                                           ),
-//                                                                         ),
-//                                                                         GestureDetector(
-//                                                                           onTap: () =>
-//                                                                               setState(() {
-//                                                                             addquantity(
-//                                                                                 storeId.toString(),
-//                                                                                 productId.toString(),
-//                                                                                 categoryIndex,
-//                                                                                 productIndex);
-//                                                                             // _increment(
-//                                                                             // categoryIndex,
-//                                                                             // productIndex);
-//                                                                           }),
-//                                                                           child: Icon(
-//                                                                               Icons.add,
-//                                                                               color: Colors.red,
-//                                                                               size: 22),
+//                                                                               fontSize: 18),
 //                                                                         ),
 //                                                                       ],
-//                                                                     ))
-//                                                                 : GestureDetector(
-//                                                                     onTap: () =>
-//                                                                         setState(
-//                                                                             () {
-//                                                                       print(
-//                                                                           "cart test $cartdetails");
-//                                                                       addquantity(
-//                                                                           product
-//                                                                               .storeId
-//                                                                               .toString(),
-//                                                                           product
-//                                                                               .itemId
-//                                                                               .toString(),
-//                                                                           categoryIndex,
-//                                                                           productIndex);
-//                                                                       // print(
-//                                                                       //     "storeid $StoreIddetails");
-//                                                                       // print(
-//                                                                       //     "cartstoreid $cartstoreid");
-//                                                                       // StoreIddetails != cartstoreid ||
-//                                                                       //         cartstoreid !=
-//                                                                       //             0 ||
-//                                                                       //         cartstoreid !=
-//                                                                       //             null
-//                                                                       //     ? _increment(
-//                                                                       //         categoryIndex,
-//                                                                       //         productIndex)
-//                                                                       //     : showInSnackBar(
-//                                                                       //         context,
-//                                                                       //         "Need To Clear Your Old Cart and Add this Hotel Menu");
-//                                                                     }),
-//                                                                     child:
-//                                                                         Container(
-//                                                                       height:
-//                                                                           33,
-//                                                                       decoration:
-//                                                                           BoxDecoration(
-//                                                                         border: Border.all(
-//                                                                             color:
-//                                                                                 Colors.red),
-//                                                                         borderRadius:
-//                                                                             BorderRadius.circular(10.0),
-//                                                                         color: Colors
-//                                                                             .white,
-//                                                                       ),
-//                                                                       child:
-//                                                                           Row(
-//                                                                         mainAxisAlignment:
-//                                                                             MainAxisAlignment.center,
-//                                                                         children: [
-//                                                                           Icon(
-//                                                                             Icons.add,
-//                                                                             color:
-//                                                                                 Colors.red,
-//                                                                           ),
-//                                                                           SizedBox(
-//                                                                               width: 5.0),
-//                                                                           Text(
-//                                                                             "Add",
-//                                                                             style:
-//                                                                                 TextStyle(color: Colors.red, fontSize: 18),
-//                                                                           ),
-//                                                                         ],
-//                                                                       ),
 //                                                                     ),
 //                                                                   ),
-//                                                           ),
-//                                                         ],
-//                                                       ),
-//                                                       SizedBox(width: 16),
-//                                                       Flexible(
-//                                                         child: Column(
-//                                                           crossAxisAlignment:
-//                                                               CrossAxisAlignment
-//                                                                   .start,
-//                                                           children: [
-//                                                             Row(
-//                                                               children: [
-//                                                                 product.itemType ==
+//                                                                 ),
+//                                                         ),
+//                                                       ],
+//                                                     ),
+//                                                     SizedBox(width: 16),
+//                                                     Flexible(
+//                                                       child: Column(
+//                                                         crossAxisAlignment:
+//                                                             CrossAxisAlignment
+//                                                                 .start,
+//                                                         children: [
+//                                                           Row(
+//                                                             children: [
+//                                                               product.itemType ==
+//                                                                       1
+//                                                                   ? Image.asset(
+//                                                                       AppAssets
+//                                                                           .nonveg_icon,
+//                                                                       width: 20,
+//                                                                       height:
+//                                                                           20,
+//                                                                     )
+//                                                                   : Image.asset(
+//                                                                       AppAssets
+//                                                                           .veg_icon,
+//                                                                       width: 20,
+//                                                                       height:
+//                                                                           20,
+//                                                                     ),
+//                                                               SizedBox(
+//                                                                 width: 3.0,
+//                                                               ),
+//                                                               HeadingWidget(
+//                                                                 title: product
+//                                                                             .itemType ==
 //                                                                         1
-//                                                                     ? Image
-//                                                                         .asset(
-//                                                                         AppAssets
-//                                                                             .nonveg_icon,
-//                                                                         width:
-//                                                                             20,
-//                                                                         height:
-//                                                                             20,
-//                                                                       )
-//                                                                     : Image
-//                                                                         .asset(
-//                                                                         AppAssets
-//                                                                             .veg_icon,
-//                                                                         width:
-//                                                                             20,
-//                                                                         height:
-//                                                                             20,
-//                                                                       ),
-//                                                                 SizedBox(
-//                                                                   width: 3.0,
-//                                                                 ),
-//                                                                 HeadingWidget(
-//                                                                   title: product
-//                                                                               .itemType ==
-//                                                                           1
-//                                                                       ? "Non Veg"
-//                                                                       : "Veg", // 'Non-Veg',
-//                                                                   vMargin: 1.0,
-//                                                                   fontSize:
-//                                                                       13.0,
-//                                                                 ),
-//                                                               ],
+//                                                                     ? "Non Veg"
+//                                                                     : "Veg", // 'Non-Veg',
+//                                                                 vMargin: 1.0,
+//                                                                 fontSize: 13.0,
+//                                                               ),
+//                                                             ],
+//                                                           ),
+//                                                           HeadingWidget(
+//                                                             title: product
+//                                                                     .itemName![
+//                                                                         0]
+//                                                                     .toUpperCase() +
+//                                                                 product
+//                                                                     .itemName!
+//                                                                     .substring(
+//                                                                         1),
+//                                                             fontSize: 16.0,
+//                                                             fontWeight:
+//                                                                 FontWeight.bold,
+//                                                             vMargin: 1.0,
+//                                                           ),
+
+//                                                           Row(children: [
+//                                                             Text(
+//                                                               "₹${product.itemPrice.toString()}",
+//                                                               //'₹150.0',
+//                                                               style: TextStyle(
+//                                                                 fontSize: 14,
+//                                                                 decoration:
+//                                                                     TextDecoration
+//                                                                         .lineThrough,
+//                                                                 color: Colors
+//                                                                     .black,
+//                                                               ),
+//                                                             ),
+//                                                             SizedBox(
+//                                                               width: 10,
 //                                                             ),
 //                                                             HeadingWidget(
-//                                                               title: product
-//                                                                   .itemName,
-//                                                               // e.dishname, // "Chicken Biryani",
-//                                                               fontSize: 16.0,
+//                                                               title:
+//                                                                   "₹${product.itemOfferPrice}", // '₹100.0',
 //                                                               fontWeight:
 //                                                                   FontWeight
 //                                                                       .bold,
 //                                                               vMargin: 1.0,
 //                                                             ),
-//                                                             Row(children: [
-//                                                               Text(
-//                                                                 "₹${product.itemPrice.toString()}",
-//                                                                 //'₹150.0',
-//                                                                 style:
-//                                                                     TextStyle(
-//                                                                   fontSize: 14,
-//                                                                   decoration:
-//                                                                       TextDecoration
-//                                                                           .lineThrough,
+//                                                           ]),
+//                                                           // Row(
+//                                                           //   children: [
+//                                                           //     Flexible(
+//                                                           //         child:
+//                                                           //             SubHeadingWidget(
+//                                                           //       title: product
+//                                                           //                   .itemDesc ==
+//                                                           //               null
+//                                                           //           ? ''
+//                                                           //           : product
+//                                                           //               .itemDesc
+//                                                           //               .toString(),
+//                                                           //       color:
+//                                                           //           AppColors.black,
+//                                                           //       vMargin: 1.0,
+//                                                           //     )),
+//                                                           //   ],
+//                                                           // )
+//                                                         ],
+//                                                       ),
+//                                                     ),
+//                                                   ],
+//                                                 ),
+//                                               ),
+
+//                                             // Out Of Stock
+
+//                                             if (product.itemStock == 0)
+//                                               Container(
+//                                                 decoration: BoxDecoration(
+//                                                     border: Border.all(
+//                                                       color:
+//                                                           const Color.fromARGB(
+//                                                               255,
+//                                                               194,
+//                                                               194,
+//                                                               194),
+//                                                       width: 1.0,
+//                                                     ),
+//                                                     borderRadius:
+//                                                         BorderRadius.circular(
+//                                                             13),
+//                                                     color: Color.fromARGB(
+//                                                         255, 213, 212, 212)),
+//                                                 child: Stack(
+//                                                   children: [
+//                                                     Padding(
+//                                                       padding: const EdgeInsets
+//                                                           .symmetric(
+//                                                           horizontal: 16.0,
+//                                                           vertical: 8.0),
+//                                                       child: Row(
+//                                                         children: [
+//                                                           Stack(
+//                                                             clipBehavior:
+//                                                                 Clip.none,
+//                                                             children: [
+//                                                               if (product
+//                                                                       .itemImageUrl !=
+//                                                                   null)
+//                                                                 ClipRRect(
+//                                                                   borderRadius:
+//                                                                       BorderRadius
+//                                                                           .circular(
+//                                                                               10),
+//                                                                   child:
+//                                                                       SizedBox(
+//                                                                     width: 100,
+//                                                                     height: 100,
+//                                                                     child: Image
+//                                                                         .network(
+//                                                                       AppConstants
+//                                                                               .imgBaseUrl +
+//                                                                           product
+//                                                                               .itemImageUrl
+//                                                                               .toString(),
+//                                                                       fit: BoxFit
+//                                                                           .contain,
+//                                                                       height:
+//                                                                           60.0,
+//                                                                       errorBuilder: (BuildContext context,
+//                                                                           Object
+//                                                                               exception,
+//                                                                           StackTrace?
+//                                                                               stackTrace) {
+//                                                                         return Image
+//                                                                             .asset(
+//                                                                           AppAssets
+//                                                                               .storeBiriyaniImg,
+//                                                                           width:
+//                                                                               120.0,
+//                                                                           height:
+//                                                                               120.0,
+//                                                                           fit: BoxFit
+//                                                                               .cover,
+//                                                                         );
+//                                                                       },
+//                                                                     ),
+//                                                                   ),
+//                                                                 ),
+//                                                             ],
+//                                                           ),
+//                                                           SizedBox(width: 16),
+//                                                           Flexible(
+//                                                             child: Column(
+//                                                               crossAxisAlignment:
+//                                                                   CrossAxisAlignment
+//                                                                       .start,
+//                                                               children: [
+//                                                                 Row(
+//                                                                   children: [
+//                                                                     product.itemType ==
+//                                                                             1
+//                                                                         ? Image
+//                                                                             .asset(
+//                                                                             AppAssets.nonveg_icon,
+//                                                                             width:
+//                                                                                 20,
+//                                                                             height:
+//                                                                                 20,
+//                                                                           )
+//                                                                         : Image
+//                                                                             .asset(
+//                                                                             AppAssets.veg_icon,
+//                                                                             width:
+//                                                                                 20,
+//                                                                             height:
+//                                                                                 20,
+//                                                                           ),
+//                                                                     SizedBox(
+//                                                                         width:
+//                                                                             3.0),
+//                                                                     HeadingWidget(
+//                                                                       title: product.itemType ==
+//                                                                               1
+//                                                                           ? "Non Veg"
+//                                                                           : "Veg",
+//                                                                       vMargin:
+//                                                                           1.0,
+//                                                                       fontSize:
+//                                                                           13.0,
+//                                                                     ),
+//                                                                   ],
+//                                                                 ),
+//                                                                 HeadingWidget(
+//                                                                   title: product
+//                                                                       .itemName,
+//                                                                   fontSize:
+//                                                                       16.0,
+//                                                                   fontWeight:
+//                                                                       FontWeight
+//                                                                           .bold,
+//                                                                   vMargin: 1.0,
 //                                                                   color: Colors
 //                                                                       .black,
 //                                                                 ),
-//                                                               ),
-//                                                               SizedBox(
-//                                                                 width: 10,
-//                                                               ),
-//                                                               HeadingWidget(
-//                                                                 title:
-//                                                                     "₹${product.itemOfferPrice}", // '₹100.0',
-//                                                                 fontWeight:
-//                                                                     FontWeight
-//                                                                         .bold,
-//                                                                 vMargin: 1.0,
-//                                                               ),
-//                                                             ]),
-//                                                             // Row(
-//                                                             //   children: [
-//                                                             //     Flexible(
-//                                                             //         child:
-//                                                             //             SubHeadingWidget(
-//                                                             //       title: product
-//                                                             //                   .itemDesc ==
-//                                                             //               null
-//                                                             //           ? ''
-//                                                             //           : product
-//                                                             //               .itemDesc
-//                                                             //               .toString(),
-//                                                             //       color:
-//                                                             //           AppColors.black,
-//                                                             //       vMargin: 1.0,
-//                                                             //     )),
-//                                                             //   ],
-//                                                             // )
-//                                                           ],
-//                                                         ),
-//                                                       ),
-//                                                     ],
-//                                                   ),
-//                                                 ),
-
-//                                               // Out Of Stock
-
-//                                               if (product.itemStock == 0)
-//                                                 Container(
-//                                                   decoration: BoxDecoration(
-//                                                       border: Border.all(
-//                                                         color: const Color
-//                                                             .fromARGB(
-//                                                             255, 194, 194, 194),
-//                                                         width: 1.0,
-//                                                       ),
-//                                                       borderRadius:
-//                                                           BorderRadius.circular(
-//                                                               13),
-//                                                       color: Color.fromARGB(
-//                                                           255, 213, 212, 212)),
-//                                                   child: Stack(
-//                                                     children: [
-//                                                       Padding(
-//                                                         padding:
-//                                                             const EdgeInsets
-//                                                                 .symmetric(
-//                                                                 horizontal:
-//                                                                     16.0,
-//                                                                 vertical: 8.0),
-//                                                         child: Row(
-//                                                           children: [
-//                                                             Stack(
-//                                                               clipBehavior:
-//                                                                   Clip.none,
-//                                                               children: [
-//                                                                 if (product
-//                                                                         .itemImageUrl !=
-//                                                                     null)
-//                                                                   ClipRRect(
-//                                                                     borderRadius:
-//                                                                         BorderRadius.circular(
-//                                                                             10),
-//                                                                     child:
-//                                                                         SizedBox(
-//                                                                       width:
-//                                                                           100,
-//                                                                       height:
-//                                                                           100,
-//                                                                       child: Image
-//                                                                           .network(
-//                                                                         AppConstants.imgBaseUrl +
-//                                                                             product.itemImageUrl.toString(),
-//                                                                         fit: BoxFit
-//                                                                             .contain,
-//                                                                         height:
-//                                                                             60.0,
-//                                                                         errorBuilder: (BuildContext context,
-//                                                                             Object
-//                                                                                 exception,
-//                                                                             StackTrace?
-//                                                                                 stackTrace) {
-//                                                                           return Image
-//                                                                               .asset(
-//                                                                             AppAssets.storeBiriyaniImg,
-//                                                                             width:
-//                                                                                 120.0,
-//                                                                             height:
-//                                                                                 120.0,
-//                                                                             fit:
-//                                                                                 BoxFit.cover,
-//                                                                           );
-//                                                                         },
+//                                                                 Row(
+//                                                                   children: [
+//                                                                     Text(
+//                                                                       "₹${product.itemPrice.toString()}",
+//                                                                       style:
+//                                                                           TextStyle(
+//                                                                         fontSize:
+//                                                                             14,
+//                                                                         decoration:
+//                                                                             TextDecoration.lineThrough,
+//                                                                         color: Colors
+//                                                                             .black,
 //                                                                       ),
 //                                                                     ),
-//                                                                   ),
+//                                                                     SizedBox(
+//                                                                         width:
+//                                                                             10),
+//                                                                     HeadingWidget(
+//                                                                       title:
+//                                                                           "₹${product.itemOfferPrice}",
+//                                                                       fontWeight:
+//                                                                           FontWeight
+//                                                                               .bold,
+//                                                                       vMargin:
+//                                                                           1.0,
+//                                                                     ),
+//                                                                   ],
+//                                                                 ),
+//                                                                 Row(
+//                                                                   children: [
+//                                                                     Flexible(
+//                                                                       child:
+//                                                                           SubHeadingWidget(
+//                                                                         title: product.itemDesc ==
+//                                                                                 null
+//                                                                             ? ''
+//                                                                             : "",
+//                                                                         color: AppColors
+//                                                                             .black,
+//                                                                         vMargin:
+//                                                                             1.0,
+//                                                                       ),
+//                                                                     ),
+//                                                                   ],
+//                                                                 ),
 //                                                               ],
 //                                                             ),
-//                                                             SizedBox(width: 16),
-//                                                             Flexible(
-//                                                               child: Column(
-//                                                                 crossAxisAlignment:
-//                                                                     CrossAxisAlignment
-//                                                                         .start,
-//                                                                 children: [
-//                                                                   Row(
-//                                                                     children: [
-//                                                                       product.itemType ==
-//                                                                               1
-//                                                                           ? Image
-//                                                                               .asset(
-//                                                                               AppAssets.nonveg_icon,
-//                                                                               width: 20,
-//                                                                               height: 20,
-//                                                                             )
-//                                                                           : Image
-//                                                                               .asset(
-//                                                                               AppAssets.veg_icon,
-//                                                                               width: 20,
-//                                                                               height: 20,
-//                                                                             ),
-//                                                                       SizedBox(
-//                                                                           width:
-//                                                                               3.0),
-//                                                                       HeadingWidget(
-//                                                                         title: product.itemType ==
-//                                                                                 1
-//                                                                             ? "Non Veg"
-//                                                                             : "Veg",
-//                                                                         vMargin:
-//                                                                             1.0,
-//                                                                         fontSize:
-//                                                                             13.0,
-//                                                                       ),
-//                                                                     ],
-//                                                                   ),
-//                                                                   HeadingWidget(
-//                                                                     title: product
-//                                                                         .itemName,
-//                                                                     fontSize:
-//                                                                         16.0,
-//                                                                     fontWeight:
-//                                                                         FontWeight
-//                                                                             .bold,
-//                                                                     vMargin:
-//                                                                         1.0,
-//                                                                     color: Colors
-//                                                                         .black,
-//                                                                   ),
-//                                                                   Row(
-//                                                                     children: [
-//                                                                       Text(
-//                                                                         "₹${product.itemPrice.toString()}",
-//                                                                         style:
-//                                                                             TextStyle(
-//                                                                           fontSize:
-//                                                                               14,
-//                                                                           decoration:
-//                                                                               TextDecoration.lineThrough,
-//                                                                           color:
-//                                                                               Colors.black,
-//                                                                         ),
-//                                                                       ),
-//                                                                       SizedBox(
-//                                                                           width:
-//                                                                               10),
-//                                                                       HeadingWidget(
-//                                                                         title:
-//                                                                             "₹${product.itemOfferPrice}",
-//                                                                         fontWeight:
-//                                                                             FontWeight.bold,
-//                                                                         vMargin:
-//                                                                             1.0,
-//                                                                       ),
-//                                                                     ],
-//                                                                   ),
-//                                                                   Row(
-//                                                                     children: [
-//                                                                       Flexible(
-//                                                                         child:
-//                                                                             SubHeadingWidget(
-//                                                                           title: product.itemDesc == null
-//                                                                               ? ''
-//                                                                               : "",
-//                                                                           color:
-//                                                                               AppColors.black,
-//                                                                           vMargin:
-//                                                                               1.0,
-//                                                                         ),
-//                                                                       ),
-//                                                                     ],
-//                                                                   ),
-//                                                                 ],
-//                                                               ),
-//                                                             ),
-//                                                           ],
-//                                                         ),
+//                                                           ),
+//                                                         ],
 //                                                       ),
-//                                                       if (product.itemStock ==
-//                                                           0)
-//                                                         Positioned.fill(
-//                                                           child: Container(
-//                                                             alignment: Alignment
-//                                                                 .bottomCenter,
-//                                                             color: const Color
-//                                                                     .fromARGB(
-//                                                                     255,
-//                                                                     112,
-//                                                                     112,
-//                                                                     112)
-//                                                                 .withOpacity(
-//                                                                     0.3),
-//                                                             child: Text(
-//                                                               "     Out of Stock",
-//                                                               style: TextStyle(
-//                                                                 color: AppColors
-//                                                                     .red,
-//                                                                 fontSize: 25,
-//                                                                 fontWeight:
-//                                                                     FontWeight
-//                                                                         .bold,
-//                                                               ),
+//                                                     ),
+//                                                     if (product.itemStock == 0)
+//                                                       Positioned.fill(
+//                                                         child: Container(
+//                                                           alignment: Alignment
+//                                                               .bottomCenter,
+//                                                           color: const Color
+//                                                                   .fromARGB(255,
+//                                                                   112, 112, 112)
+//                                                               .withOpacity(0.3),
+//                                                           child: Text(
+//                                                             "     Out of Stock",
+//                                                             style: TextStyle(
+//                                                               color:
+//                                                                   AppColors.red,
+//                                                               fontSize: 25,
+//                                                               fontWeight:
+//                                                                   FontWeight
+//                                                                       .bold,
 //                                                             ),
 //                                                           ),
 //                                                         ),
-//                                                     ],
-//                                                   ),
+//                                                       ),
+//                                                   ],
 //                                                 ),
-
-//                                               SizedBox(
-//                                                 height: 20,
 //                                               ),
-//                                               Divider(
-//                                                   height: 1,
-//                                                   thickness: 0.5,
-//                                                   color: AppColors.grey),
-//                                             ],
-//                                           );
-//                                         },
-//                                       ),
+
+//                                             SizedBox(
+//                                               height: 20,
+//                                             ),
+//                                             Divider(
+//                                                 height: 1,
+//                                                 thickness: 0.5,
+//                                                 color: AppColors.grey),
+//                                           ],
+//                                         );
+//                                       },
+//                                     ),
 //                                     // ],
 //                                   ]);
 //                             },

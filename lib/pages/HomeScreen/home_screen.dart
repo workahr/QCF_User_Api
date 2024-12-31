@@ -23,6 +23,7 @@ import '../location/selectlocation_page.dart';
 import '../models/banner_list_model.dart';
 import '../models/locationpopup_model.dart';
 
+import '../models/static_bannerimage_model.dart';
 import 'cart_list_model.dart';
 import 'deletecart_model.dart';
 import 'search_option.dart';
@@ -78,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen>
     final dialogBoxResult = await showAlertDialogInfo(
         context: context,
         title: 'Are you sure?',
-        msg: 'You want to delete this data',
+        msg: 'You want to clear the Cart',
         status: 'danger',
         okBtn: false);
     if (dialogBoxResult == 'OK') {
@@ -148,6 +149,7 @@ class _HomeScreenState extends State<HomeScreen>
     getAllCartList();
     refreshData();
     getalladdressList();
+    getstaticbannerimage();
     //   _animationController = AnimationController(
     //     vsync: this,
     //     duration: Duration(milliseconds: 800),
@@ -452,7 +454,6 @@ class _HomeScreenState extends State<HomeScreen>
     return false;
   }
 
-  //AddtoCart
   List<StoreListData> dashlistpage = [];
   List<StoreListData> dashlistpageAll = [];
   bool isLoading = false;
@@ -724,6 +725,44 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
+// Static banner image
+
+  StaticBannerListData? bannerimageList;
+
+  Future getstaticbannerimage() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      var result = await apiService.getstaticbannerimage();
+      var response = staticbannerListModelFromJson(result);
+      if (response.status.toString() == 'SUCCESS') {
+        setState(() {
+          print("userdetails $bannerimageList");
+          bannerimageList = response.list;
+
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          bannerimageList = null;
+
+          isLoading = false;
+        });
+        //  showInSnackBar(context, response.message.toString());
+      }
+    } catch (e) {
+      setState(() {
+        bannerimageList = null;
+
+        isLoading = false;
+      });
+      // showInSnackBar(context, 'Error occurred: $e');
+      print('Error occurred: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenHeight = MediaQuery.of(context).size.height;
@@ -826,12 +865,12 @@ class _HomeScreenState extends State<HomeScreen>
                     child: GestureDetector(
                       onTap: () {
                         print("Navigating to TabSearchApp");
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => TabSearchApp(),
-                          ),
-                        );
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => TabSearchApp(),
+                        //   ),
+                        // );
                       },
                       child: Container(
                         child: CustomeTextField(
@@ -863,12 +902,12 @@ class _HomeScreenState extends State<HomeScreen>
                           },
                           onTap: () {
                             print("Navigating to TabSearchApp");
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => TabSearchApp(),
-                              ),
-                            );
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => TabSearchApp(),
+                            //   ),
+                            // );
                           },
                         ),
                       ),
@@ -927,14 +966,13 @@ class _HomeScreenState extends State<HomeScreen>
                             padding: const EdgeInsets.fromLTRB(21, 23, 21, 15),
                             child: Column(
                               children: [
-                                if (carouselpage != null &&
-                                    carouselpage.isNotEmpty)
+                                if (bannerimageList != null)
                                   ClipRRect(
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(10.0)),
                                     child: Image.network(
                                       AppConstants.imgBaseUrl +
-                                          (carouselpage[0].imageUrl ??
+                                          (bannerimageList!.imageUrl ??
                                               AppAssets.Banner),
                                       fit: BoxFit.fill,
                                       errorBuilder: (BuildContext context,
@@ -1297,141 +1335,141 @@ class _HomeScreenState extends State<HomeScreen>
                                       : null);
                             },
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Top Section with Icons and Text
-                              Container(
-                                color: AppColors.red,
-                                padding: EdgeInsets.symmetric(vertical: 16.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Column(
-                                      children: [
-                                        Icon(Icons.local_shipping,
-                                            color: Colors.white, size: 40),
-                                        SizedBox(height: 8),
-                                        Text(
-                                          'Free Delivery\n(above ₹1000)',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 12),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ],
-                                    ),
-                                    Column(
-                                      children: [
-                                        Icon(Icons.verified,
-                                            color: Colors.yellow, size: 40),
-                                        SizedBox(height: 8),
-                                        Text(
-                                          'Buyer\nProtection',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 12),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ],
-                                    ),
-                                    Column(
-                                      children: [
-                                        Icon(Icons.support_agent,
-                                            color: Colors.blue, size: 40),
-                                        SizedBox(height: 8),
-                                        Text(
-                                          'Customer\nSupport',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 12),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
+                          // Column(
+                          //   crossAxisAlignment: CrossAxisAlignment.start,
+                          //   children: [
+                          //     // Top Section with Icons and Text
+                          //     Container(
+                          //       color: AppColors.red,
+                          //       padding: EdgeInsets.symmetric(vertical: 16.0),
+                          //       child: Row(
+                          //         mainAxisAlignment:
+                          //             MainAxisAlignment.spaceEvenly,
+                          //         children: [
+                          //           Column(
+                          //             children: [
+                          //               Icon(Icons.local_shipping,
+                          //                   color: Colors.white, size: 40),
+                          //               SizedBox(height: 8),
+                          //               Text(
+                          //                 'Free Delivery\n(above ₹1000)',
+                          //                 style: TextStyle(
+                          //                     color: Colors.white,
+                          //                     fontSize: 12),
+                          //                 textAlign: TextAlign.center,
+                          //               ),
+                          //             ],
+                          //           ),
+                          //           Column(
+                          //             children: [
+                          //               Icon(Icons.verified,
+                          //                   color: Colors.yellow, size: 40),
+                          //               SizedBox(height: 8),
+                          //               Text(
+                          //                 'Buyer\nProtection',
+                          //                 style: TextStyle(
+                          //                     color: Colors.white,
+                          //                     fontSize: 12),
+                          //                 textAlign: TextAlign.center,
+                          //               ),
+                          //             ],
+                          //           ),
+                          //           Column(
+                          //             children: [
+                          //               Icon(Icons.support_agent,
+                          //                   color: Colors.blue, size: 40),
+                          //               SizedBox(height: 8),
+                          //               Text(
+                          //                 'Customer\nSupport',
+                          //                 style: TextStyle(
+                          //                     color: Colors.white,
+                          //                     fontSize: 12),
+                          //                 textAlign: TextAlign.center,
+                          //               ),
+                          //             ],
+                          //           ),
+                          //         ],
+                          //       ),
+                          //     ),
 
-                              // Address Section
-                              Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Food Delivery',
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    SizedBox(height: 8),
-                                    Text(
-                                      'Nirajana complax, high school road, Thuvarankurichi, Tamil Nadu 621314',
-                                      style: TextStyle(fontSize: 14),
-                                    ),
-                                    //  SizedBox(height: 4),
-                                    // Text(
-                                    //   'Nirajana complex high school road\nthuvavankurichi',
-                                    //   style: TextStyle(fontSize: 14),
-                                    // ),
-                                  ],
-                                ),
-                              ),
+                          //     // Address Section
+                          //     Padding(
+                          //       padding: EdgeInsets.all(16.0),
+                          //       child: Column(
+                          //         crossAxisAlignment: CrossAxisAlignment.start,
+                          //         children: [
+                          //           Text(
+                          //             'Food Delivery',
+                          //             style: TextStyle(
+                          //                 fontSize: 18,
+                          //                 fontWeight: FontWeight.bold),
+                          //           ),
+                          //           SizedBox(height: 8),
+                          //           Text(
+                          //             'Nirajana complax, high school road, Thuvarankurichi, Tamil Nadu 621314',
+                          //             style: TextStyle(fontSize: 14),
+                          //           ),
+                          //           //  SizedBox(height: 4),
+                          //           // Text(
+                          //           //   'Nirajana complex high school road\nthuvavankurichi',
+                          //           //   style: TextStyle(fontSize: 14),
+                          //           // ),
+                          //         ],
+                          //       ),
+                          //     ),
 
-                              // Social Media Links
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 16.0, vertical: 8.0),
-                                child: Row(
-                                  children: [
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.facebook,
-                                        color: Colors.blue,
-                                        size: 45,
-                                      ),
-                                      onPressed: () {},
-                                    ),
-                                    // IconButton(
-                                    //   icon: Icon(
-                                    //     Icons.youtube_searched_for_outlined,
-                                    //     color: Colors.red,
-                                    //     size: 45,
-                                    //   ),
-                                    //   onPressed: () {},
-                                    // ),
-                                    GestureDetector(
-                                        onTap: () async {
-                                          whatsapp("9360159625");
-                                        },
-                                        child:
-                                            Image.asset(AppAssets.whatsapp_icon,
-                                                //  color: Colors.green,
-                                                height: 35,
-                                                width: 35))
-                                  ],
-                                ),
-                              ),
+                          //     // Social Media Links
+                          //     Padding(
+                          //       padding: EdgeInsets.symmetric(
+                          //           horizontal: 16.0, vertical: 8.0),
+                          //       child: Row(
+                          //         children: [
+                          //           IconButton(
+                          //             icon: Icon(
+                          //               Icons.facebook,
+                          //               color: Colors.blue,
+                          //               size: 45,
+                          //             ),
+                          //             onPressed: () {},
+                          //           ),
+                          //           // IconButton(
+                          //           //   icon: Icon(
+                          //           //     Icons.youtube_searched_for_outlined,
+                          //           //     color: Colors.red,
+                          //           //     size: 45,
+                          //           //   ),
+                          //           //   onPressed: () {},
+                          //           // ),
+                          //           GestureDetector(
+                          //               onTap: () async {
+                          //                 whatsapp("9360159625");
+                          //               },
+                          //               child:
+                          //                   Image.asset(AppAssets.whatsapp_icon,
+                          //                       //  color: Colors.green,
+                          //                       height: 35,
+                          //                       width: 35))
+                          //         ],
+                          //       ),
+                          //     ),
 
-                              // Links Section
-                              Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    LinkText('TERMS AND CONDITIONS'),
-                                    LinkText('PRIVACY POLICIES'),
-                                    LinkText('REFUND POLICIES'),
-                                    LinkText('SITEMAP'),
-                                    LinkText('CONTACT US'),
-                                    LinkText('ABOUT US'),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
+                          //     // Links Section
+                          //     Padding(
+                          //       padding: EdgeInsets.all(16.0),
+                          //       child: Column(
+                          //         crossAxisAlignment: CrossAxisAlignment.start,
+                          //         children: [
+                          //           LinkText('TERMS AND CONDITIONS'),
+                          //           LinkText('PRIVACY POLICIES'),
+                          //           LinkText('REFUND POLICIES'),
+                          //           LinkText('SITEMAP'),
+                          //           LinkText('CONTACT US'),
+                          //           LinkText('ABOUT US'),
+                          //         ],
+                          //       ),
+                          //     ),
+                          //   ],
+                          // ),
                         ],
                       )),
                     )
@@ -1636,7 +1674,7 @@ class _HomeScreenState extends State<HomeScreen>
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
-                                                '${totalCartItems.toString()} items | ₹${finalTotal.toString()}',
+                                                '${totalCartItems.toString()} items | ₹${finalTotal.toStringAsFixed(2)}',
                                                 style: TextStyle(
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.bold,

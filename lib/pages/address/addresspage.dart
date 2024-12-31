@@ -11,6 +11,7 @@ import 'address_list_model.dart';
 import 'deleteaddress_model.dart';
 import 'edit_addresspage.dart';
 import 'fillyour_addresspage.dart';
+import 'get_latlog_address.dart';
 
 class Addresspage extends StatefulWidget {
   const Addresspage({super.key});
@@ -162,9 +163,15 @@ class _AddresspageState extends State<Addresspage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => FillyourAddresspage(),
+                  builder: (context) => MapScreen(),
                 ),
               );
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => FillyourAddresspage(),
+              //   ),
+              // );
             },
             icon: Icon(
               Icons.add,

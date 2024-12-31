@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:pinput/pinput.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants/app_colors.dart';
+import '../../controllers/base_controller.dart';
 import '../../services/comFuncService.dart';
 import '../../services/nam_food_api_service.dart';
 import '../../widgets/sub_heading_widget.dart';
@@ -33,7 +35,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
       List.generate(6, (_) => TextEditingController());
 
   TextEditingController otpCtrl = TextEditingController();
-
+  BaseController baseCtrl = Get.put(BaseController());
   final GlobalKey<FormState> loginForm = GlobalKey<FormState>();
 
   final otpFocusNode = FocusNode();
@@ -165,6 +167,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
   }
 
   Future login() async {
+    print("token ${baseCtrl.fbUserId}");
     try {
       //  showInSnackBar(context, 'Processing...');
       showSnackBar(context: context, showClose: false);
@@ -173,11 +176,11 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
         Map<String, dynamic> postData = {
           'mobile': widget.phoneNumber,
           'otp': otpCtrl.text,
-          "mobile_push_id": ""
+          'mobile_push_id': ""
         };
         var result = await apiService.userLoginWithOtp(postData);
         LoginOtpModel response = loginOtpModelFromJson(result);
-
+        print("postdata $postData");
         closeSnackBar(context: context);
 
         if (response.status.toString() == 'SUCCESS') {

@@ -1,8 +1,18 @@
-plugins {
-    // Add the dependency for the Google services Gradle plugin
-    id 'com.google.gms.google-services' version '4.4.2' apply false
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        // Specify the version here in the dependencies block
+        classpath 'com.google.gms:google-services:4.3.15' // Ensure this version matches the rest of your project
+    }
 }
 
+plugins {
+    // No version should be specified here for the google-services plugin
+    id 'com.google.gms.google-services' apply false
+}
 
 allprojects {
     repositories {
@@ -15,6 +25,7 @@ rootProject.buildDir = "../build"
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
+
 subprojects {
     project.evaluationDependsOn(":app")
 }
@@ -22,3 +33,38 @@ subprojects {
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
+
+
+
+
+
+
+
+
+
+
+
+// plugins {
+//     // Add the dependency for the Google services Gradle plugin
+//     id 'com.google.gms.google-services' version '4.4.1' apply false
+// }
+
+
+// allprojects {
+//     repositories {
+//         google()
+//         mavenCentral()
+//     }
+// }
+
+// rootProject.buildDir = "../build"
+// subprojects {
+//     project.buildDir = "${rootProject.buildDir}/${project.name}"
+// }
+// subprojects {
+//     project.evaluationDependsOn(":app")
+// }
+
+// tasks.register("clean", Delete) {
+//     delete rootProject.buildDir
+// }

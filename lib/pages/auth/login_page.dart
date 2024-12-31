@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:namfood/constants/app_colors.dart';
 import 'package:namfood/pages/address/address_list_model.dart';
 import 'package:namfood/pages/address/fillyour_addresspage.dart';
@@ -8,6 +9,7 @@ import 'package:namfood/services/nam_food_api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants/app_assets.dart';
+import '../../controllers/base_controller.dart';
 import '../../services/comFuncService.dart';
 import '../../widgets/custom_text_field.dart';
 import '../HomeScreen/home_screen.dart';
@@ -25,9 +27,11 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _phoneController = TextEditingController();
   AuthValidation authValidation = AuthValidation();
+  BaseController baseCtrl = Get.put(BaseController());
   final NamFoodApiService apiService = NamFoodApiService();
   String? auth;
   Future login() async {
+    print("token user ${baseCtrl.fbUserId}");
     try {
       showInSnackBar(context, 'Processing...');
 
@@ -35,13 +39,13 @@ class _LoginPageState extends State<LoginPage> {
         Map<String, dynamic> postData = {
           'mobile': _phoneController.text,
           'otp': "",
-          "mobile_push_id": ""
+          'mobile_push_id': baseCtrl.fbUserId
         };
         var result = await apiService.userLoginWithOtp(postData);
         LoginOtpModel response = loginOtpModelFromJson(result);
 
         closeSnackBar(context: context);
-
+        print("postdata $postData");
         if (response.status.toString() == 'SUCCESS') {
           if (_phoneController.text == "1234567890") {
             print("login test");

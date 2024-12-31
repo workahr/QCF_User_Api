@@ -261,7 +261,7 @@ class Item {
   int? createdBy;
   String? createdDate;
   int? updatedBy;
-  DateTime? updatedDate;
+  String? updatedDate;
 
   Item({
     this.orderItemId,

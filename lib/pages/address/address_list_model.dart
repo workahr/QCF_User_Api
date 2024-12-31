@@ -106,14 +106,14 @@ class AddressList {
         landmark: json["landmark"] == null ? '' : json["landmark"],
         price: json["price"] == null ? '' : json["price"],
         status: json["status"],
-        // createdBy: json["created_by"],
-        // createdDate: json["created_date"] == null
-        //     ? null
-        //     : DateTime.parse(json["created_date"]),
-        // updatedBy: json["updated_by"],
-        // updatedDate: json["updated_date"] == null
-        //     ? null
-        //     : DateTime.parse(json["updated_date"]),
+        createdBy: json["created_by"],
+        createdDate: json["created_date"] == null
+            ? null
+            : DateTime.parse(json["created_date"]),
+        updatedBy: json["updated_by"],
+        updatedDate: json["updated_date"] == null
+            ? null
+            : DateTime.parse(json["updated_date"]),
       );
 
   Map<String, dynamic> toJson() => {
