@@ -394,8 +394,8 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
         "landmark": lankmarkController.text,
         "main_location_id": selectedmainlocationId,
         "sub_location_id": selectedsublocationId,
-        "latitude": widget.lat, //latController.text,
-        "longitude": widget.long //logController.text,
+        "latitude": latController.text,
+        "longitude": logController.text,
       };
       print('postData $postData');
 
@@ -491,8 +491,8 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
         "landmark": lankmarkController.text,
         "main_location_id": selectedmainlocationId,
         "sub_location_id": selectedsublocationId,
-        "latitude": widget.lat, //latController.text,
-        "longitude": widget.long //logController.text,
+        "latitude": latController.text,
+        "longitude": logController.text,
       };
       print("updateaddressupdate $postData");
       var result = await apiService.updateaddress(postData);
