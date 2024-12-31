@@ -519,8 +519,7 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
   }
 
   late GoogleMapController _mapController;
-  LatLng _initialPosition =
-      LatLng(37.7749, -122.4194); // Default: San Francisco
+  LatLng _initialPosition = LatLng(10.7905, 78.7047); // Default: San Francisco
   late LatLng _currentPosition = _initialPosition;
   String address = "";
   Future<void> _getCurrentLocation() async {
@@ -743,34 +742,33 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                //new map
-                // SizedBox(
-                //   width: 500.0,
-                //   height: 500.0,
-                //   child: GoogleMap(
-                //     onMapCreated: (controller) => _mapController = controller,
-                //     initialCameraPosition: CameraPosition(
-                //       target: _initialPosition,
-                //       zoom: 11.0,
-                //     ),
-                //     onTap: _onMapTap, // Detect map clicks
-                //     markers: {
-                //       Marker(
-                //         markerId: MarkerId("selectedLocation"),
-                //         position: _currentPosition,
-                //       ),
-                //     },
-                //     myLocationEnabled: false,
-                //     myLocationButtonEnabled: false,
-                //     gestureRecognizers: Set()
-                //       ..add(
-                //         Factory<OneSequenceGestureRecognizer>(
-                //           () => EagerGestureRecognizer(),
-                //         ),
-                //       ),
-                //     // Custom button instead
-                //   ),
-                // ),
+                SizedBox(
+                  width: 500.0,
+                  height: 500.0,
+                  child: GoogleMap(
+                    onMapCreated: (controller) => _mapController = controller,
+                    initialCameraPosition: CameraPosition(
+                      target: _initialPosition,
+                      zoom: 11.0,
+                    ),
+                    onTap: _onMapTap, // Detect map clicks
+                    markers: {
+                      Marker(
+                        markerId: MarkerId("selectedLocation"),
+                        position: _currentPosition,
+                      ),
+                    },
+                    myLocationEnabled: false,
+                    myLocationButtonEnabled: false,
+                    gestureRecognizers: Set()
+                      ..add(
+                        Factory<OneSequenceGestureRecognizer>(
+                          () => EagerGestureRecognizer(),
+                        ),
+                      ),
+                    // Custom button instead
+                  ),
+                ),
 
                 SubHeadingWidget(
                   title:
