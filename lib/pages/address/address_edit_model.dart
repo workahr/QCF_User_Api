@@ -50,6 +50,8 @@ class EditAddressList {
   String? main_location;
   String? sub_location;
   int? sub_location_id;
+  String? latitude;
+  String? longitude;
   String? city;
   String? state;
   int? country;
@@ -72,6 +74,8 @@ class EditAddressList {
     this.main_location,
     this.sub_location,
     this.sub_location_id,
+    this.latitude,
+    this.longitude,
     this.city,
     this.state,
     this.country,
@@ -96,6 +100,8 @@ class EditAddressList {
         main_location: json["main_location"],
         sub_location: json["sub_location"],
         sub_location_id: json["sub_location_id"],
+        latitude: json["latitude"],
+        longitude: json["longitude"],
         city: json["city"],
         state: json["state"],
         country: json["country"],
@@ -119,6 +125,8 @@ class EditAddressList {
         "main_location": main_location,
         "sub_location": sub_location,
         "sub_location_id": sub_location_id,
+        "latitude": latitude,
+        "longitude": longitude,
         "city": city,
         "state": state,
         "country": country,

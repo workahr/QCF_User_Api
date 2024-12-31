@@ -443,6 +443,9 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
         address2Controller.text = addressDetails!.addressLine2 ?? '';
         selectedsublocationId = addressDetails!.sub_location_id;
         selectedmainlocationId = addressDetails!.main_location_id;
+        latController.text = addressDetails!.latitude ?? '';
+        logController.text = addressDetails!.longitude ?? '';
+
         print(addressDetails!.main_location_id);
         cityController.text = addressDetails!.city ?? '';
         stateController.text = addressDetails!.state ?? '';

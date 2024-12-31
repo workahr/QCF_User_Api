@@ -461,6 +461,8 @@ class _CartPageState extends State<CartPage> {
                                                     "Selected Address ID: ${newAddress?.price}");
                                                 deliverycharge =
                                                     newAddress?.price;
+                                                selectedaddressid =
+                                                    newAddress?.id;
                                               });
                                             },
                                             items: myprofilepage.map<
