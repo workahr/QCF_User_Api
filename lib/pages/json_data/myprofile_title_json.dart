@@ -17,30 +17,30 @@ Future getMyProfileTitleJsonData() async {
         "updated_by": 102,
         "updated_date": null
       },
+      // {
+      //   "id": 2,
+      //   "icon": "assets/images/feedback.png",
+      //   "title": "Join as deliveryboy",
+      //   "status": 1,
+      //   "active": 1,
+      //   "created_by": 101,
+      //   "created_date": null,
+      //   "updated_by": 102,
+      //   "updated_date": null
+      // },
+      // {
+      //   "id": 3,
+      //   "icon": "assets/images/feedback.png",
+      //   "title": "Join with us for store",
+      //   "status": 1,
+      //   "active": 1,
+      //   "created_by": 101,
+      //   "created_date": null,
+      //   "updated_by": 102,
+      //   "updated_date": null
+      // },
       {
         "id": 2,
-        "icon": "assets/images/feedback.png",
-        "title": "Join as deliveryboy",
-        "status": 1,
-        "active": 1,
-        "created_by": 101,
-        "created_date": null,
-        "updated_by": 102,
-        "updated_date": null
-      },
-      {
-        "id": 3,
-        "icon": "assets/images/feedback.png",
-        "title": "Join with us for store",
-        "status": 1,
-        "active": 1,
-        "created_by": 101,
-        "created_date": null,
-        "updated_by": 102,
-        "updated_date": null
-      },
-      {
-        "id": 4,
         "icon": "assets/images/logout.png",
         "title": "Log out",
         "status": 1,

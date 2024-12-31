@@ -739,9 +739,8 @@ class _HomeScreenState extends State<HomeScreen>
       var response = staticbannerListModelFromJson(result);
       if (response.status.toString() == 'SUCCESS') {
         setState(() {
-          print("userdetails $bannerimageList");
           bannerimageList = response.list;
-
+          print("userdetails $bannerimageList");
           isLoading = false;
         });
       } else {

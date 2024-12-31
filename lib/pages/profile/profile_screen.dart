@@ -341,87 +341,87 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ],
                         ),
                       );
-                    else if (status == 'Join as deliveryboy')
-                      return Container(
-                        height: 50,
-                        child: ListTile(
-                          leading: Image.asset(
-                            e.icon.toString(),
-                            height: 24,
-                            width: 24,
-                          ),
-                          title: HeadingWidget(
-                            title: e.title.toString(),
-                            color: AppColors.black,
-                          ),
-                          trailing: IconButton(
-                              icon: Icon(
-                                Icons.arrow_forward_ios,
-                                size: 16,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => JoinDeliveryboy(),
-                                    ),
-                                  );
-                                });
-                              }),
-                          onTap: () {
-                            setState(() {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => JoinDeliveryboy(),
-                                ),
-                              );
-                            });
-                          },
-                        ),
-                      );
-                    else if (status == 'Join with us for store')
-                      return Container(
-                        height: 50,
-                        child: ListTile(
-                          leading: Image.asset(
-                            e.icon.toString(),
-                            height: 24,
-                            width: 24,
-                          ),
-                          title: HeadingWidget(
-                            title: e.title.toString(),
-                            color: AppColors.black,
-                          ),
-                          trailing: IconButton(
-                              icon: Icon(
-                                Icons.arrow_forward_ios,
-                                size: 16,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          Joinwithusforstore(),
-                                    ),
-                                  );
-                                });
-                              }),
-                          onTap: () {
-                            setState(() {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => Joinwithusforstore(),
-                                ),
-                              );
-                            });
-                          },
-                        ),
-                      );
+                    // else if (status == 'Join as deliveryboy')
+                    //   return Container(
+                    //     height: 50,
+                    //     child: ListTile(
+                    //       leading: Image.asset(
+                    //         e.icon.toString(),
+                    //         height: 24,
+                    //         width: 24,
+                    //       ),
+                    //       title: HeadingWidget(
+                    //         title: e.title.toString(),
+                    //         color: AppColors.black,
+                    //       ),
+                    //       trailing: IconButton(
+                    //           icon: Icon(
+                    //             Icons.arrow_forward_ios,
+                    //             size: 16,
+                    //           ),
+                    //           onPressed: () {
+                    //             setState(() {
+                    //               Navigator.push(
+                    //                 context,
+                    //                 MaterialPageRoute(
+                    //                   builder: (context) => JoinDeliveryboy(),
+                    //                 ),
+                    //               );
+                    //             });
+                    //           }),
+                    //       onTap: () {
+                    //         setState(() {
+                    //           Navigator.push(
+                    //             context,
+                    //             MaterialPageRoute(
+                    //               builder: (context) => JoinDeliveryboy(),
+                    //             ),
+                    //           );
+                    //         });
+                    //       },
+                    //     ),
+                    //   );
+                    // else if (status == 'Join with us for store')
+                    //   return Container(
+                    //     height: 50,
+                    //     child: ListTile(
+                    //       leading: Image.asset(
+                    //         e.icon.toString(),
+                    //         height: 24,
+                    //         width: 24,
+                    //       ),
+                    //       title: HeadingWidget(
+                    //         title: e.title.toString(),
+                    //         color: AppColors.black,
+                    //       ),
+                    //       trailing: IconButton(
+                    //           icon: Icon(
+                    //             Icons.arrow_forward_ios,
+                    //             size: 16,
+                    //           ),
+                    //           onPressed: () {
+                    //             setState(() {
+                    //               Navigator.push(
+                    //                 context,
+                    //                 MaterialPageRoute(
+                    //                   builder: (context) =>
+                    //                       Joinwithusforstore(),
+                    //                 ),
+                    //               );
+                    //             });
+                    //           }),
+                    //       onTap: () {
+                    //         setState(() {
+                    //           Navigator.push(
+                    //             context,
+                    //             MaterialPageRoute(
+                    //               builder: (context) => Joinwithusforstore(),
+                    //             ),
+                    //           );
+                    //         });
+                    //       },
+                    //     ),
+                    //   );
                     else if (status == 'Log out')
                       return Container(
                         height: 50,

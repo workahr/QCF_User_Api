@@ -380,9 +380,17 @@ class _StorePageState extends State<StorePage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            categoryName!,
-                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          Container(
+                            width: 150,
+                            child: Text(
+                              categoryName![0].toUpperCase() +
+                                  categoryName!.substring(1),
+                              // categoryName!,
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 16),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                            ),
                           ),
                           Text(
                             '${category.products.length}',
@@ -1010,7 +1018,10 @@ class _StorePageState extends State<StorePage> {
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 8.0, horizontal: 16.0),
                                       child: Text(
-                                        category.categoryName!,
+                                        category.categoryName![0]
+                                                .toUpperCase() +
+                                            category.categoryName!.substring(1),
+                                        // category.categoryName!,
                                         style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold),
