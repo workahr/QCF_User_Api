@@ -470,7 +470,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Column(
                     children: [
                       Text("Powered By:"),
-                      Text("Workahr Tech Pvt Ltd"),
+                      Text("www.profitdelivery.in"),
                     ],
                   )),
             ],

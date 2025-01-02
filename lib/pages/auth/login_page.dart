@@ -279,7 +279,7 @@ class _LoginPageState extends State<LoginPage> {
                     // ),
                     Text("Powered By:"),
                     HeadingWidget(
-                      title: "Workahr Tech Pvt Ltd",
+                      title: "www.profitdelivery.in",
                       fontSize: 15.0,
                       fontWeight: FontWeight.bold,
                     ),
