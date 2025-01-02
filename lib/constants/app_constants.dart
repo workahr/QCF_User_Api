@@ -1,5 +1,5 @@
 class AppConstants {
-  static const appVersion = '1.0.3';
+  static const appVersion = '1.0.4';
   static const apiBaseUrl =
       'https://www.namfooddelivery.in/api/'; // change here before work
   static const imgBaseUrl =
