@@ -12,6 +12,7 @@ import 'deleteaddress_model.dart';
 import 'edit_addresspage.dart';
 import 'fillyour_addresspage.dart';
 import 'get_latlog_address.dart';
+import 'map.dart';
 
 class Addresspage extends StatefulWidget {
   const Addresspage({super.key});
@@ -160,18 +161,18 @@ class _AddresspageState extends State<Addresspage> {
         actions: [
           IconButton(
             onPressed: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => MapScreen(),
-              //   ),
-              // );
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => FillyourAddresspage(),
+                  builder: (context) => Mappage(),
                 ),
               );
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => FillyourAddresspage(),
+              //   ),
+              // );
             },
             icon: Icon(
               Icons.add,
@@ -244,7 +245,7 @@ class _AddresspageState extends State<Addresspage> {
                             fontSize: 16.0,
                             fontWeight: FontWeight.w500,
                             title:
-                                "${e.state.toString()}, Land Mark -${e.landmark.toString()},",
+                                "${e.state.toString()}${e.state.toString() == '' ? "" : ","}${e.landmark.toString() == '' ? "" : "Land Mark -${e.landmark.toString()}"}",
                           ),
                           HeadingWidget(
                             fontSize: 16.0,
@@ -257,11 +258,18 @@ class _AddresspageState extends State<Addresspage> {
                             children: [
                               InkWell(
                                 onTap: () {
+                                  // Navigator.push(
+                                  //     context,
+                                  //     MaterialPageRoute(
+                                  //         builder: (context) =>
+                                  //             FillyourAddresspage(
+                                  //               addressId: e.id,
+                                  //             ))).then((value) {});
+
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) =>
-                                              FillyourAddresspage(
+                                          builder: (context) => Mappage(
                                                 addressId: e.id,
                                               ))).then((value) {});
                                 },

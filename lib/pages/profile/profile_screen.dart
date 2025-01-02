@@ -233,9 +233,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       children: [
                                         if (profiledetailsList != null)
                                           HeadingWidget(
-                                            title:
-                                                (profiledetailsList!.fullname ??
-                                                    ''), // "Johan Singh",
+                                            title: (profiledetailsList!
+                                                        .fullname![0]
+                                                        .toUpperCase() +
+                                                    profiledetailsList!
+                                                        .fullname!
+                                                        .substring(1) ??
+                                                ''),
+                                            // (profiledetailsList!.fullname ??
+                                            //     ''), // "Johan Singh",
                                             color: AppColors.white,
                                           ),
                                         if (profiledetailsList != null)
@@ -459,6 +465,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   },
                 ),
               ),
+              Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Column(
+                    children: [
+                      Text("Powered By:"),
+                      Text("Workahr Tech Pvt Ltd"),
+                    ],
+                  )),
             ],
           ),
         ));

@@ -401,7 +401,7 @@ class _HomeScreenState extends State<HomeScreen>
                   ),
                   GestureDetector(
                       onTap: () async {
-                        _makePhoneCall("9360159625");
+                        _makePhoneCall("9361616063");
                       },
                       child: Image.asset(AppAssets.call_icon,
                           height: 35, width: 35))
@@ -416,7 +416,7 @@ class _HomeScreenState extends State<HomeScreen>
                   ),
                   GestureDetector(
                       onTap: () async {
-                        whatsapp("9360159625");
+                        whatsapp("9361616063");
                       },
                       child: Image.asset(AppAssets.whatsapp_icon,
                           //  color: Colors.green,
@@ -840,14 +840,20 @@ class _HomeScreenState extends State<HomeScreen>
                                                   fontSize: 14,
                                                 ),
                                               ),
-                                        Text(
-                                          "$defaultAddressString$defaultAddress2String$defaultcityString$defaultlandmarkString",
-                                          style: TextStyle(
-                                              fontSize: 15.0,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white),
-                                          // softWrap: true,
-                                        ),
+                                        Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                1.3,
+                                            child: Text(
+                                              "$defaultAddressString$defaultAddress2String$defaultcityString$defaultlandmarkString",
+                                              style: TextStyle(
+                                                  fontSize: 15.0,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white),
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 2,
+                                            )),
                                       ],
                                     ),
                           ],
@@ -1441,7 +1447,7 @@ class _HomeScreenState extends State<HomeScreen>
                           //           // ),
                           //           GestureDetector(
                           //               onTap: () async {
-                          //                 whatsapp("9360159625");
+                          //                 whatsapp("9361616063");
                           //               },
                           //               child:
                           //                   Image.asset(AppAssets.whatsapp_icon,

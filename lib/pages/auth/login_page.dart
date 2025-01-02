@@ -7,11 +7,14 @@ import 'package:namfood/pages/address/fillyour_addresspage.dart';
 import 'package:namfood/pages/maincontainer.dart';
 import 'package:namfood/services/nam_food_api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../constants/app_assets.dart';
 import '../../controllers/base_controller.dart';
 import '../../services/comFuncService.dart';
 import '../../widgets/custom_text_field.dart';
+import '../../widgets/heading_widget.dart';
+import '../../widgets/sub_heading_widget.dart';
 import '../HomeScreen/home_screen.dart';
 import 'auth_validations.dart';
 import 'login_model.dart';
@@ -156,6 +159,15 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  void _makePhoneCall(String phoneNumber) async {
+    final Uri telUri = Uri(scheme: 'tel', path: phoneNumber);
+    if (await canLaunchUrl(telUri)) {
+      await launchUrl(telUri);
+    } else {
+      throw 'Could not launch $telUri';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -247,8 +259,97 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
             ),
+            Align(
+                alignment: Alignment.bottomCenter,
+                child: Column(
+                  children: [
+                    // Row(
+                    //   children: [
+                    //     HeadingWidget(
+                    //       title: "Customer Care: ",
+                    //       fontSize: 15.0,
+                    //       fontWeight: FontWeight.bold,
+                    //     ),
+                    //     SubHeadingWidget(
+                    //       title: "9361616063",
+                    //       fontSize: 14.0,
+                    //       color: Colors.black,
+                    //     ),
+                    //   ],
+                    // ),
+                    Text("Powered By:"),
+                    HeadingWidget(
+                      title: "Workahr Tech Pvt Ltd",
+                      fontSize: 15.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ],
+                )),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Show number or initiate a call
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text("Customer Care"),
+              content: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        "Call Us:",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(" +91 9361616063"),
+                    ],
+                  ),
+                  GestureDetector(
+                    onTap: () async {
+                      _makePhoneCall("9361616063");
+                    },
+                    child: Container(
+                      height: 35, // Set the size of the circle
+                      width: 35, // Set the size of the circle
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle, // Make it circular
+                        color: Colors.white, // Set the inside color to white
+                        border: Border.all(
+                          color: Colors.red, // Set the border color to red
+                          width: 2, // Set the border width
+                        ),
+                      ),
+                      child: Center(
+                        child: Image.asset(
+                          AppAssets.call_iconfill,
+                          height: 25, // Set the size of the icon
+                          width: 25, // Set the size of the icon
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("Close"),
+                ),
+              ],
+            ),
+          );
+        },
+        child: Icon(
+          Icons.phone,
+          color: Colors.white,
+        ),
+        tooltip: 'Customer Care',
+        backgroundColor: AppColors.red, // Set the background color to red
       ),
     );
   }

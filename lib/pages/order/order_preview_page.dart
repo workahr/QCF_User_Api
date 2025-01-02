@@ -190,7 +190,7 @@ class _OrderPreviewPageState extends State<OrderPreviewPage> {
                           ),
                           GestureDetector(
                               onTap: () async {
-                                _makePhoneCall(storeAddress!.mobile.toString());
+                                _makePhoneCall("9361616063");
                               },
                               child: Image.asset(
                                 AppAssets.call_icon,
@@ -309,7 +309,11 @@ class _OrderPreviewPageState extends State<OrderPreviewPage> {
                                               // const SizedBox(height: 5),
                                               Flexible(
                                                 child: HeadingWidget(
-                                                  title: item.productName,
+                                                  title: item.productName![0]
+                                                          .toUpperCase() +
+                                                      item.productName!
+                                                          .substring(1),
+                                                  //item.productName,
                                                   maxLines: 1,
                                                   overflow:
                                                       TextOverflow.ellipsis,

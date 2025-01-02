@@ -142,6 +142,7 @@ class _StorePageState extends State<StorePage> {
           storedetailslistpage = response.categoryProductList;
           storedetailslistpageAll = storedetailslistpage;
           print(storedetailslistpage);
+          print(storedetailslistpage);
           isLoading = false;
         });
       } else {
@@ -243,6 +244,9 @@ class _StorePageState extends State<StorePage> {
         showInSnackBar(context, response.message.toString());
       } else {
         showInSnackBar(context, response.message.toString());
+        setState(() {
+          getAllCartListforitemvalue();
+        });
       }
     } catch (error) {
       print('Error removing quantity: $error');
@@ -352,60 +356,76 @@ class _StorePageState extends State<StorePage> {
         bottom: 170.0,
         right: 20.0,
         child: Material(
-          color: Colors.transparent,
-          child: Container(
-            width: 250,
-            padding: EdgeInsets.only(
-                top: 1.0, left: 20.0, right: 25.0, bottom: 10.0),
-            decoration: BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.circular(16.0),
-            ),
-            child: ListView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: storedetailslistpage.length,
-              itemBuilder: (context, categoryIndex) {
-                final category = storedetailslistpage[categoryIndex];
-                final String? categoryName = category.categoryName;
-
-                return GestureDetector(
-                  onTap: () {
-                    _reorderCategories(categoryIndex); // Move selected to top
-                    _removeOverlay(); // Close overlay
-                  },
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            width: 150,
-                            child: Text(
-                              categoryName![0].toUpperCase() +
-                                  categoryName!.substring(1),
-                              // categoryName!,
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 16),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                            ),
-                          ),
-                          Text(
-                            '${category.products.length}',
-                            style: TextStyle(color: Colors.white, fontSize: 16),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 15),
-                    ],
+            color: Colors.transparent,
+            child: Container(
+                width: 250,
+                padding: EdgeInsets.only(
+                    top: 1.0, left: 20.0, right: 25.0, bottom: 10.0),
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: 500, // Set a maximum height for the list
                   ),
-                );
-              },
-            ),
-          ),
-        ),
+                  child: SingleChildScrollView(
+                    // Enable scrolling
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: storedetailslistpage
+                          .where((category) => category.products
+                              .isNotEmpty) // Filter out empty categories
+                          .length,
+                      itemBuilder: (context, categoryIndex) {
+                        final category = storedetailslistpage
+                                .where((category) => category.products
+                                    .isNotEmpty) // Filter out empty categories
+                                .toList()[
+                            categoryIndex]; // Convert filtered categories into a list
+
+                        final String? categoryName = category.categoryName;
+
+                        return GestureDetector(
+                          onTap: () {
+                            _reorderCategories(
+                                categoryIndex); // Move selected to top
+                            _removeOverlay(); // Close overlay
+                          },
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    width: 150,
+                                    child: Text(
+                                      categoryName![0].toUpperCase() +
+                                          categoryName!.substring(1),
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 16),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                    ),
+                                  ),
+                                  Text(
+                                    '${category.products.length}',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 16),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 15),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ))),
       ),
     );
 
@@ -627,6 +647,7 @@ class _StorePageState extends State<StorePage> {
           cartList = [];
           cartListAll = [];
           isLoading = false;
+          resetCalculations();
         });
         showInSnackBar(context, response.message.toString());
       }
@@ -635,6 +656,7 @@ class _StorePageState extends State<StorePage> {
         cartList = [];
         cartListAll = [];
         isLoading = false;
+        resetCalculations();
       });
       // showInSnackBar(context, 'Error occurred: $e');
     }
@@ -666,6 +688,18 @@ class _StorePageState extends State<StorePage> {
   double discount = 0.0;
   bool isTripAdded = false;
   double finalTotal = 0.0;
+
+  void resetCalculations() {
+    totalDiscountPrice = 0.0;
+    totalCartItems = 0;
+    finalTotal = 0.0;
+    deliveryFee = 0.0;
+    platformFee = 0.0;
+    gstFee = 0.0;
+    discount = 0.0;
+    isTripAdded = false;
+    setState(() {});
+  }
 
   Widget _buildShimmerPlaceholder() {
     return Padding(
@@ -754,26 +788,26 @@ class _StorePageState extends State<StorePage> {
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
+                                              // Padding(
+                                              //     padding:
+                                              //         const EdgeInsets.fromLTRB(
+                                              //             0, 0, 15.0, 0),
+                                              //     child: GestureDetector(
+                                              //         onTap: () async {
+                                              //           _makePhoneCall(
+                                              //               storeDetails.mobile
+                                              //                   .toString());
+                                              //         },
+                                              //         child: Image.asset(
+                                              //           AppAssets.call_icon,
+                                              //           width: 40,
+                                              //           height: 40,
+                                              //           // color: AppColors.red,
+                                              //         ))),
                                               Padding(
                                                   padding:
                                                       const EdgeInsets.fromLTRB(
-                                                          0, 0, 15.0, 0),
-                                                  child: GestureDetector(
-                                                      onTap: () async {
-                                                        _makePhoneCall(
-                                                            storeDetails.mobile
-                                                                .toString());
-                                                      },
-                                                      child: Image.asset(
-                                                        AppAssets.call_icon,
-                                                        width: 40,
-                                                        height: 40,
-                                                        // color: AppColors.red,
-                                                      ))),
-                                              Padding(
-                                                  padding:
-                                                      const EdgeInsets.fromLTRB(
-                                                          0, 0, 15.0, 0),
+                                                          0, 0, 10.0, 0),
                                                   child: ElevatedButton(
                                                     onPressed: () {
                                                       generateInvoice();
@@ -807,12 +841,12 @@ class _StorePageState extends State<StorePage> {
                                           // ),
                                           // SizedBox(height: 8),
                                           Row(children: [
-                                            Expanded(
-                                                child: SubHeadingWidget(
-                                              title: 'South Indian Foods',
-                                              fontSize: 14.0,
-                                              color: AppColors.black,
-                                            )),
+                                            // Expanded(
+                                            //     child: SubHeadingWidget(
+                                            //   title: 'South Indian Foods',
+                                            //   fontSize: 14.0,
+                                            //   color: AppColors.black,
+                                            // )),
                                             // GestureDetector(
                                             //     onTap: () {
                                             // _removeOverlay();
@@ -919,13 +953,13 @@ class _StorePageState extends State<StorePage> {
                                         children: [
                                           HeadingWidget(
                                             title:
-                                                "Mobile  : ", // 'Grill Chicken Arabian Restaurant',
+                                                "Customer Care: ", // 'Grill Chicken Arabian Restaurant',
                                             fontSize: 15.0,
                                             fontWeight: FontWeight.bold,
                                           ),
                                           SubHeadingWidget(
-                                            title: storeDetails
-                                                .mobile, // 'Grill Chicken Arabian Restaurant',
+                                            title:
+                                                "9361616063", //storeDetails.mobile,
                                             fontSize: 14.0,
                                             color: Colors.black,
                                             //fontWeight: FontWeight.bold,
@@ -1741,16 +1775,6 @@ class _StorePageState extends State<StorePage> {
             )));
   }
 }
-
-
-
-
-
-
-
-
-
-
 
 // import 'dart:typed_data';
 
