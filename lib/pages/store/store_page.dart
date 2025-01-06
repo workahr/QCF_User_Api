@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:namfood/pages/HomeScreen/home_screen.dart';
 import 'package:namfood/pages/cart/cart_page.dart';
 import 'package:namfood/widgets/custom_text_field.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../constants/app_assets.dart';
@@ -17,6 +18,7 @@ import '../../services/nam_food_api_service.dart';
 import '../../widgets/heading_widget.dart';
 import '../../widgets/sub_heading_widget.dart';
 import '../HomeScreen/cart_list_model.dart';
+import '../maincontainer.dart';
 import '../models/homescreen_model.dart';
 import '../models/store_list_model.dart';
 import '../rating/add_rating_page.dart';
@@ -81,6 +83,9 @@ class _StorePageState extends State<StorePage> {
   List<CategoryProductList> storedetailslistpageAll = [];
   //List<StoreDetails> storeDetails = [];
   int? StoreIddetails;
+
+  bool? loginStatus;
+
   @override
   void initState() {
     super.initState();
@@ -88,6 +93,7 @@ class _StorePageState extends State<StorePage> {
     getstoredetailmenuList();
     getStoreDetails();
     getAllCartListforitemvalue();
+    getLoginStatus();
   }
 
   Future<void> getStoreDetails() async {
@@ -166,6 +172,13 @@ class _StorePageState extends State<StorePage> {
   }
 
   Map<String, Map<String, int>> categoryProductQuantities = {};
+
+  Future getLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      loginStatus = prefs.getBool('isLoggedin');
+    });
+  }
 
   Future<void> addquantity(
       String storeid, String productid, categoryIndex, productIndex) async {
@@ -1145,128 +1158,16 @@ class _StorePageState extends State<StorePage> {
                                                             ),
                                                           ),
                                                         Positioned(
-                                                          bottom: -13,
-                                                          left: 8,
-                                                          right: 8,
-                                                          child: cartQuantity >
-                                                                  0
-                                                              ? Container(
-                                                                  height: 35,
-                                                                  padding: EdgeInsets
-                                                                      .symmetric(
-                                                                          horizontal:
-                                                                              2.0),
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    border: Border.all(
-                                                                        color: Colors
-                                                                            .red),
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            10),
-                                                                    color: Colors
-                                                                        .white,
-                                                                  ),
-                                                                  child: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      GestureDetector(
-                                                                        onTap: () =>
-                                                                            setState(() {
-                                                                          _decrement(
-                                                                              categoryIndex,
-                                                                              productIndex);
-
-                                                                          if (cartQuantity >
-                                                                              0) {
-                                                                            removequantity(storeId.toString(),
-                                                                                productId.toString());
-                                                                          } else {
-                                                                            deletequantity(storeId.toString(),
-                                                                                productId.toString());
-                                                                          }
-                                                                        }),
-                                                                        child: Icon(
-                                                                            Icons
-                                                                                .remove,
-                                                                            color:
-                                                                                Colors.red,
-                                                                            size: 22),
-                                                                      ),
-                                                                      Padding(
-                                                                        padding:
-                                                                            EdgeInsets.symmetric(horizontal: 5.0),
-                                                                        child:
-                                                                            Text(
-                                                                          '$cartQuantity',
-                                                                          style:
-                                                                              TextStyle(
-                                                                            color:
-                                                                                Colors.red,
-                                                                            fontSize:
-                                                                                20,
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                      GestureDetector(
-                                                                        onTap: () =>
-                                                                            setState(() {
-                                                                          addquantity(
-                                                                              storeId.toString(),
-                                                                              productId.toString(),
-                                                                              categoryIndex,
-                                                                              productIndex);
-                                                                          // _increment(
-                                                                          // categoryIndex,
-                                                                          // productIndex);
-                                                                        }),
-                                                                        child: Icon(
-                                                                            Icons
-                                                                                .add,
-                                                                            color:
-                                                                                Colors.red,
-                                                                            size: 22),
-                                                                      ),
-                                                                    ],
-                                                                  ))
-                                                              : GestureDetector(
-                                                                  onTap: () =>
-                                                                      setState(
-                                                                          () {
-                                                                    print(
-                                                                        "cart test $cartdetails");
-                                                                    addquantity(
-                                                                        product
-                                                                            .storeId
-                                                                            .toString(),
-                                                                        product
-                                                                            .itemId
-                                                                            .toString(),
-                                                                        categoryIndex,
-                                                                        productIndex);
-                                                                    // print(
-                                                                    //     "storeid $StoreIddetails");
-                                                                    // print(
-                                                                    //     "cartstoreid $cartstoreid");
-                                                                    // StoreIddetails != cartstoreid ||
-                                                                    //         cartstoreid !=
-                                                                    //             0 ||
-                                                                    //         cartstoreid !=
-                                                                    //             null
-                                                                    //     ? _increment(
-                                                                    //         categoryIndex,
-                                                                    //         productIndex)
-                                                                    //     : showInSnackBar(
-                                                                    //         context,
-                                                                    //         "Need To Clear Your Old Cart and Add this Hotel Menu");
-                                                                  }),
-                                                                  child:
-                                                                      Container(
-                                                                    height: 33,
+                                                            bottom: -13,
+                                                            left: 8,
+                                                            right: 8,
+                                                            child: cartQuantity >
+                                                                    0
+                                                                ? Container(
+                                                                    height: 35,
+                                                                    padding: EdgeInsets.symmetric(
+                                                                        horizontal:
+                                                                            2.0),
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       border: Border.all(
@@ -1274,7 +1175,7 @@ class _StorePageState extends State<StorePage> {
                                                                               Colors.red),
                                                                       borderRadius:
                                                                           BorderRadius.circular(
-                                                                              10.0),
+                                                                              10),
                                                                       color: Colors
                                                                           .white,
                                                                     ),
@@ -1283,26 +1184,114 @@ class _StorePageState extends State<StorePage> {
                                                                           MainAxisAlignment
                                                                               .center,
                                                                       children: [
-                                                                        Icon(
-                                                                          Icons
-                                                                              .add,
-                                                                          color:
-                                                                              Colors.red,
-                                                                        ),
-                                                                        SizedBox(
-                                                                            width:
-                                                                                5.0),
-                                                                        Text(
-                                                                          "Add",
-                                                                          style: TextStyle(
+                                                                        GestureDetector(
+                                                                          onTap: () =>
+                                                                              setState(() {
+                                                                            _decrement(categoryIndex,
+                                                                                productIndex);
+
+                                                                            if (cartQuantity >
+                                                                                0) {
+                                                                              removequantity(storeId.toString(), productId.toString());
+                                                                            } else {
+                                                                              deletequantity(storeId.toString(), productId.toString());
+                                                                            }
+                                                                          }),
+                                                                          child: Icon(
+                                                                              Icons.remove,
                                                                               color: Colors.red,
-                                                                              fontSize: 18),
+                                                                              size: 22),
+                                                                        ),
+                                                                        Padding(
+                                                                          padding:
+                                                                              EdgeInsets.symmetric(horizontal: 5.0),
+                                                                          child:
+                                                                              Text(
+                                                                            '$cartQuantity',
+                                                                            style:
+                                                                                TextStyle(
+                                                                              color: Colors.red,
+                                                                              fontSize: 20,
+                                                                              fontWeight: FontWeight.bold,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        GestureDetector(
+                                                                          onTap: () =>
+                                                                              setState(() {
+                                                                            addquantity(
+                                                                                storeId.toString(),
+                                                                                productId.toString(),
+                                                                                categoryIndex,
+                                                                                productIndex);
+                                                                          }),
+                                                                          child: Icon(
+                                                                              Icons.add,
+                                                                              color: Colors.red,
+                                                                              size: 22),
                                                                         ),
                                                                       ],
+                                                                    ))
+                                                                : GestureDetector(
+                                                                    onTap: () {
+                                                                      if (loginStatus ==
+                                                                          true) {
+                                                                        setState(
+                                                                            () {
+                                                                          print(
+                                                                              "cart test $cartdetails");
+                                                                          addquantity(
+                                                                            product.storeId.toString(),
+                                                                            product.itemId.toString(),
+                                                                            categoryIndex,
+                                                                            productIndex,
+                                                                          );
+                                                                        });
+                                                                      } else {
+                                                                        Navigator.pushNamedAndRemoveUntil(
+                                                                            context,
+                                                                            '/login',
+                                                                            ModalRoute.withName('/login'));
+                                                                      }
+                                                                    },
+                                                                    child:
+                                                                        Container(
+                                                                      height:
+                                                                          33,
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        border: Border.all(
+                                                                            color:
+                                                                                Colors.red),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(10.0),
+                                                                        color: Colors
+                                                                            .white,
+                                                                      ),
+                                                                      child:
+                                                                          Row(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.center,
+                                                                        children: [
+                                                                          Icon(
+                                                                            Icons.add,
+                                                                            color:
+                                                                                Colors.red,
+                                                                          ),
+                                                                          SizedBox(
+                                                                              width: 5.0),
+                                                                          Text(
+                                                                            "Add",
+                                                                            style:
+                                                                                TextStyle(
+                                                                              color: Colors.red,
+                                                                              fontSize: 18,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
                                                                     ),
-                                                                  ),
-                                                                ),
-                                                        ),
+                                                                  )),
                                                       ],
                                                     ),
                                                     SizedBox(width: 16),
@@ -1624,77 +1613,80 @@ class _StorePageState extends State<StorePage> {
                       ),
                     ),
                   ),
-            bottomNavigationBar: BottomAppBar(
-              height: 80.0,
-              elevation: 0,
-              color: AppColors.light,
-              child: SafeArea(
-                child: Padding(
-                  padding: EdgeInsets.all(4.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SubHeadingWidget(
-                            title:
-                                "${totalCartItems.toString()} item${totalCartItems.toString() == 1 ? '' : 's'}",
-                            //  "${selectedItems.length} item${selectedItems.length == 1 ? '' : 's'}",
-                            color: AppColors.black,
-                            fontSize: 15.0,
-                          ),
-                          HeadingWidget(
-                            title: "Price: ₹${finalTotal.toStringAsFixed(2)}",
-                            color: AppColors.red,
-                            fontSize: 18.0,
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                          width: 140,
-                          height: 75,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              // Navigate to cart
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.red,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
+            bottomNavigationBar: cartList.isNotEmpty
+                ? BottomAppBar(
+                    height: 80.0,
+                    elevation: 0,
+                    color: AppColors.light,
+                    child: SafeArea(
+                      child: Padding(
+                        padding: EdgeInsets.all(4.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SubHeadingWidget(
+                                  title:
+                                      "${totalCartItems.toString()} item${totalCartItems.toString() == 1 ? '' : 's'}",
+                                  //  "${selectedItems.length} item${selectedItems.length == 1 ? '' : 's'}",
+                                  color: AppColors.black,
+                                  fontSize: 15.0,
+                                ),
+                                HeadingWidget(
+                                  title:
+                                      "Price: ₹${finalTotal.toStringAsFixed(2)}",
+                                  color: AppColors.red,
+                                  fontSize: 18.0,
+                                ),
+                              ],
                             ),
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 5, vertical: 10),
-                              child: Row(
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      _removeOverlay();
-                                      _navigateToMenus();
-                                      // Navigator.push(
-                                      //   context,
-                                      //   MaterialPageRoute(
-                                      //     builder: (context) => CartPage(),
-                                      //   ),
-                                      // );
-                                    },
-                                    child: SubHeadingWidget(
-                                      title: "Go to cart",
-                                      color: Colors.white,
-                                      fontSize: 16.0,
+                            SizedBox(
+                                width: 140,
+                                height: 75,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    // Navigate to cart
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.red,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
-                          )),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 5, vertical: 10),
+                                    child: Row(
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            _removeOverlay();
+                                            _navigateToMenus();
+                                            // Navigator.push(
+                                            //   context,
+                                            //   MaterialPageRoute(
+                                            //     builder: (context) => CartPage(),
+                                            //   ),
+                                            // );
+                                          },
+                                          child: SubHeadingWidget(
+                                            title: "Go to cart",
+                                            color: Colors.white,
+                                            fontSize: 16.0,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                : SizedBox(),
             floatingActionButton: GestureDetector(
               onTap: () {
                 if (isOverlayVisible) {

@@ -9,7 +9,7 @@ import 'store/store_page.dart';
 
 class MainContainer extends StatefulWidget {
   final Widget? childWidget;
-  final int initialPage; // Added to allow redirection to specific page
+  final int initialPage;
 
   MainContainer({super.key, this.childWidget, this.initialPage = 0});
 
@@ -20,6 +20,19 @@ class MainContainer extends StatefulWidget {
 class _MainContainerState extends State<MainContainer>
     with WidgetsBindingObserver {
   late int _selectedIndex;
+  bool? loginStatus;
+
+  Future getLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    loginStatus = prefs.getBool('isLoggedin');
+    setState(() {
+      if (loginStatus == true) {
+        _selectedIndex = widget.initialPage;
+      } else {
+        _selectedIndex = widget.initialPage;
+      }
+    });
+  }
 
   static List<Widget> pageOptions = <Widget>[
     HomeScreen(),
@@ -30,13 +43,41 @@ class _MainContainerState extends State<MainContainer>
   @override
   void initState() {
     super.initState();
-    _selectedIndex = widget.initialPage; // Initialize selected index
+    getLoginStatus(); // Check login status when the widget initializes
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+  void _onItemTapped(int index) async {
+    final prefs = await SharedPreferences.getInstance();
+    bool? isLoggedIn =
+        prefs.getBool('isLoggedin') ?? false; // Check login status
+
+    if (index == 0) {
+      setState(() {
+        _selectedIndex = 0;
+      });
+    } else if (index == 1) {
+      if (isLoggedIn == true) {
+        setState(() {
+          _selectedIndex = 1;
+        });
+      } else {
+        setState(() {
+          Navigator.pushNamedAndRemoveUntil(
+              context, '/login', ModalRoute.withName('/login'));
+        });
+      }
+    } else if (index == 2) {
+      if (isLoggedIn == true) {
+        setState(() {
+          _selectedIndex = 2;
+        });
+      } else {
+        setState(() {
+          Navigator.pushNamedAndRemoveUntil(
+              context, '/login', ModalRoute.withName('/login'));
+        });
+      }
+    }
   }
 
   Future<void> _onPop() async {
@@ -74,7 +115,6 @@ class _MainContainerState extends State<MainContainer>
                 _selectedIndex == 0
                     ? AppAssets.homefill_icon // Selected icon
                     : AppAssets.home_icon,
-                // AppAssets.home_icon,
                 height: 25,
                 width: 25,
               ),
@@ -85,7 +125,6 @@ class _MainContainerState extends State<MainContainer>
                 _selectedIndex == 1
                     ? AppAssets.ChefHatfill_icon // Selected icon
                     : AppAssets.ChefHat,
-                //  AppAssets.ChefHat,
                 height: 25,
                 width: 25,
               ),
@@ -96,7 +135,6 @@ class _MainContainerState extends State<MainContainer>
                 _selectedIndex == 2
                     ? AppAssets.userroundedfill_icon // Selected icon
                     : AppAssets.UserRounded,
-                // AppAssets.UserRounded,
                 height: 25,
                 width: 25,
               ),
@@ -113,6 +151,148 @@ class _MainContainerState extends State<MainContainer>
     );
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+// import 'package:flutter/material.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
+// import '../constants/app_assets.dart';
+// import 'HomeScreen/home_screen.dart';
+// import 'cart/cart_page.dart';
+// import 'order/myorder_page.dart';
+// import 'profile/profile_screen.dart';
+// import 'store/store_page.dart';
+
+// class MainContainer extends StatefulWidget {
+//   final Widget? childWidget;
+//   final int initialPage; // Added to allow redirection to specific page
+
+//   MainContainer({super.key, this.childWidget, this.initialPage = 0});
+
+//   @override
+//   State<MainContainer> createState() => _MainContainerState();
+// }
+
+// class _MainContainerState extends State<MainContainer>
+//     with WidgetsBindingObserver {
+//   late int _selectedIndex;
+//   bool? loginStatus;
+//   Future getLoginStatus() async {
+//     final prefs = await SharedPreferences.getInstance();
+//     loginStatus = prefs.getBool('isLoggedin');
+//     // Navigator.pushNamedAndRemoveUntil(
+//     //     context, '/home', ModalRoute.withName('/home'));
+//     if (loginStatus == true) {
+//       // Navigator.pushNamedAndRemoveUntil(
+//       //     context, '/home', ModalRoute.withName('/home'));
+//     } else {
+//       // Navigator.pushNamedAndRemoveUntil(
+//       //     context, '/login', ModalRoute.withName('/login'));
+//     }
+//   }
+
+//   static List<Widget> pageOptions = <Widget>[
+//     HomeScreen(),
+//     MyorderPage(),
+//     ProfileScreen(),
+//   ];
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _selectedIndex = widget.initialPage; // Initialize selected index
+//     getLoginStatus();
+//   }
+
+//   void _onItemTapped(int index) {
+//     setState(() {
+//       _selectedIndex = index;
+//     });
+//   }
+
+//   Future<void> _onPop() async {
+//     if (_selectedIndex == 0) {
+//       // Exit the app if on the first tab
+//       return;
+//     } else {
+//       // Navigate back to the first tab
+//       setState(() {
+//         _selectedIndex = 0;
+//       });
+//     }
+//   }
+
+//   Future<void> _handleLogout() async {
+//     final prefs = await SharedPreferences.getInstance();
+//     await prefs.clear();
+//     Navigator.pushNamedAndRemoveUntil(
+//         context, '/login', ModalRoute.withName('/login'));
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return WillPopScope(
+//       onWillPop: () async {
+//         await _onPop();
+//         return false; // Prevent default back action
+//       },
+//       child: Scaffold(
+//         body: pageOptions[_selectedIndex], // Display the selected page
+//         bottomNavigationBar: BottomNavigationBar(
+//           items: [
+//             BottomNavigationBarItem(
+//               icon: Image.asset(
+//                 _selectedIndex == 0
+//                     ? AppAssets.homefill_icon // Selected icon
+//                     : AppAssets.home_icon,
+//                 // AppAssets.home_icon,
+//                 height: 25,
+//                 width: 25,
+//               ),
+//               label: 'Home',
+//             ),
+//             BottomNavigationBarItem(
+//               icon: Image.asset(
+//                 _selectedIndex == 1
+//                     ? AppAssets.ChefHatfill_icon // Selected icon
+//                     : AppAssets.ChefHat,
+//                 //  AppAssets.ChefHat,
+//                 height: 25,
+//                 width: 25,
+//               ),
+//               label: 'Orders',
+//             ),
+//             BottomNavigationBarItem(
+//               icon: Image.asset(
+//                 _selectedIndex == 2
+//                     ? AppAssets.userroundedfill_icon // Selected icon
+//                     : AppAssets.UserRounded,
+//                 // AppAssets.UserRounded,
+//                 height: 25,
+//                 width: 25,
+//               ),
+//               label: 'Profile',
+//             ),
+//           ],
+//           currentIndex: _selectedIndex,
+//           showUnselectedLabels: true,
+//           onTap: _onItemTapped,
+//           type: BottomNavigationBarType.fixed,
+//           selectedItemColor: const Color(0xFFE23744),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 
 

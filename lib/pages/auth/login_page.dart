@@ -175,8 +175,10 @@ class _LoginPageState extends State<LoginPage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
       ),
-      body: SingleChildScrollView(
-        child: Column(
+      body: Column(children: [
+        Expanded(
+            child: SingleChildScrollView(
+                child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // Logo and header section
@@ -230,14 +232,6 @@ class _LoginPageState extends State<LoginPage> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => OtpVerificationPage(
-                        //       phoneNumber: _phoneController.text,
-                        //     ),
-                        //   ),
-                        // );
                         login();
                         print(
                             'Get OTP tapped with number: ${_phoneController.text}');
@@ -256,38 +250,52 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 20.0),
+
+                  Center(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MainContainer(
+                              initialPage: 0,
+                            ),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        "Back To Home Page ->",
+                        style: TextStyle(color: AppColors.red, fontSize: 16.0),
+                      ),
+                    ),
+                  ),
+                  //SizedBox(height: 20.0),
                 ],
               ),
             ),
-            Align(
-                alignment: Alignment.bottomCenter,
-                child: Column(
-                  children: [
-                    // Row(
-                    //   children: [
-                    //     HeadingWidget(
-                    //       title: "Customer Care: ",
-                    //       fontSize: 15.0,
-                    //       fontWeight: FontWeight.bold,
-                    //     ),
-                    //     SubHeadingWidget(
-                    //       title: "9361616063",
-                    //       fontSize: 14.0,
-                    //       color: Colors.black,
-                    //     ),
-                    //   ],
-                    // ),
-                    Text("Powered By:"),
-                    HeadingWidget(
-                      title: "www.profitdelivery.in",
-                      fontSize: 15.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ],
-                )),
+            Container(
+              padding: const EdgeInsets.all(10.0),
+              color: Colors.white,
+              child: Column(
+                children: [
+                  const SizedBox(height: 20.0),
+                  Text(
+                    "Powered By:",
+                    style: TextStyle(fontSize: 14.0, color: Colors.grey),
+                  ),
+                  HeadingWidget(
+                    title: "www.profitdelivery.in",
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  const SizedBox(height: 20.0),
+                ],
+              ),
+            ),
           ],
-        ),
-      ),
+        ))),
+      ]),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Show number or initiate a call

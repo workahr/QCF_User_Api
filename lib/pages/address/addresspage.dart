@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:namfood/constants/app_assets.dart';
 import '../../constants/app_colors.dart';
+import '../../widgets/sub_heading_widget.dart';
 import '../models/myprofile_model.dart';
 import '../../services/comFuncService.dart';
 import '../../services/nam_food_api_service.dart';
@@ -227,6 +228,24 @@ class _AddresspageState extends State<Addresspage> {
                               HeadingWidget(
                                 title: e.type.toString(),
                               ),
+                              SizedBox(
+                                width: 12,
+                              ),
+                              if (e.defaultAddress == 1)
+                                Container(
+                                  decoration: BoxDecoration(
+                                      color: AppColors.red,
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(8))),
+                                  child: Padding(
+                                    padding: EdgeInsets.all(6),
+                                    child: SubHeadingWidget(
+                                      title: 'Defult',
+                                      fontSize: 10.0,
+                                      color: AppColors.white,
+                                    ),
+                                  ),
+                                )
                             ],
                           ),
                           SizedBox(height: 6),

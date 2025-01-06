@@ -35,12 +35,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
     getprofileDetails();
     getmyprofile();
     getmyprofiletitle();
+    getLoginStatus();
+  }
+
+  Future getLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      loginStatus = prefs.getBool('isLoggedin');
+    });
   }
 
   //myprofile
   List<myprofilelist> myprofilepage = [];
   List<myprofilelist> myprofilepageAll = [];
   bool isLoading = false;
+  bool? loginStatus;
 
   Future getmyprofile() async {
     setState(() {
@@ -70,7 +79,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         myprofilepageAll = [];
         isLoading = false;
       });
-      showInSnackBar(context, 'Error occurred: $e');
+      // showInSnackBar(context, 'Error occurred: $e');
+      showInSnackBar(context, 'Please Login');
     }
 
     setState(() {});
@@ -158,8 +168,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         // profiledetailsListAll = [];
         isLoading = false;
       });
-      showInSnackBar(context, 'Error occurred: $e');
+      // showInSnackBar(context, 'Error occurred: $e');
       print('Error occurred: $e');
+      showInSnackBar(context, 'Please Login');
     }
   }
 
@@ -254,41 +265,68 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ),
                                   ],
                                 ),
-                                ElevatedButton.icon(
-                                  onPressed: () {
-                                    // Navigator.push(
-                                    //     context,
-                                    //     MaterialPageRoute(
-                                    //         builder: (context) =>
-                                    //             EditProfilepage()));
-                                    if (profiledetailsList != null)
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  EditProfilepage(
-                                                    userId:
-                                                        profiledetailsList!.id,
-                                                  ))).then((value) {});
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    backgroundColor: Colors.white,
-                                  ),
-                                  icon: Icon(
-                                    Icons.edit_outlined,
-                                    size: 18,
-                                    color: AppColors.red,
-                                  ),
-                                  label: Text(
-                                    'Edit',
-                                    style: TextStyle(
-                                      color: AppColors.red,
-                                    ),
-                                  ),
-                                )
+                                loginStatus == true
+                                    ? ElevatedButton.icon(
+                                        onPressed: () {
+                                          // Navigator.push(
+                                          //     context,
+                                          //     MaterialPageRoute(
+                                          //         builder: (context) =>
+                                          //             EditProfilepage()));
+                                          if (profiledetailsList != null)
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        EditProfilepage(
+                                                          userId:
+                                                              profiledetailsList!
+                                                                  .id,
+                                                        ))).then((value) {});
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          backgroundColor: Colors.white,
+                                        ),
+                                        icon: Icon(
+                                          Icons.edit_outlined,
+                                          size: 18,
+                                          color: AppColors.red,
+                                        ),
+                                        label: Text(
+                                          'Edit',
+                                          style: TextStyle(
+                                            color: AppColors.red,
+                                          ),
+                                        ),
+                                      )
+                                    : ElevatedButton.icon(
+                                        onPressed: () {
+                                          Navigator.pushNamedAndRemoveUntil(
+                                              context,
+                                              '/login',
+                                              ModalRoute.withName('/login'));
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          backgroundColor: Colors.white,
+                                        ),
+                                        icon: Icon(
+                                          Icons.person,
+                                          size: 18,
+                                          color: AppColors.red,
+                                        ),
+                                        label: Text(
+                                          'Login',
+                                          style: TextStyle(
+                                            color: AppColors.red,
+                                          ),
+                                        ),
+                                      )
                               ],
                             ),
                           ],
@@ -327,21 +365,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     size: 16,
                                   ),
                                   onPressed: () {
-                                    setState(() {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  Addresspage()));
-                                    });
+                                    loginStatus == true
+                                        ? setState(() {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        Addresspage()));
+                                          })
+                                        : setState(() {
+                                            Navigator.pushNamedAndRemoveUntil(
+                                                context,
+                                                '/login',
+                                                ModalRoute.withName('/login'));
+                                          });
                                   }),
                               onTap: () {
-                                setState(() {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => Addresspage()));
-                                });
+                                loginStatus == true
+                                    ? setState(() {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    Addresspage()));
+                                      })
+                                    : setState(() {
+                                        Navigator.pushNamedAndRemoveUntil(
+                                            context,
+                                            '/login',
+                                            ModalRoute.withName('/login'));
+                                      });
                               },
                             ),
                           ],

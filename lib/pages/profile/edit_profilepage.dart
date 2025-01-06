@@ -24,6 +24,7 @@ class EditProfilepage extends StatefulWidget {
 
 class _EditProfilepageState extends State<EditProfilepage> {
   final NamFoodApiService apiService = NamFoodApiService();
+  final GlobalKey<FormState> loginForm = GlobalKey<FormState>();
 
   TextEditingController fullnameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -83,35 +84,68 @@ class _EditProfilepageState extends State<EditProfilepage> {
     }
   }
 
+  // Future updateprofile() async {
+  //   await apiService.getBearerToken();
+
+  //   Map<String, dynamic> postData = {
+  //     "fullname": fullnameController.text,
+  //     "email": emailController.text
+  //   };
+  //   print(postData);
+
+  //   showSnackBar(context: context);
+  //   // update-Car_management
+  //   String url = 'v1/updateprofile';
+
+  //   var result = await apiService.updateprofile(url, postData, imageFile);
+  //   closeSnackBar(context: context);
+  //   setState(() {
+  //     // isLoading = false;
+  //   });
+  //   UpdateProfilemodel response = updateProfilemodelFromJson(result);
+
+  //   if (response.status.toString() == 'SUCCESS') {
+  //     //  showInSnackBar(context, response.message.toString());
+
+  //     // Navigator.pop(context, {'add': true});
+  //     Navigator.push(
+  //         context, MaterialPageRoute(builder: (context) => MainContainer()));
+  //   } else {
+  //     print(response.message.toString());
+  //     //  showInSnackBar(context, response.message.toString());
+  //   }
+  // }
+
   Future updateprofile() async {
     await apiService.getBearerToken();
+    if (loginForm.currentState!.validate()) {
+      Map<String, dynamic> postData = {
+        "fullname": fullnameController.text,
+        "email": emailController.text
+      };
+      print(postData);
 
-    Map<String, dynamic> postData = {
-      "fullname": fullnameController.text,
-      "email": emailController.text
-    };
-    print(postData);
+      showSnackBar(context: context);
+      // update-Car_management
+      String url = 'v1/updateprofile';
 
-    showSnackBar(context: context);
-    // update-Car_management
-    String url = 'v1/updateprofile';
+      var result = await apiService.updateprofile(url, postData, imageFile);
+      closeSnackBar(context: context);
+      setState(() {
+        // isLoading = false;
+      });
+      UpdateProfilemodel response = updateProfilemodelFromJson(result);
 
-    var result = await apiService.updateprofile(url, postData, imageFile);
-    closeSnackBar(context: context);
-    setState(() {
-      // isLoading = false;
-    });
-    UpdateProfilemodel response = updateProfilemodelFromJson(result);
+      if (response.status.toString() == 'SUCCESS') {
+        //  showInSnackBar(context, response.message.toString());
 
-    if (response.status.toString() == 'SUCCESS') {
-      //  showInSnackBar(context, response.message.toString());
-
-      // Navigator.pop(context, {'add': true});
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => MainContainer()));
-    } else {
-      print(response.message.toString());
-      //  showInSnackBar(context, response.message.toString());
+        // Navigator.pop(context, {'add': true});
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => MainContainer()));
+      } else {
+        print(response.message.toString());
+        //  showInSnackBar(context, response.message.toString());
+      }
     }
   }
 
@@ -196,154 +230,185 @@ class _EditProfilepageState extends State<EditProfilepage> {
         });
   }
 
+  errValidatefullname(String? value) {
+    return (value) {
+      if (value.isEmpty) {
+        return 'Full Name is required';
+      }
+      return null;
+    };
+  }
+
+  errValidatemobile(String? value) {
+    return (value) {
+      if (value.isEmpty) {
+        return 'Mobile is required';
+      }
+      return null;
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.lightGrey3,
-        title: Text('Edit Profile'),
-      ),
-      body: SingleChildScrollView(
+        appBar: AppBar(
+          backgroundColor: AppColors.lightGrey3,
+          title: Text('Edit Profile'),
+        ),
+        body: SingleChildScrollView(
           child: Padding(
-        padding: EdgeInsets.symmetric(
-            horizontal: screenWidth * 0.04, vertical: screenHeight * 0.05),
-        child: Column(
-          children: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                liveimgSrc != "" && liveimgSrc != null && imageSrc == null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(26),
-                        child: Container(
-                          width: 160,
-                          height: 160,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              image: NetworkImage(
-                                AppConstants.imgBaseUrl + (liveimgSrc ?? ''),
+              padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth * 0.04,
+                  vertical: screenHeight * 0.05),
+              child: Form(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                key: loginForm,
+                child: Column(
+                  children: [
+                    Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        liveimgSrc != "" &&
+                                liveimgSrc != null &&
+                                imageSrc == null
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(26),
+                                child: Container(
+                                  width: 160,
+                                  height: 160,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    image: DecorationImage(
+                                      image: NetworkImage(
+                                        AppConstants.imgBaseUrl +
+                                            (liveimgSrc ?? ''),
+                                      ),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : imageSrc != null
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(16),
+                                    child: Container(
+                                      width: 160,
+                                      height: 160,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        image: DecorationImage(
+                                          image: FileImage(imageSrc!),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : ClipRRect(
+                                    borderRadius: BorderRadius.circular(16),
+                                    child: Container(
+                                      width: 160,
+                                      height: 160,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        image: DecorationImage(
+                                          image:
+                                              AssetImage(AppAssets.profileimg),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                        // Positioned edit icon
+                        Positioned(
+                          bottom: -3, // Adjust to make the icon more visible
+                          right: 10,
+                          child: GestureDetector(
+                            onTap: () {
+                              type = 0;
+                              showActionSheet(context);
+                            },
+                            child: Container(
+                              height:
+                                  40, // Slightly increase for better visibility
+                              width: 40,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: AppColors.red,
                               ),
-                              fit: BoxFit.cover,
+                              child: Icon(
+                                Icons.edit_outlined,
+                                color: AppColors.white,
+                                size: 20, // Increase size if needed
+                              ),
                             ),
                           ),
                         ),
-                      )
-                    : imageSrc != null
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            child: Container(
-                              width: 160,
-                              height: 160,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  image: FileImage(imageSrc!),
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                          )
-                        : ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            child: Container(
-                              width: 160,
-                              height: 160,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  image: AssetImage(AppAssets.profileimg),
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 12,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: screenHeight * 0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomeTextField(
+                            control: fullnameController,
+                            labelText: 'Name *',
+                            validator:
+                                errValidatefullname(fullnameController.text),
+                            borderColor: AppColors.grey,
+                            width: screenWidth,
                           ),
-                // Positioned edit icon
-                Positioned(
-                  bottom: -3, // Adjust to make the icon more visible
-                  right: 10,
-                  child: GestureDetector(
-                    onTap: () {
-                      type = 0;
-                      showActionSheet(context);
-                    },
-                    child: Container(
-                      height: 40, // Slightly increase for better visibility
-                      width: 40,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppColors.red,
-                      ),
-                      child: Icon(
-                        Icons.edit_outlined,
-                        color: AppColors.white,
-                        size: 20, // Increase size if needed
+                          CustomeTextField(
+                            control: mobilenumberController,
+                            labelText: 'Mobile Number*',
+                            validator:
+                                errValidatemobile(mobilenumberController.text),
+                            borderColor: AppColors.grey,
+                            width: screenWidth,
+                            readOnly: true,
+                          ),
+                          CustomeTextField(
+                            control: emailController,
+                            labelText: 'Email Id',
+                            borderColor: AppColors.grey,
+                            width: screenWidth,
+                          ),
+                          SizedBox(
+                            height: 25,
+                          ),
+                          ButtonWidget(
+                            borderRadius: 10,
+                            title: "Submit",
+                            width: screenWidth,
+                            color: AppColors.red,
+                            onTap: () {
+                              updateprofile();
+                            },
+                          ),
+                        ],
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-            SizedBox(
-              height: 12,
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: screenHeight * 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CustomeTextField(
-                    control: fullnameController,
-                    labelText: 'Name *',
-                    borderColor: AppColors.grey,
-                    width: screenWidth,
-                  ),
-                  CustomeTextField(
-                    control: mobilenumberController,
-                    labelText: 'Mobile Number',
-                    borderColor: AppColors.grey,
-                    width: screenWidth,
-                    readOnly: true,
-                  ),
-                  CustomeTextField(
-                    control: emailController,
-                    labelText: 'Email Id *',
-                    borderColor: AppColors.grey,
-                    width: screenWidth,
-                  ),
-                  SizedBox(
-                    height: 25,
-                  ),
-                  ButtonWidget(
-                    borderRadius: 10,
-                    title: "Submit",
-                    width: screenWidth,
-                    color: AppColors.red,
-                    onTap: () {
-                      updateprofile();
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      )),
-      // bottomNavigationBar: Padding(
-      //   padding: EdgeInsets.symmetric(
-      //       vertical: screenHeight * 0.04, horizontal: screenWidth * 0.04),
-      //   child: ButtonWidget(
-      //     borderRadius: 10,
-      //     title: "Submit",
-      //     width: screenWidth,
-      //     color: AppColors.red,
-      //     onTap: () {
-      //       updateprofile();
-      //     },
-      //   ),
-      // ),
-    );
+              )),
+          // bottomNavigationBar: Padding(
+          //   padding: EdgeInsets.symmetric(
+          //       vertical: screenHeight * 0.04, horizontal: screenWidth * 0.04),
+          //   child: ButtonWidget(
+          //     borderRadius: 10,
+          //     title: "Submit",
+          //     width: screenWidth,
+          //     color: AppColors.red,
+          //     onTap: () {
+          //       updateprofile();
+          //     },
+          //   ),
+          // ),
+        ));
   }
 }

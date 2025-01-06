@@ -283,7 +283,7 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
         CustomAutoCompleteWidget(
           width: MediaQuery.of(context).size.width / 1.1,
           selectedItem: selectedmainlocationedit,
-          labelText: 'Select Main Location',
+          labelText: 'Select Location',
           // validator: errValidatesublocation(selectedmainlocationedit),
           labelField: (item) => item.name,
           onChanged: (value) {
@@ -298,7 +298,7 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
         CustomAutoCompleteWidget(
           width: MediaQuery.of(context).size.width / 1.1,
           selectedItem: selectedsublocationedit,
-          labelText: 'Select Sub Location',
+          labelText: 'Select Area',
           // validator: errValidatesublocation(selectedsublocationedit),
           labelField: (item) => item.name,
           onChanged: (value) {
@@ -465,6 +465,10 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
         // stateController.text = addressDetails!.state ?? '';
         // postController.text = (addressDetails!.postcode ?? '').toString();
         // lankmarkController.text = addressDetails!.landmark ?? '';
+
+        if (selectedmainlocationId != null) {
+          getallsublocationList(selectedmainlocationId);
+        }
       });
     } else {
       showInSnackBar(context, "Data not found");
@@ -512,6 +516,7 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
   refresh() async {
     if (widget.addressId != null) {
       await getAddressById();
+      //  getallsublocationList(addressDetails!.sub_location_id);
     }
     getallmainlocationList();
     // getallsublocationList(0);
