@@ -1412,207 +1412,195 @@ class _StorePageState extends State<StorePage> {
                                             // Out Of Stock
 
                                             if (product.itemStock == 0)
-                                              Container(
-                                                decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                      color:
-                                                          const Color.fromARGB(
-                                                              255,
-                                                              194,
-                                                              194,
-                                                              194),
-                                                      width: 1.0,
-                                                    ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            13),
-                                                    color: Color.fromARGB(
-                                                        255, 213, 212, 212)),
-                                                child: Stack(
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 16.0,
+                                                        vertical: 8.0),
+                                                child: Row(
                                                   children: [
-                                                    Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 16.0,
-                                                          vertical: 8.0),
-                                                      child: Row(
-                                                        children: [
-                                                          Stack(
-                                                            clipBehavior:
-                                                                Clip.none,
-                                                            children: [
-                                                              if (product
-                                                                      .itemImageUrl !=
-                                                                  null)
-                                                                ClipRRect(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              10),
-                                                                  child:
-                                                                      SizedBox(
-                                                                    width: 100,
-                                                                    height: 100,
-                                                                    child: Image
-                                                                        .network(
-                                                                      AppConstants
-                                                                              .imgBaseUrl +
-                                                                          product
-                                                                              .itemImageUrl
-                                                                              .toString(),
-                                                                      fit: BoxFit
-                                                                          .contain,
+                                                    Stack(
+                                                      clipBehavior: Clip.none,
+                                                      children: [
+                                                        if (product.itemImageUrl
+                                                                .toString() !=
+                                                            null)
+                                                          ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                            child: SizedBox(
+                                                              width: 100,
+                                                              height: 100,
+                                                              child:
+                                                                  Image.network(
+                                                                AppConstants
+                                                                        .imgBaseUrl +
+                                                                    product
+                                                                        .itemImageUrl
+                                                                        .toString(),
+                                                                fit: BoxFit
+                                                                    .contain,
+                                                                height: 60.0,
+                                                                errorBuilder: (BuildContext
+                                                                        context,
+                                                                    Object
+                                                                        exception,
+                                                                    StackTrace?
+                                                                        stackTrace) {
+                                                                  return Image.asset(
+                                                                      AppAssets
+                                                                          .storeBiriyaniImg,
+                                                                      width:
+                                                                          120.0,
                                                                       height:
-                                                                          60.0,
-                                                                      errorBuilder: (BuildContext context,
-                                                                          Object
-                                                                              exception,
-                                                                          StackTrace?
-                                                                              stackTrace) {
-                                                                        return Image
-                                                                            .asset(
-                                                                          AppAssets
-                                                                              .storeBiriyaniImg,
-                                                                          width:
-                                                                              120.0,
-                                                                          height:
-                                                                              120.0,
-                                                                          fit: BoxFit
-                                                                              .cover,
-                                                                        );
-                                                                      },
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                            ],
+                                                                          120.0,
+                                                                      fit: BoxFit
+                                                                          .cover);
+                                                                },
+                                                              ),
+                                                            ),
                                                           ),
-                                                          SizedBox(width: 16),
-                                                          Flexible(
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Row(
-                                                                  children: [
-                                                                    product.itemType ==
-                                                                            1
-                                                                        ? Image
-                                                                            .asset(
-                                                                            AppAssets.nonveg_icon,
-                                                                            width:
-                                                                                20,
-                                                                            height:
-                                                                                20,
-                                                                          )
-                                                                        : Image
-                                                                            .asset(
-                                                                            AppAssets.veg_icon,
-                                                                            width:
-                                                                                20,
-                                                                            height:
-                                                                                20,
-                                                                          ),
-                                                                    SizedBox(
-                                                                        width:
-                                                                            3.0),
-                                                                    HeadingWidget(
-                                                                      title: product.itemType ==
-                                                                              1
-                                                                          ? "Non Veg"
-                                                                          : "Veg",
-                                                                      vMargin:
-                                                                          1.0,
-                                                                      fontSize:
-                                                                          13.0,
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                HeadingWidget(
-                                                                  title: product
-                                                                      .itemName,
-                                                                  fontSize:
-                                                                      16.0,
+                                                        //container
+
+                                                        Positioned(
+                                                          top: 0,
+                                                          left: 0,
+                                                          right: 0,
+                                                          child: Container(
+                                                            width: 100,
+                                                            height: 100,
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                                    8.0),
+                                                            child: Center(
+                                                              child: Text(
+                                                                'Out of Stock',
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: Colors
+                                                                      .white,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
-                                                                  vMargin: 1.0,
-                                                                  color: Colors
-                                                                      .black,
+                                                                  fontSize:
+                                                                      14.0,
                                                                 ),
-                                                                Row(
-                                                                  children: [
-                                                                    Text(
-                                                                      "₹${product.itemPrice.toString()}",
-                                                                      style:
-                                                                          TextStyle(
-                                                                        fontSize:
-                                                                            14,
-                                                                        decoration:
-                                                                            TextDecoration.lineThrough,
-                                                                        color: Colors
-                                                                            .black,
-                                                                      ),
-                                                                    ),
-                                                                    SizedBox(
-                                                                        width:
-                                                                            10),
-                                                                    HeadingWidget(
-                                                                      title:
-                                                                          "₹${product.itemOfferPrice}",
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      vMargin:
-                                                                          1.0,
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                Row(
-                                                                  children: [
-                                                                    Flexible(
-                                                                      child:
-                                                                          SubHeadingWidget(
-                                                                        title: product.itemDesc ==
-                                                                                null
-                                                                            ? ''
-                                                                            : "",
-                                                                        color: AppColors
-                                                                            .black,
-                                                                        vMargin:
-                                                                            1.0,
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ],
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                              ),
                                                             ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    if (product.itemStock == 0)
-                                                      Positioned.fill(
-                                                        child: Container(
-                                                          alignment: Alignment
-                                                              .bottomCenter,
-                                                          color: const Color
-                                                                  .fromARGB(255,
-                                                                  112, 112, 112)
-                                                              .withOpacity(0.3),
-                                                          child: Text(
-                                                            "     Out of Stock",
-                                                            style: TextStyle(
-                                                              color:
-                                                                  AppColors.red,
-                                                              fontSize: 25,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
+                                                              color: Colors
+                                                                  .black
+                                                                  .withOpacity(
+                                                                      0.7),
                                                             ),
                                                           ),
                                                         ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(width: 16),
+                                                    Flexible(
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Row(
+                                                            children: [
+                                                              product.itemType ==
+                                                                      1
+                                                                  ? Image.asset(
+                                                                      AppAssets
+                                                                          .nonveg_icon,
+                                                                      color: AppColors
+                                                                          .grey,
+                                                                      width: 20,
+                                                                      height:
+                                                                          20,
+                                                                    )
+                                                                  : Image.asset(
+                                                                      AppAssets
+                                                                          .veg_icon,
+                                                                      color: AppColors
+                                                                          .grey,
+                                                                      width: 20,
+                                                                      height:
+                                                                          20,
+                                                                    ),
+                                                              SizedBox(
+                                                                width: 3.0,
+                                                              ),
+                                                              HeadingWidget(
+                                                                  title: product
+                                                                              .itemType ==
+                                                                          1
+                                                                      ? "Non Veg"
+                                                                      : "Veg", // 'Non-Veg',
+                                                                  vMargin: 1.0,
+                                                                  fontSize:
+                                                                      13.0,
+                                                                  color:
+                                                                      AppColors
+                                                                          .grey),
+                                                            ],
+                                                          ),
+                                                          HeadingWidget(
+                                                            title: product
+                                                                    .itemName![
+                                                                        0]
+                                                                    .toUpperCase() +
+                                                                product
+                                                                    .itemName!
+                                                                    .substring(
+                                                                        1),
+                                                            fontSize: 16.0,
+                                                            color:
+                                                                AppColors.grey,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            vMargin: 1.0,
+                                                          ),
+                                                          Row(children: [
+                                                            Text(
+                                                              "₹${product.itemPrice.toString()}",
+                                                              //'₹150.0',
+                                                              style: TextStyle(
+                                                                  fontSize: 14,
+                                                                  decoration:
+                                                                      TextDecoration
+                                                                          .lineThrough,
+                                                                  decorationColor:
+                                                                      AppColors
+                                                                          .grey,
+                                                                  color:
+                                                                      AppColors
+                                                                          .grey),
+                                                            ),
+                                                            SizedBox(
+                                                              width: 10,
+                                                            ),
+                                                            HeadingWidget(
+                                                                title:
+                                                                    "₹${product.itemOfferPrice}", // '₹100.0',
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                vMargin: 1.0,
+                                                                color: AppColors
+                                                                    .grey),
+                                                          ]),
+                                                        ],
                                                       ),
+                                                    ),
                                                   ],
                                                 ),
                                               ),
