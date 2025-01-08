@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 
 // Top-level functions for encoding and decoding
 UserDetailsModel userDetailsmodelFromJson(String str) =>
@@ -248,47 +249,56 @@ class Address {
 
 
 
-// // To parse this JSON data, do
-// //
-// //     final userDetailsmodel = userDetailsmodelFromJson(jsonString);
+
+
+
+
+
+
+
+
 
 // import 'dart:convert';
 
-// UserDetailsmodel userDetailsmodelFromJson(String str) =>
-//     UserDetailsmodel.fromJson(json.decode(str));
+// // Top-level functions for encoding and decoding
+// UserDetailsModel userDetailsmodelFromJson(String str) =>
+//     UserDetailsModel.fromJson(json.decode(str));
 
-// String userDetailsmodelToJson(UserDetailsmodel data) =>
+// String userDetailsModelToJson(UserDetailsModel data) =>
 //     json.encode(data.toJson());
 
-// class UserDetailsmodel {
-//   String status;
-//   ProfileDetails list;
-//   String code;
-//   String message;
+// // Main UserDetailsModel class
+// class UserDetailsModel {
+//   String? status;
+//   ProfileDetails? list;
+//   String? code;
+//   String? message;
 
-//   UserDetailsmodel({
-//     required this.status,
-//     required this.list,
-//     required this.code,
-//     required this.message,
+//   UserDetailsModel({
+//     this.status,
+//     this.list,
+//     this.code,
+//     this.message,
 //   });
 
-//   factory UserDetailsmodel.fromJson(Map<String, dynamic> json) =>
-//       UserDetailsmodel(
-//         status: json["status"],
-//         list: ProfileDetails.fromJson(json["list"]),
-//         code: json["code"],
-//         message: json["message"],
+//   factory UserDetailsModel.fromJson(Map<String, dynamic> json) =>
+//       UserDetailsModel(
+//         status: json["status"] ?? "unknown",
+//         list:
+//             json["list"] != null ? ProfileDetails.fromJson(json["list"]) : null,
+//         code: json["code"] ?? "error",
+//         message: json["message"] ?? "No message provided",
 //       );
 
 //   Map<String, dynamic> toJson() => {
 //         "status": status,
-//         "list": list.toJson(),
+//         "list": list?.toJson(),
 //         "code": code,
 //         "message": message,
 //       };
 // }
 
+// // ProfileDetails class
 // class ProfileDetails {
 //   int id;
 //   String? username;
@@ -301,9 +311,9 @@ class Address {
 //   int? status;
 //   int? active;
 //   int? createdBy;
-//   DateTime createdDate;
+//   DateTime? createdDate;
 //   int? updatedBy;
-//   String? updatedDate;
+//   DateTime? updatedDate;
 //   String? mobilePushId;
 //   String? imageUrl;
 //   String? licenseNo;
@@ -329,8 +339,8 @@ class Address {
 //     this.status,
 //     this.active,
 //     this.createdBy,
-//     required this.createdDate,
-//     required this.updatedBy,
+//     this.createdDate,
+//     this.updatedBy,
 //     this.updatedDate,
 //     this.mobilePushId,
 //     this.imageUrl,
@@ -340,14 +350,14 @@ class Address {
 //     this.licenseFrontImg,
 //     this.licenseBackImg,
 //     this.vehicleImg,
-//     required this.address,
+//     this.address = const [],
 //     this.area,
 //     this.city,
 //     this.pincode,
 //   });
 
 //   factory ProfileDetails.fromJson(Map<String, dynamic> json) => ProfileDetails(
-//         id: json["id"],
+//         id: json["id"] ?? 0,
 //         username: json["username"],
 //         password: json["password"],
 //         fullname: json["fullname"],
@@ -358,9 +368,13 @@ class Address {
 //         status: json["status"],
 //         active: json["active"],
 //         createdBy: json["created_by"],
-//         createdDate: DateTime.parse(json["created_date"]),
+//         createdDate: json["created_date"] != null
+//             ? DateTime.parse(json["created_date"])
+//             : null,
 //         updatedBy: json["updated_by"],
-//         updatedDate: json["updated_date"],
+//         updatedDate: json["updated_date"] != null
+//             ? DateTime.parse(json["updated_date"])
+//             : null,
 //         mobilePushId: json["mobile_push_id"],
 //         imageUrl: json["image_url"],
 //         licenseNo: json["license_no"],
@@ -369,8 +383,10 @@ class Address {
 //         licenseFrontImg: json["license_front_img"],
 //         licenseBackImg: json["license_back_img"],
 //         vehicleImg: json["vehicle_img"],
-//         address:
-//             List<Address>.from(json["address"].map((x) => Address.fromJson(x))),
+//         address: json["address"] != null
+//             ? List<Address>.from(
+//                 json["address"].map((x) => Address.fromJson(x)))
+//             : [],
 //         area: json["area"],
 //         city: json["city"],
 //         pincode: json["pincode"],
@@ -388,9 +404,9 @@ class Address {
 //         "status": status,
 //         "active": active,
 //         "created_by": createdBy,
-//         "created_date": createdDate.toIso8601String(),
+//         "created_date": createdDate?.toIso8601String(),
 //         "updated_by": updatedBy,
-//         "updated_date": updatedDate,
+//         "updated_date": updatedDate?.toIso8601String(),
 //         "mobile_push_id": mobilePushId,
 //         "image_url": imageUrl,
 //         "license_no": licenseNo,
@@ -406,6 +422,7 @@ class Address {
 //       };
 // }
 
+// // Address class
 // class Address {
 //   int id;
 //   int? defaultAddress;
@@ -420,7 +437,7 @@ class Address {
 //   String? landmark;
 //   int status;
 //   int? createdBy;
-//   DateTime createdDate;
+//   DateTime? createdDate;
 //   int? updatedBy;
 //   DateTime? updatedDate;
 
@@ -438,13 +455,13 @@ class Address {
 //     this.landmark,
 //     required this.status,
 //     this.createdBy,
-//     required this.createdDate,
+//     this.createdDate,
 //     this.updatedBy,
 //     this.updatedDate,
 //   });
 
 //   factory Address.fromJson(Map<String, dynamic> json) => Address(
-//         id: json["id"],
+//         id: json["id"] ?? 0,
 //         defaultAddress: json["default_address"],
 //         type: json["type"],
 //         userId: json["user_id"],
@@ -455,11 +472,15 @@ class Address {
 //         country: json["country"],
 //         postcode: json["postcode"],
 //         landmark: json["landmark"],
-//         status: json["status"],
+//         status: json["status"] ?? 0,
 //         createdBy: json["created_by"],
-//         createdDate: DateTime.parse(json["created_date"]),
+//         createdDate: json["created_date"] != null
+//             ? DateTime.parse(json["created_date"])
+//             : null,
 //         updatedBy: json["updated_by"],
-//         updatedDate: DateTime.parse(json["updated_date"]),
+//         updatedDate: json["updated_date"] != null
+//             ? DateTime.parse(json["updated_date"])
+//             : null,
 //       );
 
 //   Map<String, dynamic> toJson() => {
@@ -476,7 +497,7 @@ class Address {
 //         "landmark": landmark,
 //         "status": status,
 //         "created_by": createdBy,
-//         "created_date": createdDate.toIso8601String(),
+//         "created_date": createdDate?.toIso8601String(),
 //         "updated_by": updatedBy,
 //         "updated_date": updatedDate?.toIso8601String(),
 //       };

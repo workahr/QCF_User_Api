@@ -140,6 +140,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // List<ProfileDetails> profiledetailsListAll = [];
 
   Future getprofileDetails() async {
+    await apiService.getBearerToken();
     setState(() {
       isLoading = true;
     });
@@ -150,6 +151,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (response.status.toString() == 'SUCCESS') {
         setState(() {
           print("userdetails $profiledetailsList");
+
           profiledetailsList = response.list;
           // profiledetailsListAll = profiledetailsList;
           isLoading = false;
@@ -244,13 +246,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       children: [
                                         if (profiledetailsList != null)
                                           HeadingWidget(
-                                            title: (profiledetailsList!
-                                                        .fullname![0]
-                                                        .toUpperCase() +
-                                                    profiledetailsList!
-                                                        .fullname!
-                                                        .substring(1) ??
-                                                ''),
+                                            title:
+                                                profiledetailsList?.fullname !=
+                                                        null
+                                                    ? (profiledetailsList!
+                                                                .fullname![0]
+                                                                .toUpperCase() +
+                                                            profiledetailsList!
+                                                                .fullname!
+                                                                .substring(1) ??
+                                                        '')
+                                                    : "",
                                             // (profiledetailsList!.fullname ??
                                             //     ''), // "Johan Singh",
                                             color: AppColors.white,

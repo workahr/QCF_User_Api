@@ -76,6 +76,8 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
   TextEditingController latController = TextEditingController();
   TextEditingController logController = TextEditingController();
 
+  TextEditingController districtController = TextEditingController();
+
   String? selectedmainlocation;
   int? selectedmainlocationId;
 
@@ -127,6 +129,15 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
         isLoading = false;
         if (widget.addressId != null) {
           selectedmainlocationArray();
+        } else if (MainLocationListdata != null &&
+            MainLocationListdata!.isNotEmpty) {
+          if (widget.addressId != null) {
+            selectedmainlocationArray();
+          } else if (MainLocationListdata != null &&
+              MainLocationListdata!.isNotEmpty) {
+            selectedmainlocationId = MainLocationListdata![0].id;
+            getallsublocationList(selectedmainlocationId);
+          }
         }
       });
     } else {
@@ -284,53 +295,53 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
           width: MediaQuery.of(context).size.width / 1.1,
           selectedItem: selectedmainlocationedit,
           labelText: 'Select Location',
-          // validator: errValidatesublocation(selectedmainlocationedit),
           labelField: (item) => item.name,
           onChanged: (value) {
             selectedmainlocation = value.name;
             selectedmainlocationId = value.id;
-            print("mainlocation id$selectedmainlocationId");
+            print("main location id: $selectedmainlocationId");
+
             getallsublocationList(selectedmainlocationId);
           },
           valArr: MainLocationListdata,
         ),
-      if (SubLocationListdata != null)
+
+      if (SubLocationListdata != null && SubLocationListdata!.isNotEmpty)
         CustomAutoCompleteWidget(
           width: MediaQuery.of(context).size.width / 1.1,
           selectedItem: selectedsublocationedit,
           labelText: 'Select Area',
-          // validator: errValidatesublocation(selectedsublocationedit),
           labelField: (item) => item.name,
           onChanged: (value) {
             selectedsublocation = value.name;
             selectedsublocationId = value.id;
-            print("sublocation id$selectedsublocationId");
-            //  getallsublocationList(selectedsublocationId);
+            print("sub location id: $selectedsublocationId");
           },
           valArr: SubLocationListdata,
         ),
-      // CustomeTextField(
-      //   control: cityController,
-      //   borderColor: AppColors.grey1,
-      //   labelText: 'City',
-      //   lines: 1,
-      //   width: MediaQuery.of(context).size.width,
-      // ),
-      CustomAutoCompleteWidget(
-        width: MediaQuery.of(context).size.width / 1.1,
-        selectedItem: selectedcityArr,
+      CustomeTextField(
+        control: districtController,
+        borderColor: AppColors.grey1,
+        readOnly: true,
         labelText: 'District',
-        labelField: (item) => item["name"],
-        onChanged: (value) {
-          selectedcity = value["name"];
-          print(selectedcity);
-          // if (selectedyes == 'No') {
-          //   selectedThirdpartyId == 0;
-          //   selectedThirdParty == '';
-          // }
-        },
-        valArr: refercityList,
+        lines: 1,
+        width: MediaQuery.of(context).size.width,
       ),
+      // CustomAutoCompleteWidget(
+      //   width: MediaQuery.of(context).size.width / 1.1,
+      //   selectedItem: selectedcityArr,
+      //   labelText: 'District',
+      //   labelField: (item) => item["name"],
+      //   onChanged: (value) {
+      //     selectedcity = value["name"];
+      //     print(selectedcity);
+      //     // if (selectedyes == 'No') {
+      //     //   selectedThirdpartyId == 0;
+      //     //   selectedThirdParty == '';
+      //     // }
+      //   },
+      //   valArr: refercityList,
+      // ),
 
       // CustomAutoCompleteWidget(
       //   width: MediaQuery.of(context).size.width / 1.1,
@@ -511,6 +522,7 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
             : widget.postcode.toString();
     latController.text = widget.lat.toString();
     logController.text = widget.long.toString();
+    districtController.text = "Trichy";
   }
 
   refresh() async {
@@ -519,7 +531,7 @@ class _FillyourAddresspageState extends State<FillyourAddresspage> {
       //  getallsublocationList(addressDetails!.sub_location_id);
     }
     getallmainlocationList();
-    // getallsublocationList(0);
+    //  getallsublocationList(0);
   }
 
   Future updateaddress() async {

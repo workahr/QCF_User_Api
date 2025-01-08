@@ -208,6 +208,7 @@ class _CartPageState extends State<CartPage> {
         );
         showInSnackBar(context, "Order Created");
       } else {
+        print(" min");
         showInSnackBar(context, response.message);
       }
     } catch (error) {
