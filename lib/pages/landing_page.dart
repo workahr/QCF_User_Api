@@ -17,15 +17,15 @@ class _LandingPageState extends State<LandingPage> {
   Future getLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
     loginStatus = prefs.getBool('isLoggedin');
-    // Navigator.pushNamedAndRemoveUntil(
-    //     context, '/home', ModalRoute.withName('/home'));
-    if (loginStatus == true) {
-      Navigator.pushNamedAndRemoveUntil(
-          context, '/home', ModalRoute.withName('/home'));
-    } else {
-      Navigator.pushNamedAndRemoveUntil(
-          context, '/login', ModalRoute.withName('/login'));
-    }
+    Navigator.pushNamedAndRemoveUntil(
+        context, '/home', ModalRoute.withName('/home'));
+    // if (loginStatus == true) {
+    //   Navigator.pushNamedAndRemoveUntil(
+    //       context, '/home', ModalRoute.withName('/home'));
+    // } else {
+    //   Navigator.pushNamedAndRemoveUntil(
+    //       context, '/login', ModalRoute.withName('/login'));
+    // }
   }
 
   @override
