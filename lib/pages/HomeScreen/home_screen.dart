@@ -787,7 +787,7 @@ class _HomeScreenState extends State<HomeScreen>
                   bottom: Radius.circular(20),
                 ),
               ),
-              toolbarHeight: 130,
+              toolbarHeight: 145,
               title: Column(
                 children: [
                   Row(
@@ -933,6 +933,17 @@ class _HomeScreenState extends State<HomeScreen>
                       ),
                     ),
                   ),
+                  Center(
+                    child: Text(
+                      "Service Hours: 8:00 AM - 11:00 PM",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors
+                            .white, // Adjust based on the background color
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),
@@ -1057,269 +1068,260 @@ class _HomeScreenState extends State<HomeScreen>
                               return Padding(
                                   padding:
                                       const EdgeInsets.fromLTRB(15, 0, 18, 5),
-                                  child: e.storeStatus == 1
-                                      ? Container(
-                                          margin: EdgeInsets.only(bottom: 16),
-                                          decoration: BoxDecoration(
+                                  child: Container(
+                                    margin: EdgeInsets.only(bottom: 16),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: Color(0xFFEEEEEE),
+                                        width: 0.2,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color:
+                                              Color.fromARGB(255, 196, 195, 195)
+                                                  .withOpacity(0.2),
+                                          spreadRadius: 2,
+                                          blurRadius: 4,
+                                          offset: Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: GestureDetector(
+                                        onTap: () {
+                                          e.storeStatus == 1
+                                              ? _navigateToMenus(e.storeId)
+                                              : showInSnackBar(
+                                                  context,
+                                                  "We’re sorry! The store is currently closed and not accepting orders at this time."
+                                                  " Please check back later during our operating hours,");
+
+                                          // Navigator.push(
+                                          //   context,
+                                          //   MaterialPageRoute(
+                                          //     builder: (context) => StorePage(),
+                                          //   ),
+                                          // );
+                                        },
+                                        child: Card(
+                                          shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(12),
-                                            border: Border.all(
-                                              color: Color(0xFFEEEEEE),
-                                              width: 0.2,
-                                            ),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Color.fromARGB(
-                                                        255, 196, 195, 195)
-                                                    .withOpacity(0.2),
-                                                spreadRadius: 2,
-                                                blurRadius: 4,
-                                                offset: Offset(0, 2),
+                                          ),
+                                          elevation: 0,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Stack(
+                                                children: [
+                                                  e.frontImg == null
+                                                      ? ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(12),
+                                                          child: Image.asset(
+                                                            AppAssets.foodimg,
+                                                            height: 150,
+                                                            width:
+                                                                double.infinity,
+                                                            fit: BoxFit.cover,
+                                                          ),
+                                                        )
+                                                      : ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(12),
+                                                          child: Image.network(
+                                                            AppConstants
+                                                                    .imgBaseUrl +
+                                                                e.frontImg
+                                                                    .toString(),
+                                                            height: 150,
+                                                            width:
+                                                                double.infinity,
+                                                            fit: BoxFit.cover,
+                                                          ),
+                                                        ),
+                                                  // Positioned(
+                                                  //   child: Container(
+                                                  //     padding: EdgeInsets.symmetric(
+                                                  //         horizontal: 7, vertical: 4),
+                                                  //     decoration: BoxDecoration(
+                                                  //       color: Colors.white,
+                                                  //       borderRadius: BorderRadius.only(
+                                                  //           bottomRight:
+                                                  //               Radius.circular(10),
+                                                  //           topLeft: Radius.circular(10)),
+                                                  //     ),
+                                                  //     child: Row(
+                                                  //       mainAxisSize: MainAxisSize.min,
+                                                  //       children: [
+                                                  //         e.type == "Non-Veg"
+                                                  //             ? Image.asset(
+                                                  //                 AppAssets.nonveg_icon,
+                                                  //                 width: 14,
+                                                  //                 height: 14)
+                                                  //             : Image.asset(
+                                                  //                 AppAssets.veg_icon,
+                                                  //                 width: 14,
+                                                  //                 height: 14),
+                                                  //         SizedBox(width: 4),
+                                                  //         HeadingWidget(
+                                                  //           title: e.type,
+                                                  //           color: e.type == "Non-Veg"
+                                                  //               ? Color(0xFFEF4848)
+                                                  //               : Colors.green,
+                                                  //           fontSize: 11.0,
+                                                  //           fontWeight: FontWeight.bold,
+                                                  //         ),
+                                                  //       ],
+                                                  //     ),
+                                                  //   ),
+                                                  // ),
+                                                  // Positioned(
+                                                  //   top: 8,
+                                                  //   right: 8,
+                                                  //   child: Icon(
+                                                  //       Icons.favorite_border,
+                                                  //       color: Colors.white),
+                                                  // ),
+                                                  // Positioned(
+                                                  //   bottom: 8,
+                                                  //   left: 8,
+                                                  //   child: Row(
+                                                  //     children: [
+                                                  //       Column(
+                                                  //         crossAxisAlignment:
+                                                  //             CrossAxisAlignment
+                                                  //                 .start,
+                                                  //         children: [
+                                                  //           HeadingWidget(
+                                                  //             title: e.name
+                                                  //                 .toString(),
+                                                  //             //  'Grill Chicken Arabian \nRestaurant',
+                                                  //             fontSize: 16.0,
+                                                  //             fontWeight:
+                                                  //                 FontWeight
+                                                  //                     .bold,
+                                                  //             color: Colors
+                                                  //                 .white,
+                                                  //           ),
+                                                  //         ],
+                                                  //       ),
+                                                  //     ],
+                                                  //   ),
+                                                  // ),
+                                                  // Positioned(
+                                                  //   bottom: 21,
+                                                  //   right: 12,
+                                                  //   child: Container(
+                                                  //     padding: EdgeInsets
+                                                  //         .symmetric(
+                                                  //             horizontal: 8),
+                                                  //     height: 30,
+                                                  //     decoration:
+                                                  //         BoxDecoration(
+                                                  //       color:
+                                                  //           Color(0xFFE23744),
+                                                  //       borderRadius:
+                                                  //           BorderRadius
+                                                  //               .circular(16),
+                                                  //     ),
+                                                  //     child: Row(
+                                                  //       children: [
+                                                  //         Icon(Icons.star,
+                                                  //             color: Colors
+                                                  //                 .white,
+                                                  //             size: 16),
+                                                  //         SizedBox(width: 4),
+                                                  //         SubHeadingWidget(
+                                                  //             title: ' 4.5 ',
+                                                  //             color: Colors
+                                                  //                 .white),
+                                                  //       ],
+                                                  //     ),
+                                                  //   ),
+                                                  // ),
+                                                ],
                                               ),
+                                              Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        HeadingWidget(
+                                                          title: e.name
+                                                              .toString(), //'40% Off ,
+                                                          color: Colors.black87,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 18.00,
+                                                        ),
+                                                        SubHeadingWidget(
+                                                          title:
+                                                              "${e.address.toString()}, ${e.city.toString()}, ${e.state.toString()},", //'40% Off ,
+                                                          color: Colors.black87,
+                                                        ),
+                                                        SubHeadingWidget(
+                                                          title:
+                                                              "${e.zipcode.toString()}.", //'40% Off ,
+                                                          color: Colors.black87,
+                                                        ),
+                                                      ])),
+                                              // Padding(
+                                              //   padding:
+                                              //       const EdgeInsets.all(8.0),
+                                              //   child: Row(
+                                              //     mainAxisAlignment:
+                                              //         MainAxisAlignment
+                                              //             .spaceBetween,
+                                              //     children: [
+                                              //       Row(
+                                              //         children: [
+                                              // Image.asset(AppAssets.offerimg),
+                                              // SizedBox(width: 4),
+                                              // SubHeadingWidget(
+                                              //   title:
+                                              //       "${e.offerpercentage}% off", //'40% Off ,
+                                              //   color: Colors.black87,
+                                              // ),
+                                              // SubHeadingWidget(
+                                              //   title:
+                                              //       "-Upto ₹${e.offerupto}", // Upto ₹90',
+                                              //   color: Colors.black87,
+                                              // ),
+
+                                              //     SubHeadingWidget(
+                                              //       title: e.address
+                                              //           .toString(), //'40% Off ,
+                                              //       color:
+                                              //           Colors.black87,
+                                              //     ),
+                                              //   ],
+                                              // ),
+                                              // Row(
+                                              //   children: [
+                                              //     SubHeadingWidget(
+                                              //         title:
+                                              //             " ${e.km} Km - ", //'2.5km',
+                                              //         color: Colors.black),
+                                              //     SizedBox(width: 3),
+                                              //     SubHeadingWidget(
+                                              //         title: e.time, //'10mins',
+                                              //         color: Colors.black),
+                                              //   ],
+                                              // ),
+                                              //     ],
+                                              //   ),
+                                              // ),
                                             ],
                                           ),
-                                          child: GestureDetector(
-                                              onTap: () {
-                                                _navigateToMenus(e.storeId);
-                                                // Navigator.push(
-                                                //   context,
-                                                //   MaterialPageRoute(
-                                                //     builder: (context) => StorePage(),
-                                                //   ),
-                                                // );
-                                              },
-                                              child: Card(
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                ),
-                                                elevation: 0,
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Stack(
-                                                      children: [
-                                                        e.frontImg == null
-                                                            ? ClipRRect(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            12),
-                                                                child:
-                                                                    Image.asset(
-                                                                  AppAssets
-                                                                      .foodimg,
-                                                                  height: 150,
-                                                                  width: double
-                                                                      .infinity,
-                                                                  fit: BoxFit
-                                                                      .cover,
-                                                                ),
-                                                              )
-                                                            : ClipRRect(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            12),
-                                                                child: Image
-                                                                    .network(
-                                                                  AppConstants
-                                                                          .imgBaseUrl +
-                                                                      e.frontImg
-                                                                          .toString(),
-                                                                  height: 150,
-                                                                  width: double
-                                                                      .infinity,
-                                                                  fit: BoxFit
-                                                                      .cover,
-                                                                ),
-                                                              ),
-                                                        // Positioned(
-                                                        //   child: Container(
-                                                        //     padding: EdgeInsets.symmetric(
-                                                        //         horizontal: 7, vertical: 4),
-                                                        //     decoration: BoxDecoration(
-                                                        //       color: Colors.white,
-                                                        //       borderRadius: BorderRadius.only(
-                                                        //           bottomRight:
-                                                        //               Radius.circular(10),
-                                                        //           topLeft: Radius.circular(10)),
-                                                        //     ),
-                                                        //     child: Row(
-                                                        //       mainAxisSize: MainAxisSize.min,
-                                                        //       children: [
-                                                        //         e.type == "Non-Veg"
-                                                        //             ? Image.asset(
-                                                        //                 AppAssets.nonveg_icon,
-                                                        //                 width: 14,
-                                                        //                 height: 14)
-                                                        //             : Image.asset(
-                                                        //                 AppAssets.veg_icon,
-                                                        //                 width: 14,
-                                                        //                 height: 14),
-                                                        //         SizedBox(width: 4),
-                                                        //         HeadingWidget(
-                                                        //           title: e.type,
-                                                        //           color: e.type == "Non-Veg"
-                                                        //               ? Color(0xFFEF4848)
-                                                        //               : Colors.green,
-                                                        //           fontSize: 11.0,
-                                                        //           fontWeight: FontWeight.bold,
-                                                        //         ),
-                                                        //       ],
-                                                        //     ),
-                                                        //   ),
-                                                        // ),
-                                                        // Positioned(
-                                                        //   top: 8,
-                                                        //   right: 8,
-                                                        //   child: Icon(
-                                                        //       Icons.favorite_border,
-                                                        //       color: Colors.white),
-                                                        // ),
-                                                        // Positioned(
-                                                        //   bottom: 8,
-                                                        //   left: 8,
-                                                        //   child: Row(
-                                                        //     children: [
-                                                        //       Column(
-                                                        //         crossAxisAlignment:
-                                                        //             CrossAxisAlignment
-                                                        //                 .start,
-                                                        //         children: [
-                                                        //           HeadingWidget(
-                                                        //             title: e.name
-                                                        //                 .toString(),
-                                                        //             //  'Grill Chicken Arabian \nRestaurant',
-                                                        //             fontSize: 16.0,
-                                                        //             fontWeight:
-                                                        //                 FontWeight
-                                                        //                     .bold,
-                                                        //             color: Colors
-                                                        //                 .white,
-                                                        //           ),
-                                                        //         ],
-                                                        //       ),
-                                                        //     ],
-                                                        //   ),
-                                                        // ),
-                                                        // Positioned(
-                                                        //   bottom: 21,
-                                                        //   right: 12,
-                                                        //   child: Container(
-                                                        //     padding: EdgeInsets
-                                                        //         .symmetric(
-                                                        //             horizontal: 8),
-                                                        //     height: 30,
-                                                        //     decoration:
-                                                        //         BoxDecoration(
-                                                        //       color:
-                                                        //           Color(0xFFE23744),
-                                                        //       borderRadius:
-                                                        //           BorderRadius
-                                                        //               .circular(16),
-                                                        //     ),
-                                                        //     child: Row(
-                                                        //       children: [
-                                                        //         Icon(Icons.star,
-                                                        //             color: Colors
-                                                        //                 .white,
-                                                        //             size: 16),
-                                                        //         SizedBox(width: 4),
-                                                        //         SubHeadingWidget(
-                                                        //             title: ' 4.5 ',
-                                                        //             color: Colors
-                                                        //                 .white),
-                                                        //       ],
-                                                        //     ),
-                                                        //   ),
-                                                        // ),
-                                                      ],
-                                                    ),
-                                                    Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(8.0),
-                                                        child: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              HeadingWidget(
-                                                                title: e.name
-                                                                    .toString(), //'40% Off ,
-                                                                color: Colors
-                                                                    .black87,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 18.00,
-                                                              ),
-                                                              SubHeadingWidget(
-                                                                title:
-                                                                    "${e.address.toString()}, ${e.city.toString()}, ${e.state.toString()},", //'40% Off ,
-                                                                color: Colors
-                                                                    .black87,
-                                                              ),
-                                                              SubHeadingWidget(
-                                                                title:
-                                                                    "${e.zipcode.toString()}.", //'40% Off ,
-                                                                color: Colors
-                                                                    .black87,
-                                                              ),
-                                                            ])),
-                                                    // Padding(
-                                                    //   padding:
-                                                    //       const EdgeInsets.all(8.0),
-                                                    //   child: Row(
-                                                    //     mainAxisAlignment:
-                                                    //         MainAxisAlignment
-                                                    //             .spaceBetween,
-                                                    //     children: [
-                                                    //       Row(
-                                                    //         children: [
-                                                    // Image.asset(AppAssets.offerimg),
-                                                    // SizedBox(width: 4),
-                                                    // SubHeadingWidget(
-                                                    //   title:
-                                                    //       "${e.offerpercentage}% off", //'40% Off ,
-                                                    //   color: Colors.black87,
-                                                    // ),
-                                                    // SubHeadingWidget(
-                                                    //   title:
-                                                    //       "-Upto ₹${e.offerupto}", // Upto ₹90',
-                                                    //   color: Colors.black87,
-                                                    // ),
-
-                                                    //     SubHeadingWidget(
-                                                    //       title: e.address
-                                                    //           .toString(), //'40% Off ,
-                                                    //       color:
-                                                    //           Colors.black87,
-                                                    //     ),
-                                                    //   ],
-                                                    // ),
-                                                    // Row(
-                                                    //   children: [
-                                                    //     SubHeadingWidget(
-                                                    //         title:
-                                                    //             " ${e.km} Km - ", //'2.5km',
-                                                    //         color: Colors.black),
-                                                    //     SizedBox(width: 3),
-                                                    //     SubHeadingWidget(
-                                                    //         title: e.time, //'10mins',
-                                                    //         color: Colors.black),
-                                                    //   ],
-                                                    // ),
-                                                    //     ],
-                                                    //   ),
-                                                    // ),
-                                                  ],
-                                                ),
-                                              )),
-                                        )
-                                      : null);
+                                        )),
+                                  ));
                             },
                           ),
                           // Column(
@@ -1461,78 +1463,75 @@ class _HomeScreenState extends State<HomeScreen>
                       )),
                     )
                   ]),
-            // floatingActionButton: GestureDetector(
-            //   onTap: () {
-            //     if (isOverlayVisible) {
-            //       _removeOverlay();
-            //     } else {
-            //       _showOverlay(context);
-            //     }
-            //   },
-            //   child: isOverlayVisible
-            //       ? Container(
-            //           width: 80,
-            //           height: 80,
-            //           decoration: BoxDecoration(
-            //             color: AppColors.red,
-            //             shape: BoxShape.circle,
-            //           ),
-            //           child: Padding(
-            //             padding: const EdgeInsets.all(1.0),
-            //             child: Column(
-            //               mainAxisAlignment: MainAxisAlignment.center,
-            //               crossAxisAlignment: CrossAxisAlignment.center,
-            //               children: [
-            //                 Icon(
-            //                   Icons.close,
-            //                   color: Colors.white,
-            //                 ),
-            //                 Text(
-            //                   "Close",
-            //                   style: TextStyle(
-            //                     color: Colors.white,
-            //                   ),
-            //                 ),
-            //               ],
-            //             ),
-            //           ),
-            //         )
-            //       : Container(
-            //           width: 80,
-            //           height: 80,
-            //           decoration: BoxDecoration(
-            //             color: AppColors.red,
-            //             shape: BoxShape.circle,
-            //           ),
-            //           child: Padding(
-            //             padding: const EdgeInsets.all(8.0),
-            //             child: Column(
-            //               mainAxisAlignment: MainAxisAlignment.center,
-            //               crossAxisAlignment: CrossAxisAlignment.center,
-            //               children: [
-            //                 // Image.asset(
-            //                 //   AppAssets.call_icon,
-            //                 //   width: 20,
-            //                 //   height: 20,
-            //                 //   //color: AppColors.light,
-            //                 // ),
-            //                 Text(
-            //                   "Customer",
-            //                   style: TextStyle(
-            //                     color: Colors.white,
-            //                   ),
-            //                 ),
-            //                 Text(
-            //                   "Care",
-            //                   style: TextStyle(
-            //                     color: Colors.white,
-            //                   ),
-            //                 ),
-            //               ],
-            //             ),
-            //           ),
-            //         ),
-            // ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                // Show number or initiate a call
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text("Customer Care"),
+                    content: Column(mainAxisSize: MainAxisSize.min, children: [
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Call Us       ",
+                              style: TextStyle(
+                                  color: AppColors.red,
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            GestureDetector(
+                                onTap: () async {
+                                  _makePhoneCall("9361616063");
+                                },
+                                child: Image.asset(AppAssets.call_icon,
+                                    height: 35, width: 35))
+                          ]),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Whats App ",
+                              style: TextStyle(
+                                  color: AppColors.red,
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            GestureDetector(
+                                onTap: () async {
+                                  whatsapp("9361616063");
+                                },
+                                child: Image.asset(AppAssets.whatsapp_icon,
+                                    //  color: Colors.green,
+                                    height: 35,
+                                    width: 35))
+                          ])
+                    ]),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(
+                          "Close",
+                          style: TextStyle(color: AppColors.red),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              child: Icon(
+                Icons.phone,
+                color: Colors.white,
+              ),
+              tooltip: 'Customer Care',
+              backgroundColor: AppColors.red, // Set the background color to red
+            ),
             bottomNavigationBar: cartList.isNotEmpty
                 ? BottomAppBar(
                     height: 105.0,
@@ -1585,15 +1584,17 @@ class _HomeScreenState extends State<HomeScreen>
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      cartList[0].store_name.toString(),
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
+                                    Container(
+                                        width: 180,
+                                        child: Text(
+                                          cartList[0].store_name.toString(),
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        )),
                                     // Text(
                                     //   '${totalCartItems.toString()} items | ₹${finalTotal.toString()}',
                                     //   style: TextStyle(

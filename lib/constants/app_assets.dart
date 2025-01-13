@@ -140,4 +140,5 @@ class AppAssets {
   static const String image_plus_icon = 'assets/images/image-plus.png';
   static const String location_map_pic = 'assets/images/location_map_pic.jpeg';
   static const String call_iconfill = 'assets/images/call_iconfill.png';
+  static const String noimage = 'assets/images/noimage.png';
 }
