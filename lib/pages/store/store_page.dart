@@ -1151,53 +1151,53 @@ class _StorePageState extends State<StorePage> {
                             ),
                           ),
                           SizedBox(height: 16),
-                          // CustomeTextField(
-                          //   width: MediaQuery.of(context).size.width - 10.0,
-                          //   hint: 'Find your dish',
-                          //   prefixIcon: Icon(
-                          //     Icons.search,
-                          //     color: AppColors.red,
-                          //   ),
-                          //   labelColor: Colors.grey[900],
-                          //   focusBorderColor: AppColors.primary,
-                          //   borderRadius:
-                          //       BorderRadius.all(Radius.circular(20.0)),
-                          //   borderColor: AppColors.lightGrey3,
-                          //   onChanged: (value) {
-                          //     if (value.isNotEmpty) {
-                          //       storedetailslistpage = storedetailslistpageAll
-                          //           .map((category) {
-                          //             final filteredProducts =
-                          //                 category.products.where((product) {
-                          //               return product.itemName != null &&
-                          //                   product.itemName!
-                          //                       .toLowerCase()
-                          //                       .contains(value.toLowerCase());
-                          //             }).toList();
+                          CustomeTextField(
+                            width: MediaQuery.of(context).size.width - 10.0,
+                            hint: 'Find your dish',
+                            prefixIcon: Icon(
+                              Icons.search,
+                              color: AppColors.red,
+                            ),
+                            labelColor: Colors.grey[900],
+                            focusBorderColor: AppColors.primary,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(20.0)),
+                            borderColor: AppColors.lightGrey3,
+                            onChanged: (value) {
+                              if (value.isNotEmpty) {
+                                storedetailslistpage = storedetailslistpageAll
+                                    .map((category) {
+                                      final filteredProducts =
+                                          category.products.where((product) {
+                                        return product.itemName != null &&
+                                            product.itemName!
+                                                .toLowerCase()
+                                                .contains(value.toLowerCase());
+                                      }).toList();
 
-                          //             return CategoryProductList(
-                          //               categoryId: category.categoryId,
-                          //               categoryName: category.categoryName,
-                          //               description: category.description,
-                          //               slug: category.slug,
-                          //               serial: category.serial,
-                          //               imageUrl: category.imageUrl,
-                          //               products: filteredProducts,
-                          //               createdDate: category.createdDate,
-                          //             );
-                          //           })
-                          //           .where((category) =>
-                          //               category.products.isNotEmpty)
-                          //           .toList();
-                          //     } else {
-                          //       storedetailslistpage = storedetailslistpageAll;
-                          //     }
-                          //     print(
-                          //         'Filtered categories count: ${storedetailslistpage.length}');
-                          //     setState(() {});
-                          //   },
-                          // ),
-                          // SizedBox(height: 5),
+                                      return CategoryProductList(
+                                        categoryId: category.categoryId,
+                                        categoryName: category.categoryName,
+                                        description: category.description,
+                                        slug: category.slug,
+                                        serial: category.serial,
+                                        imageUrl: category.imageUrl,
+                                        products: filteredProducts,
+                                        createdDate: category.createdDate,
+                                      );
+                                    })
+                                    .where((category) =>
+                                        category.products.isNotEmpty)
+                                    .toList();
+                              } else {
+                                storedetailslistpage = storedetailslistpageAll;
+                              }
+                              print(
+                                  'Filtered categories count: ${storedetailslistpage.length}');
+                              setState(() {});
+                            },
+                          ),
+                          SizedBox(height: 5),
                           ListView.builder(
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
@@ -1368,27 +1368,53 @@ class _StorePageState extends State<StorePage> {
                                                                               size: 22),
                                                                         ),
                                                                         // Show CircularProgressIndicator when loading
-                                                                        itemLoadingState['$storeId-$productId'] ==
-                                                                                true
-                                                                            ? SizedBox(
-                                                                                width: 22.0, // Set the width of the circular progress
-                                                                                height: 22.0, // Set the height of the circular progress
-                                                                                child: CircularProgressIndicator(
-                                                                                  strokeWidth: 4.0, // Set the thickness of the circular progress
-                                                                                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.red), // Set the color
-                                                                                ),
-                                                                              )
-                                                                            : Padding(
-                                                                                padding: EdgeInsets.symmetric(horizontal: 5.0),
-                                                                                child: Text(
-                                                                                  '$cartQuantity',
-                                                                                  style: TextStyle(
-                                                                                    color: Colors.red,
-                                                                                    fontSize: 20,
-                                                                                    fontWeight: FontWeight.bold,
-                                                                                  ),
-                                                                                ),
-                                                                              ),
+                                                                        // itemLoadingState['$storeId-$productId'] ==
+                                                                        //         true
+                                                                        //     ? SizedBox(
+                                                                        //         width: 22.0, // Set the width of the circular progress
+                                                                        //         height: 22.0, // Set the height of the circular progress
+                                                                        //         child: CircularProgressIndicator(
+                                                                        //           strokeWidth: 4.0, // Set the thickness of the circular progress
+                                                                        //           valueColor: AlwaysStoppedAnimation<Color>(AppColors.red), // Set the color
+                                                                        //         ),
+                                                                        //       )
+                                                                        //     :
+                                                                        //      Padding(
+                                                                        //         padding: EdgeInsets.symmetric(horizontal: 5.0),
+                                                                        //         child: Text(
+                                                                        //           '$cartQuantity',
+                                                                        //           style: TextStyle(
+                                                                        //             color: Colors.red,
+                                                                        //             fontSize: 20,
+                                                                        //             fontWeight: FontWeight.bold,
+                                                                        //           ),
+                                                                        //         ),
+                                                                        //       ),
+
+                                                                        AnimatedSwitcher(
+  duration: Duration(milliseconds: 300),
+  transitionBuilder: (Widget child, Animation<double> animation) {
+    return FadeTransition(
+      opacity: animation,
+      child: SlideTransition(
+        position: Tween<Offset>(
+          begin: Offset(0, cartQuantity > ((child.key as ValueKey<int>?)?.value ?? 0) ? -0.4 : 0.5),
+          end: Offset(0, 0),
+        ).animate(animation),
+        child: child,
+      ),
+    );
+  },
+  child:Text(
+    '$cartQuantity',
+    key: ValueKey<int>(cartQuantity),
+    style: TextStyle(
+      color: Color(0xFFE23744),
+      fontSize: 18,
+      fontWeight: FontWeight.bold,
+    ),
+  ),
+),
                                                                         GestureDetector(
                                                                           onTap: () =>
                                                                               setState(() {
