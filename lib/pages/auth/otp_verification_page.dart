@@ -167,10 +167,13 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
   }
 
   Future login() async {
+    print("test");
     print("token ${baseCtrl.fbUserId}");
+    print("test1");
     try {
       //  showInSnackBar(context, 'Processing...');
-      showSnackBar(context: context, showClose: false);
+    //  showSnackBar(context: context, showClose: false);
+      print("test2");
       startTimer();
       if (loginForm.currentState!.validate()) {
         Map<String, dynamic> postData = {
@@ -178,14 +181,16 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
           'otp': otpCtrl.text,
           'mobile_push_id': ""
         };
+        print("test3");
         var result = await apiService.userLoginWithOtp(postData);
+        print("test4");
         LoginOtpModel response = loginOtpModelFromJson(result);
         print("postdata $postData");
         closeSnackBar(context: context);
-
+print("test");
         if (response.status.toString() == 'SUCCESS') {
           final prefs = await SharedPreferences.getInstance();
-
+print("test");
           if (response.authToken != null) {
             //Navigator.pushNamed(context, '/');
             prefs.setString('auth_token', response.authToken ?? '');

@@ -33,27 +33,30 @@ class _LoginPageState extends State<LoginPage> {
   BaseController baseCtrl = Get.put(BaseController());
   final NamFoodApiService apiService = NamFoodApiService();
   String? auth;
+
+  
   Future login() async {
     print("token user ${baseCtrl.fbUserId}");
     try {
-      showInSnackBar(context, 'Processing...');
-
+       
       if (_phoneController.text != "") {
         Map<String, dynamic> postData = {
           'mobile': _phoneController.text,
           'otp': "",
           'mobile_push_id': baseCtrl.fbUserId
         };
+        
         var result = await apiService.userLoginWithOtp(postData);
         LoginOtpModel response = loginOtpModelFromJson(result);
 
         closeSnackBar(context: context);
-        print("postdata $postData");
+        print("postdata3 $postData");
 
         if (response.status.toString() == 'SUCCESS') {
           if (_phoneController.text == "1234567890") {
             print("login test");
             setState(() async {
+              
               final prefs = await SharedPreferences.getInstance();
               if (response.authToken != null) {
                 //Navigator.pushNamed(context, '/');
