@@ -1659,6 +1659,25 @@ class NamFoodApiService {
     }
   }
 
+  
+getservicehours() async {
+    try {
+      final url = Uri.parse('${liveApiPath}v1/getservicehours');
+      final response = await client.get(
+        url,
+        headers: headerData,
+      );
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        return response;
+      }
+    } catch (e) {
+      return e;
+    }
+  }
+
+
   // get All Cart List
   Future getCartList() async {
     try {

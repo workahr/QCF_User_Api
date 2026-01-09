@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:namfood/constants/app_assets.dart';
 import 'package:namfood/pages/models/homescreen_model.dart';
 import 'package:namfood/pages/store/store_page.dart';
@@ -41,6 +44,61 @@ class _HomeScreenState extends State<HomeScreen>
 
   List<popups> locationpopuppage = [];
   List<popups> locationpopuppageAll = [];
+List<dynamic> servicehours = [];
+
+
+String openTime = '';
+String closeTime = '';
+String formatTime(String time24) {
+  try {
+    final dateTime = DateFormat("HH:mm:ss").parse(time24); // parse 24-hour time
+    return DateFormat.jm().format(dateTime); // format as 12-hour with AM/PM
+  } catch (e) {
+    return time24; // fallback if parsing fails
+  }
+}
+
+Future getservicehours() async {
+  setState(() {
+    isLoading = true;
+  });
+
+  try {
+    var result = await apiService.getservicehours();
+    final decoded = jsonDecode(result);
+
+    if (decoded['status'] == 'SUCCESS') {
+      setState(() {
+        // decoded['list'] should be a list of service hours
+        servicehours = decoded['list'];
+
+      if (servicehours.isNotEmpty) {
+  openTime = formatTime(servicehours[0]['open_time'] ?? '');
+  closeTime = formatTime(servicehours[0]['close_time'] ?? '');
+}
+
+        isLoading = false;
+      });
+    } else {
+      setState(() {
+        servicehours = [];
+        openTime = '';
+        closeTime = '';
+        isLoading = false;
+      });
+      showInSnackBar(context, decoded['message'].toString());
+    }
+  } catch (e) {
+    setState(() {
+      servicehours = [];
+      openTime = '';
+      closeTime = '';
+      isLoading = false;
+    });
+    showInSnackBar(context, "Error: $e");
+  }
+}
+
 
   Future getlocationpopup() async {
     setState(() {
@@ -160,6 +218,8 @@ class _HomeScreenState extends State<HomeScreen>
     refreshData();
     getalladdressList();
     getstaticbannerimage();
+    getservicehours();
+
     //   _animationController = AnimationController(
     //     vsync: this,
     //     duration: Duration(milliseconds: 800),
@@ -933,17 +993,30 @@ class _HomeScreenState extends State<HomeScreen>
                       ),
                     ),
                   ),
+                  // Center(
+                  //   child: Text(
+                  //     "Service Hours: 8:00 AM - 11:00 PM",
+                  //     style: TextStyle(
+                  //       fontSize: 14,
+                  //       color: Colors
+                  //           .white, // Adjust based on the background color
+                  //       fontWeight: FontWeight.w500,
+                  //     ),
+                  //   ),
+                  // )
                   Center(
-                    child: Text(
-                      "Service Hours: 8:00 AM - 11:00 PM",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors
-                            .white, // Adjust based on the background color
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  )
+  child: Text(
+    servicehours.isNotEmpty 
+        ? "Service Hours: $openTime - $closeTime" 
+        : "Service Hours: ",
+    style: TextStyle(
+      fontSize: 14,
+      color: Colors.white,
+      fontWeight: FontWeight.w500,
+    ),
+  ),
+)
+
                 ],
               ),
             ),
